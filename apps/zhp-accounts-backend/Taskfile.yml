@@ -1,0 +1,28 @@
+version: '3'
+
+includes:
+
+tasks:
+    default:
+        desc: Help
+        summary: Show available tasks
+        aliases:
+            - help
+        cmd: task --list-all
+
+    venv:
+        desc: Python venv
+        summary: Activate the Python virtual environment
+        cmd: . ./venv/Scripts/activate
+
+    install:
+        desc: Install dependencies
+        summary: Install Python dependencies
+        cmd: pip install -r requirements.txt
+
+    start:local:
+        desc: Run locally
+        summary: Run the functions locally (requires azure-functions-core-tools)
+        cmd: func start
+        preconditions:
+            - func --version
