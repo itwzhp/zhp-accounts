@@ -10,11 +10,6 @@ tasks:
             - help
         cmd: task --list-all
 
-    venv:
-        desc: Python venv
-        summary: Activate the Python virtual environment
-        cmd: . ./venv/Scripts/activate
-
     install:
         desc: Install dependencies
         summary: Install Python dependencies
