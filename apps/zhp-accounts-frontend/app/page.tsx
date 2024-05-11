@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { HTMLAttributeAnchorTarget } from 'react';
 
 export default function Home() {
   return (
@@ -56,7 +57,7 @@ export default function Home() {
 
           <div className="grid gap-4 md:grid-cols-3">
             {cards.map((data) => (
-              <LinkCard {...data} />
+              <LinkCard key={data.image} {...data} />
             ))}
           </div>
         </div>
@@ -69,6 +70,7 @@ interface LinkCardData {
   image: string;
   alt: string;
   href: string;
+  target?: HTMLAttributeAnchorTarget;
   body: string;
 }
 
@@ -76,29 +78,31 @@ const cards: LinkCardData[] = [
   {
     image: '/images/create-account.webp',
     alt: 'Załóż konto',
-    href: 'https://forms.office.com/Pages/ResponsePage.aspx?id=Ho024XU55kyJPfw1H9RNzagYEwNUSyJIv9jtKjNrRIJUNE02SjMwNkpYMVBBNUtUUklSNU9IVTlCSS4u&embed=true',
+    href: '/accounts/activate',
     body: 'Przed założeniem konta upewnij się, że w systemie Tipi masz wyrażone zgody na przetwarzanie danych osobowych oraz odznaczone opłacenie składki członkowskiej',
   },
   {
     image: '/images/reset-password.webp',
     alt: 'Resetuj hasło',
     href: 'https://passwordreset.microsoftonline.com/',
+    target: '_blank',
     body: 'Zapomniałeś hasła? Tu je zresetujesz!',
   },
   {
     image: '/images/reset-2fa.webp',
     alt: 'Rozwiąż problem z dwuskładnikowym uwierzytelnianiem',
     href: 'https://pomoc.zhp.pl/pages/viewpage.action?pageId=1376376',
+    target: '_blank',
     body: 'Masz problem z MFA? Kliknij tutaj, aby otrzymać pomoc.',
   },
 ];
 
-function LinkCard({ image, alt, href, body }: LinkCardData) {
+function LinkCard({ image, alt, href, target, body }: LinkCardData) {
   return (
     <Link
       href={href}
-      target="_blank"
-      className="card bg-base-100 no-underline shadow-xl transition duration-200 ease-in-out md:scale-90 hover:scale-100"
+      target={target ?? '_self'}
+      className="card bg-base-100 no-underline shadow-xl transition duration-200 ease-in-out hover:scale-100 md:scale-90"
     >
       <figure className="m-0">
         <Image
