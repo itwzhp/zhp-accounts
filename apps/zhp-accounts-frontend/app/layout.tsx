@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 const navigationRoutes = [
-  { label: 'Aktywacja', href: '/accounts/create' },
+  { label: 'Aktywacja', href: '/accounts/activate' },
   { label: 'Resetuj hasło', href: '/' },
 ];
 
