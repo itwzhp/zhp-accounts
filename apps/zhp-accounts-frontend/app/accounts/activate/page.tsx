@@ -91,7 +91,7 @@ export default function CreateAccountPage() {
                 name="consents.rodo"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.consents.rodo}
+                value={formik.values.consents.rodo.toString()}
                 required
               >
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione
@@ -105,7 +105,7 @@ export default function CreateAccountPage() {
                 name="consents.ageGT13"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.consents.ageGT13}
+                value={formik.values.consents.ageGT13.toString()}
                 required
               >
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione
