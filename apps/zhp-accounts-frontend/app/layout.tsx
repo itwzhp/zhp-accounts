@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Link from 'next/link';
 import clsx from 'clsx';
+import identifier from '../public/images/identifier-zhp-white.png';
 
 const inter = Inter({ subsets: ['latin'] });
 const museo = localFont({
@@ -70,7 +71,7 @@ function Navbar({
       <div className="mx-2 flex-1 px-2">
         <Link href="/" className="flex items-center gap-2">
           <Image
-            src="/images/identifier-zhp-white.png"
+            src={identifier}
             height={45}
             width={100}
             alt="Związek Harcerstwa Polskiego"
