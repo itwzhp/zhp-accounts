@@ -1,6 +1,6 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 
-export async function GetMyUnits(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
+async function GetMyUnits(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
 
     const name = request.query.get('name') || 'world';
@@ -12,5 +12,5 @@ app.http('getMyUnits', {
     methods: ['GET'],
     authLevel: 'anonymous',
     handler: GetMyUnits,
-    route: '/units'
+//    route: '/units'
 });
