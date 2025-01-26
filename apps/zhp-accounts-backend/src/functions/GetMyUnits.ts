@@ -12,5 +12,5 @@ app.http('getMyUnits', {
     methods: ['GET'],
     authLevel: 'anonymous',
     handler: GetMyUnits,
-//    route: '/units'
+    route: 'units'
 });
