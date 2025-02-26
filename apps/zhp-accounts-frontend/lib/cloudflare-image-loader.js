@@ -1,4 +1,4 @@
-const isCloudflarePagesDev = process.env.CF_PAGES_URL?.includes("pages.dev");
+const isCloudflarePagesDev = process.env.CF_PAGES_URL?.includes('pages.dev');
 
 // Docs: https://developers.cloudflare.com/images/transform-images
 // based on https://nextjs.org/docs/app/api-reference/config/next-config-js/images#cloudflare

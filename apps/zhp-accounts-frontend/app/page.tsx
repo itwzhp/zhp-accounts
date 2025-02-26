@@ -1,8 +1,14 @@
-'use client';
-
 import Link from 'next/link';
 import Image from 'next/image';
 import { HTMLAttributeAnchorTarget } from 'react';
+import { cn } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
+// import {
+//   Card,
+//   CardContent, CardDescription,
+//   CardFooter,
+//   CardHeader, CardTitle
+// } from '@/components/ui/card';
 
 export default function Home() {
   return (
@@ -30,21 +36,19 @@ export default function Home() {
 
           <h2>Masz już konto Microsoft 365 od ZHP?</h2>
 
-          <div className="flex w-full flex-col lg:flex-row">
+          <div className="flex justify-center gap-1">
             <Link
               href="https://portal.office.com/"
               target="_blank"
-              className="btn card btn-primary grid h-12 flex-grow place-items-center rounded-box"
+              className={buttonVariants({ variant: 'default' })}
             >
               Zaloguj się do konta Microsoft 365
             </Link>
 
-            <div className="divider lg:divider-horizontal" />
-
             <Link
               href="https://pomoc.zhp.pl/login.action"
               target="_blank"
-              className="btn card btn-primary grid h-12 flex-grow place-items-center rounded-box"
+              className={cn(buttonVariants())}
             >
               Zaloguj się do serwisu pomoc.zhp.pl
             </Link>
@@ -54,6 +58,19 @@ export default function Home() {
             Masz problem ze swoim kontem Microsoft 365 od ZHP? <br />
             Wybierz, jak możemy ci pomóc:
           </h2>
+
+          {/*<Card>
+            <CardHeader>
+              <CardTitle>Card Title</CardTitle>
+              <CardDescription>Card Description</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>Card Content</p>
+            </CardContent>
+            <CardFooter>
+              <p>Card Footer</p>
+            </CardFooter>
+          </Card>*/}
 
           <div className="grid gap-4 md:grid-cols-3">
             {cards.map((data) => (
