@@ -36,7 +36,7 @@ export default function Home() {
 
           <h2>Masz już konto Microsoft 365 od ZHP?</h2>
 
-          <div className="flex justify-center gap-1">
+          <div className="flex flex-wrap justify-center gap-1">
             <Link
               href="https://portal.office.com/"
               target="_blank"
