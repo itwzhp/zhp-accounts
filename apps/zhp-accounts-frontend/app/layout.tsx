@@ -34,21 +34,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pl">
-      <body className={cn(museo.variable, 'antialiased')}>
+      <body className={cn(museo.className, 'antialiased')}>
         <header className={cn('bg-primary text-primary-foreground')}>
           <div
             className={cn(
               'container mx-auto flex items-center justify-between py-4',
             )}
           >
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-4">
               <Image
                 src="/images/identifier-zhp-white.png"
                 height={45}
                 width={100}
                 alt="Związek Harcerstwa Polskiego"
               />
-              <span>aktywacja.zhp.pl</span>
+              <span className="text-lg font-extrabold tracking-wide">
+                aktywacja.zhp.pl
+              </span>
             </Link>
 
             <NavigationMenu>
@@ -59,7 +61,7 @@ export default function RootLayout({
                       asChild
                       className={cn(
                         navigationMenuTriggerStyle(),
-                        'bg-transparent',
+                        'bg-transparent font-extrabold',
                       )}
                     >
                       <Link href={route.href}>{route.label}</Link>
