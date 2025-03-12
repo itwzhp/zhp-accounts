@@ -11,6 +11,7 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import { cn } from '@/lib/utils';
+import Providers from '@/app/providers';
 
 const museo = localFont({
   variable: '--font-museo',
@@ -18,10 +19,7 @@ const museo = localFont({
   display: 'swap',
 });
 
-const navigationRoutes = [
-  { label: 'Aktywacja', href: '/accounts/activate' },
-  { label: 'Resetuj hasło', href: '/' },
-];
+const navigationRoutes = [{ label: 'Jednostki', href: '/units' }];
 
 export const metadata: Metadata = {
   title: 'Aktywacja | Microsoft365 w ZHP',
@@ -61,7 +59,7 @@ export default function RootLayout({
                       asChild
                       className={cn(
                         navigationMenuTriggerStyle(),
-                        'bg-transparent font-extrabold',
+                        'bg-transparent font-black',
                       )}
                     >
                       <Link href={route.href}>{route.label}</Link>
@@ -73,7 +71,9 @@ export default function RootLayout({
           </div>
         </header>
 
-        <main>{children}</main>
+        <main>
+          <Providers>{children}</Providers>
+        </main>
       </body>
     </html>
   );

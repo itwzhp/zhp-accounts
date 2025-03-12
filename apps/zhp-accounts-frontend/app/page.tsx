@@ -8,7 +8,7 @@ const linkCards = [
   {
     image: '/images/create-account.webp',
     alt: 'Załóż konto',
-    href: '/accounts/activate',
+    href: '/units',
     label:
       'Przed założeniem konta upewnij się, że w systemie Tipi masz wyrażone zgody na przetwarzanie danych osobowych oraz odznaczone opłacenie składki członkowskiej',
   },
@@ -30,82 +30,80 @@ const linkCards = [
 
 export default function HomePage() {
   return (
-    <main className="container mx-auto px-4">
-      <div className="flex flex-col">
-        <div className="prose max-w-none py-12">
-          <h1>Microsoft 365 w ZHP</h1>
+    <div className="container mx-auto my-12 flex flex-col">
+      <div className="prose max-w-none">
+        <h1>Microsoft 365 w ZHP</h1>
 
-          <p className="font-bold">
-            Związek Harcerstwa Polskiego daje możliwość bezpłatnego korzystania
-            z pakietu Microsoft 365 każdemu członkowi organizacji.
-          </p>
+        <p className="font-bold">
+          Związek Harcerstwa Polskiego daje możliwość bezpłatnego korzystania z
+          pakietu Microsoft 365 każdemu członkowi organizacji.
+        </p>
 
-          <p>
-            Microsoft 365 to zestaw w pełni profesjonalnych narzędzi do
-            współpracy i komunikacji, dostępny w chmurze internetowej. Harcerze,
-            którzy chcą mieć konto w zhp.net.pl, otrzymają pakiet usług
-            zawierających pocztę elektroniczną, współdzielone kalendarze,
-            wiadomości błyskawiczne, wideokonferencje, przestrzeń na dysku
-            wirtualnym oraz dostęp do internetowych wersji aplikacji pakietu
-            biurowego – Word, Excel, PowerPoint i OneNote. Dzięki zastosowaniu
-            technologii chmury internetowej dostęp do wszystkich funkcji pakietu
-            będzie dostępny z dowolnego miejsca i w dowolnym czasie.
-          </p>
+        <p>
+          Microsoft 365 to zestaw w pełni profesjonalnych narzędzi do współpracy
+          i komunikacji, dostępny w chmurze internetowej. Harcerze, którzy chcą
+          mieć konto w zhp.net.pl, otrzymają pakiet usług zawierających pocztę
+          elektroniczną, współdzielone kalendarze, wiadomości błyskawiczne,
+          wideokonferencje, przestrzeń na dysku wirtualnym oraz dostęp do
+          internetowych wersji aplikacji pakietu biurowego – Word, Excel,
+          PowerPoint i OneNote. Dzięki zastosowaniu technologii chmury
+          internetowej dostęp do wszystkich funkcji pakietu będzie dostępny z
+          dowolnego miejsca i w dowolnym czasie.
+        </p>
 
-          <h2>Masz już konto Microsoft 365 od ZHP?</h2>
+        <h2>Masz już konto Microsoft 365 od ZHP?</h2>
 
-          <div className="flex flex-wrap justify-center gap-1">
+        <div className="flex flex-wrap justify-center gap-1">
+          <Link
+            href="https://portal.office.com/"
+            target="_blank"
+            className={cn(buttonVariants(), 'no-underline')}
+          >
+            Zaloguj się do konta Microsoft 365
+          </Link>
+
+          <Link
+            href="https://pomoc.zhp.pl/login.action"
+            target="_blank"
+            className={cn(buttonVariants(), 'no-underline')}
+          >
+            Zaloguj się do serwisu pomoc.zhp.pl
+          </Link>
+        </div>
+
+        <h2>
+          Masz problem ze swoim kontem Microsoft 365 od ZHP? <br />
+          Wybierz, jak możemy ci pomóc:
+        </h2>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          {linkCards.map((link) => (
             <Link
-              href="https://portal.office.com/"
-              target="_blank"
-              className={cn(buttonVariants(), 'no-underline')}
+              key={link.href}
+              href={link.href}
+              target={link.target ?? '_self'}
+              className="card bg-base-100 no-underline transition duration-200 ease-in-out hover:scale-100 md:scale-90"
             >
-              Zaloguj się do konta Microsoft 365
+              <Card>
+                <CardHeader className="p-0">
+                  <Image
+                    className="m-0 rounded-t-xl"
+                    src={link.image}
+                    alt={link.alt}
+                    width={1024}
+                    height={1024}
+                    sizes="100vw"
+                    style={{ width: '100%', height: 'auto' }}
+                  />
+                </CardHeader>
+                <CardContent>
+                  <p className="text-center">{link.label}</p>
+                </CardContent>
+              </Card>
             </Link>
-
-            <Link
-              href="https://pomoc.zhp.pl/login.action"
-              target="_blank"
-              className={cn(buttonVariants(), 'no-underline')}
-            >
-              Zaloguj się do serwisu pomoc.zhp.pl
-            </Link>
-          </div>
-
-          <h2>
-            Masz problem ze swoim kontem Microsoft 365 od ZHP? <br />
-            Wybierz, jak możemy ci pomóc:
-          </h2>
-
-          <div className="grid gap-4 md:grid-cols-3">
-            {linkCards.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                target={link.target ?? '_self'}
-                className="card bg-base-100 no-underline transition duration-200 ease-in-out hover:scale-100 md:scale-90"
-              >
-                <Card>
-                  <CardHeader className="p-0">
-                    <Image
-                      className="m-0 rounded-t-xl"
-                      src={link.image}
-                      alt={link.alt}
-                      width={1024}
-                      height={1024}
-                      sizes="100vw"
-                      style={{ width: '100%', height: 'auto' }}
-                    />
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-center">{link.label}</p>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
+          ))}
         </div>
       </div>
-    </main>
+    </div>
   );
 }
