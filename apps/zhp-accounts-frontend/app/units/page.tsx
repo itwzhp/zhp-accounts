@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -46,7 +45,7 @@ export default function UnitsPage() {
   );
 }
 
-export function ZhpUnitDataTable({ data }: { data: ZhpUnit[] }) {
+function ZhpUnitDataTable({ data }: { data: ZhpUnit[] }) {
   const router = useRouter();
   const [globalFilter, setGlobalFilter] = useState<string>('');
 

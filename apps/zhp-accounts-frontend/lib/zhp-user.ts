@@ -74,6 +74,7 @@ export async function getZhpUser(userId: string): Promise<ZhpUser> {
   return user;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function getZhpUsers(unitId: string): Promise<ZhpUser[]> {
   const randomIndexes = new Set<number>();
   while (randomIndexes.size < 10) {

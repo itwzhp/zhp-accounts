@@ -60,7 +60,7 @@ export default function UnitPage() {
   );
 }
 
-export function ZhpUserDataTable({ data }: { data: ZhpUser[] }) {
+function ZhpUserDataTable({ data }: { data: ZhpUser[] }) {
   const router = useRouter();
   const [globalFilter, setGlobalFilter] = useState<string>('');
 

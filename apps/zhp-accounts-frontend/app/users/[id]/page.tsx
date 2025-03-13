@@ -54,7 +54,7 @@ export default function UserPage() {
   );
 }
 
-export function UserProfile({
+function UserProfile({
   name,
   surname,
   membershipNumber,
