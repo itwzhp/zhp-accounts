@@ -111,7 +111,9 @@ function ZhpUnitDataTable({ data }: { data: ZhpUnit[] }) {
                   key={row.id}
                   className="cursor-pointer"
                   data-state={row.getIsSelected() && 'selected'}
-                  onClick={() => router.push(`/units/${row.original.id}`)}
+                  onClick={() =>
+                    router.push(`/units/details?id=${row.original.id}`)
+                  }
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="p-4">

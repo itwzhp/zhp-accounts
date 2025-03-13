@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { getZhpUser, ZhpUser } from '@/lib/zhp-user';
 import { useState } from 'react';
@@ -35,7 +35,8 @@ import {
 import { Separator } from '@/components/ui/separator';
 
 export default function UserPage() {
-  const { id: zhpUserId } = useParams<{ id: string }>();
+  const searchParams = useSearchParams();
+  const zhpUserId = searchParams.get('id') ?? '';
   const zhpUsersQuery = useQuery({
     queryKey: ['users', zhpUserId],
     queryFn: () => getZhpUser(zhpUserId),
@@ -64,13 +65,13 @@ function UserProfile({
   const [open, setOpen] = useState(false);
   const initials = `${name.charAt(0)}${surname.charAt(0)}`.toUpperCase();
 
-  const email = 'john.doe@nie.zhp.pl';
+  const email = 'b.kowalski@poczta.pl';
   const phone = '+48 555 123 567';
-  const birthdate = 'Sty 15, 2023';
+  const birthdate = 'Sty 15, 1995';
   const checks = [
     'Weryfikacja danych osobowych',
     'Sprawdzenie płatności składek',
-    'Potwierdzenie tożsamości',
+    'Weryfikacja zgód RODO',
   ];
 
   return (
@@ -100,7 +101,7 @@ function UserProfile({
 
               <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
-                  <Button size="lg">Aktywuj</Button>
+                  <Button size="lg">Aktywuj konto Microsoft</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader>
@@ -130,7 +131,7 @@ function UserProfile({
                       onClick={() => setOpen(false)}
                       className="w-full sm:w-auto"
                     >
-                      Potwierdź aktywację
+                      Zamknij
                     </Button>
                   </DialogFooter>
                 </DialogContent>
@@ -256,7 +257,7 @@ function UserProfile({
               </div>
               <Separator />
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Typ członkostwa</span>
+                <span className="text-sm font-medium">Typ konta</span>
                 <span>Członek ZHP</span>
               </div>
             </div>

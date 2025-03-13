@@ -18,13 +18,15 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { getZhpUsers, ZhpUser } from '@/lib/zhp-user';
 import { normalizeText } from '@/lib/utils';
 import { getZhpUnit } from '@/lib/zhp-unit';
 
 export default function UnitPage() {
-  const { id: zhpUnitId } = useParams<{ id: string }>();
+  const searchParams = useSearchParams();
+  const zhpUnitId = searchParams.get('id') ?? '';
+
   const zhpUnitQuery = useQuery({
     queryKey: ['units', zhpUnitId],
     queryFn: () => getZhpUnit(zhpUnitId),
@@ -130,7 +132,7 @@ function ZhpUserDataTable({ data }: { data: ZhpUser[] }) {
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   className="cursor-pointer"
-                  onClick={() => router.push(`/users/${row.original.id}`)}
+                  onClick={() => router.push(`/users?id=${row.original.id}`)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="p-4">

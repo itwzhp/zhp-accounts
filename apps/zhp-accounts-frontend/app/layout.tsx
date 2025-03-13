@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/navigation-menu';
 import { cn } from '@/lib/utils';
 import Providers from '@/app/providers';
+import { Suspense } from 'react';
 
 const museo = localFont({
   variable: '--font-museo',
@@ -72,7 +73,9 @@ export default function RootLayout({
         </header>
 
         <main>
-          <Providers>{children}</Providers>
+          <Providers>
+            <Suspense fallback={<div>...loading</div>}>{children}</Suspense>
+          </Providers>
         </main>
       </body>
     </html>
