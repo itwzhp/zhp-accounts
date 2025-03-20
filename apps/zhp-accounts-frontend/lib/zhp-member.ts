@@ -1,4 +1,4 @@
-export interface ZhpUser {
+export interface ZhpMember {
   id: string;
   name: string;
   surname: string;
@@ -7,7 +7,7 @@ export interface ZhpUser {
   district: string;
 }
 
-const generateUsers = () => {
+const generateMembers = () => {
   const names = [
     'Jan',
     'Marta',
@@ -62,24 +62,24 @@ const generateUsers = () => {
   }));
 };
 
-const GENERATED_USERS = generateUsers();
+const GENERATED_MEMBERS = generateMembers();
 
-export async function getZhpUser(userId: string): Promise<ZhpUser> {
-  const user = GENERATED_USERS.find((u) => u.id === userId);
+export async function getZhpMember(memberId: string): Promise<ZhpMember> {
+  const member = GENERATED_MEMBERS.find((u) => u.id === memberId);
 
-  if (!user) {
-    throw new Error(`Could not find user for id "${userId}"`);
+  if (!member) {
+    throw new Error(`Could not find member for id "${memberId}"`);
   }
 
-  return user;
+  return member;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function getZhpUsers(unitId: string): Promise<ZhpUser[]> {
+export async function getZhpMembers(unitId: string): Promise<ZhpMember[]> {
   const randomIndexes = new Set<number>();
   while (randomIndexes.size < 10) {
-    const randomIndex = Math.floor(Math.random() * GENERATED_USERS.length);
+    const randomIndex = Math.floor(Math.random() * GENERATED_MEMBERS.length);
     randomIndexes.add(randomIndex);
   }
-  return Array.from(randomIndexes).map((index) => GENERATED_USERS[index]);
+  return Array.from(randomIndexes).map((index) => GENERATED_MEMBERS[index]);
 }
