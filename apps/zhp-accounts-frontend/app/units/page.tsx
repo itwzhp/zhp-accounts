@@ -1,8 +1,9 @@
 'use client';
 
-import { getZhpUnits, ZhpUnit } from '@/lib/zhp-unit';
-import { useQuery } from '@tanstack/react-query';
 import UnitsList from '@/components/units-list';
+import { getZhpUnits } from '@/lib/zhp-unit';
+import { ZhpUnit } from '@/libs/types/zhp';
+import { useQuery } from '@tanstack/react-query';
 
 export default function UnitsPage() {
   const zhpUnitsQuery = useQuery({

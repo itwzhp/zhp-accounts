@@ -1,11 +1,4 @@
-export interface ZhpMember {
-  id: string;
-  name: string;
-  surname: string;
-  membershipNumber: string;
-  region: string;
-  district: string;
-}
+import { ZhpMember } from '@/libs/types/zhp';
 
 const generateMembers = () => {
   const names = [

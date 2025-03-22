@@ -1,8 +1,4 @@
-export interface ZhpUnit {
-  id: string;
-  name: string;
-  region?: string;
-}
+import { ZhpUnit } from '@/libs/types/zhp';
 
 const GENERATED_UNITS: ZhpUnit[] = [
   {

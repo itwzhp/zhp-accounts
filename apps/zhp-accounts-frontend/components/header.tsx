@@ -48,6 +48,7 @@ export default function Header() {
           </div>
         </Link>
 
+        {/* Desktop navigation */}
         <NavigationMenu className="hidden md:block">
           <NavigationMenuList>
             {isLoggedIn &&
@@ -83,6 +84,7 @@ export default function Header() {
           </NavigationMenuList>
         </NavigationMenu>
 
+        {/* Mobile navigation */}
         <Sheet>
           <SheetTrigger className="md:hidden">
             <Menu />
