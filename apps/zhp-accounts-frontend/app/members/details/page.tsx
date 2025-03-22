@@ -9,8 +9,8 @@ import { ArrowLeft } from 'lucide-react';
 
 export default function MemberProfilePage() {
   const searchParams = useSearchParams();
-  const zhpUnitId = searchParams.get('unitId') ?? '';
-  const zhpUserId = searchParams.get('id') ?? '';
+  const zhpUnitId = +(searchParams.get('unitId') ?? 0);
+  const zhpUserId = +(searchParams.get('id') ?? 0);
   const zhpUserQuery = useQuery({
     queryKey: ['users', zhpUserId],
     queryFn: () => getZhpMember(zhpUserId),

@@ -69,7 +69,7 @@ export async function getZhpMember(memberId: number): Promise<ZhpMember> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function getZhpMembers(unitId: string): Promise<ZhpMember[]> {
+export async function getZhpMembers(unitId: number): Promise<ZhpMember[]> {
   const randomIndexes = new Set<number>();
   while (randomIndexes.size < 10) {
     const randomIndex = Math.floor(Math.random() * GENERATED_MEMBERS.length);
