@@ -43,7 +43,8 @@
     "prettier": "^3.5.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",,
+    "zhp-accounts-types": "file:../zhp-accounts-types"
   },
   "overrides": {
     "@types/react": "19.0.10",

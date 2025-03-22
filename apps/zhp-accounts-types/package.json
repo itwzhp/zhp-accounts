@@ -1,0 +1,12 @@
+{
+  "name": "zhp-accounts-types",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts"
+    }
+  },
+  "types": "./index.d.ts"
+}
