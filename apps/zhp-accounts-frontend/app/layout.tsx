@@ -26,7 +26,7 @@ export default function RootLayout({
       <body className={cn(museo.className, 'antialiased')}>
         <Header />
 
-        <main>
+        <main className="px-4">
           <Providers>
             <Suspense fallback={<div>...loading</div>}>{children}</Suspense>
           </Providers>

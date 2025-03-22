@@ -1,9 +1,8 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -12,8 +11,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { ArrowUpDown, ChevronLeft, ChevronRight, Search } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { normalizeText } from '@/lib/utils';
+import { ZhpMember, ZhpUnit } from '@/libs/types/zhp';
 import {
   type ColumnDef,
   flexRender,
@@ -24,10 +23,10 @@ import {
   type SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { ZhpMember } from '@/lib/zhp-member';
-import { normalizeText } from '@/lib/utils';
-import { ZhpUnit } from '@/lib/zhp-unit';
+import { ArrowUpDown, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useMemo, useState } from 'react';
 
 export default function UnitMembers({
   members,

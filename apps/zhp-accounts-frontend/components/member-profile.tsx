@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -21,6 +20,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
+import { ZhpMember } from '@/libs/types/zhp';
 import {
   AlertCircle,
   Calendar,
@@ -32,7 +32,7 @@ import {
   User,
   XCircle,
 } from 'lucide-react';
-import { ZhpMember } from '@/lib/zhp-member';
+import { useState } from 'react';
 
 export default function MemberProfile({ member }: { member: ZhpMember }) {
   const [dialogOpen, setDialogOpen] = useState(false);
