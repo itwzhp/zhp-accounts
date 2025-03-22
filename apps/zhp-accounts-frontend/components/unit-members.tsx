@@ -12,7 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { normalizeText } from '@/lib/utils';
-import { ZhpMember, ZhpUnit } from '@/libs/types/zhp';
+import { ZhpMember, ZhpUnit } from 'zhp-accounts-types';
 import {
   type ColumnDef,
   flexRender,
