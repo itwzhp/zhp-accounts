@@ -20,7 +20,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { ZhpMember } from '@/libs/types/zhp';
+import { ZhpMember } from 'zhp-accounts-types';
 import {
   AlertCircle,
   Calendar,

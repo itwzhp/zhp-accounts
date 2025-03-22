@@ -19,7 +19,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { normalizeText } from '@/lib/utils';
-import { ZhpUnit } from '@/libs/types/zhp';
+import { ZhpUnit } from 'zhp-accounts-types';
 import {
   type ColumnDef,
   type ColumnFiltersState,

@@ -1,4 +1,4 @@
-import { ZhpMember } from '@/libs/types/zhp';
+import { ZhpMember } from 'zhp-accounts-types';
 
 const generateMembers = () => {
   const names = [
@@ -33,7 +33,7 @@ const generateMembers = () => {
     'Hufiec ZHP "Orion"',
   ];
 
-  const randomId = () => Math.ceil(Math.random() * 100000).toString();
+  const randomId = () => Math.ceil(Math.random() * 100000);
   const randomElement = (arr: string[]) =>
     arr[Math.floor(Math.random() * arr.length)];
 
@@ -52,12 +52,13 @@ const generateMembers = () => {
     membershipNumber: generateMembershipNumber(),
     region: randomElement(regions),
     district: randomElement(districts),
+    isAdmin: false,
   }));
 };
 
 const GENERATED_MEMBERS = generateMembers();
 
-export async function getZhpMember(memberId: string): Promise<ZhpMember> {
+export async function getZhpMember(memberId: number): Promise<ZhpMember> {
   const member = GENERATED_MEMBERS.find((u) => u.id === memberId);
 
   if (!member) {
@@ -68,7 +69,7 @@ export async function getZhpMember(memberId: string): Promise<ZhpMember> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function getZhpMembers(unitId: string): Promise<ZhpMember[]> {
+export async function getZhpMembers(unitId: number): Promise<ZhpMember[]> {
   const randomIndexes = new Set<number>();
   while (randomIndexes.size < 10) {
     const randomIndex = Math.floor(Math.random() * GENERATED_MEMBERS.length);

@@ -2,7 +2,7 @@
 
 import UnitsList from '@/components/units-list';
 import { getZhpUnits } from '@/lib/zhp-unit';
-import { ZhpUnit } from '@/libs/types/zhp';
+import { ZhpUnit } from 'zhp-accounts-types';
 import { useQuery } from '@tanstack/react-query';
 
 export default function UnitsPage() {

@@ -10,7 +10,7 @@ import { ArrowLeft } from 'lucide-react';
 
 export default function UnitMembersPage() {
   const searchParams = useSearchParams();
-  const zhpUnitId = searchParams.get('id') ?? '';
+  const zhpUnitId = +(searchParams.get('id') ?? 0);
 
   const zhpUnitQuery = useQuery({
     queryKey: ['units', zhpUnitId],
