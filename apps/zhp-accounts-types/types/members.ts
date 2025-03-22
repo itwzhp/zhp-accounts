@@ -6,6 +6,7 @@ export interface ZhpMember {
     surname: string
     membershipNumber: string
     district: ZhpUnit
+    region?: ZhpUnit
 
     personalMail?: string
     isAdmin: boolean
