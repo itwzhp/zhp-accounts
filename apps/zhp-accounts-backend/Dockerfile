@@ -5,6 +5,9 @@ RUN npm install -g pnpm@10.28
 # Build stage
 FROM base AS builder
 
+# Build argument for version
+ARG VERSION=1.0.0-dev
+
 WORKDIR /build/zhp-accounts-backend
 
 # Copy package files
@@ -16,6 +19,9 @@ RUN pnpm install --frozen-lockfile
 
 # Copy source code
 COPY zhp-accounts-backend .
+
+# Inject version into source code
+RUN echo "export const VERSION = '${VERSION}';" > src/version.ts
 
 # Build TypeScript
 RUN pnpm run build

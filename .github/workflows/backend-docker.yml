@@ -18,7 +18,7 @@ on:
       
 env:
   REGISTRY: ${{ secrets.ACR_ENDPOINT }}
-  IMAGE_NAME: zhp-accounts-backend
+  IMAGE_NAME: zhp/accounts-backend
 
 jobs:
   build:
@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -52,12 +52,24 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=sha,prefix={{branch}}-
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+      - name: Run tests
+        uses: docker/build-push-action@v6
         with:
-          context: ./apps/zhp-accounts-backend
+          context: ./apps
+          file: ./apps/zhp-accounts-backend/Dockerfile
+          target: tester
+          push: false
+          cache-from: type=gha
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./apps
+          file: ./apps/zhp-accounts-backend/Dockerfile
           push: ${{ github.event_name == 'push' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VERSION=${{ steps.meta.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
