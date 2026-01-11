@@ -16,9 +16,6 @@ on:
       - "apps/zhp-accounts-types/**"
       - ".github/workflows/backend-docker.yml"
       
-env:
-  IMAGE_NAME: ${{ vars.ACR_ENDPOINT }}/zhp/accounts-backend
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,12 +41,13 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.IMAGE_NAME }}
+          images: ${{ vars.ACR_ENDPOINT }}/zhp/accounts-backend
           tags: |
             type=ref,event=branch
+            type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix={{branch}}-
+            type=sha
 
       - name: Run tests
         uses: docker/build-push-action@v6

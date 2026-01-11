@@ -11,7 +11,7 @@ ARG VERSION=1.0.0-dev
 WORKDIR /build/zhp-accounts-backend
 
 # Copy package files
-COPY zhp-accounts-backend/package.json zhp-accounts-backend/pnpm-lock.yaml ./
+COPY zhp-accounts-backend/package.json zhp-accounts-backend/pnpm-lock.yaml zhp-accounts-backend/pnpm-workspace.yaml ./
 COPY zhp-accounts-types /build/zhp-accounts-types
 
 # Install dependencies
@@ -47,7 +47,7 @@ RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001
 
 # Copy package files
-COPY zhp-accounts-backend/package.json zhp-accounts-backend/pnpm-lock.yaml ./
+COPY zhp-accounts-backend/package.json zhp-accounts-backend/pnpm-lock.yaml zhp-accounts-backend/pnpm-workspace.yaml ./
 
 # Install production dependencies only
 RUN pnpm install --frozen-lockfile --production
