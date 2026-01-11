@@ -1,0 +1,11 @@
+zhp-accounts-backend/node_modules
+dist
+.env
+.env.local
+.env.*.local
+coverage
+.DS_Store
+*.log
+
+# for now, we ignore the whole frontend as it's not built by docker
+zhp-accounts-frontend
