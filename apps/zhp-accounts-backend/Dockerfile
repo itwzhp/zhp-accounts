@@ -32,6 +32,7 @@ FROM builder AS tester
 WORKDIR /build/zhp-accounts-backend
 
 ENV NODE_ENV=test
+ENV EXPECTED_VERSION=${VERSION}
 
 # Run tests
 RUN pnpm test --run

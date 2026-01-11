@@ -19,6 +19,8 @@ describe("Health Use Case", (): void => {
 
   it("should include version", (): void => {
     const health = getHealth();
-    expect(health.version).toBe("1.0.0");
+    expect(health.version).toBe(process.env.EXPECTED_VERSION);
+    expect(health.version).toBeTypeOf("string");
+    expect(health.version).not.toBe("");
   });
 });
