@@ -20,7 +20,15 @@ COPY zhp-accounts-backend .
 # Build TypeScript
 RUN pnpm run build
 
-# TODO Add test stage
+# Test stage
+FROM builder AS tester
+
+WORKDIR /build/zhp-accounts-backend
+
+ENV NODE_ENV=test
+
+# Run tests
+RUN pnpm test --run
 
 # Production stage
 FROM base AS production
