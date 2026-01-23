@@ -17,8 +17,7 @@ export default [
   {
     rules: {
       'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/explicit-function-return-types': ['warn', { allowExpressions: true }]
+      '@typescript-eslint/no-explicit-any': 'warn'
     }
   },
   {
