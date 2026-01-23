@@ -1,5 +1,3 @@
-import type {ZhpUnit} from "./units";
-
 export interface ZhpMember {
     id: number
     name: string
