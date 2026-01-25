@@ -28,6 +28,12 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: apps/zhp-accounts-frontend/pnpm-lock.yaml
 
+      - name: DEBUG print versions
+        run: |
+          node -v
+          pnpm -v
+          npm -v
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
         working-directory: ./apps/zhp-accounts-frontend
