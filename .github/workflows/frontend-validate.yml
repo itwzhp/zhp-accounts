@@ -30,21 +30,27 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+        working-directory: ./apps/zhp-accounts-frontend
 
       - name: Lint
         run: pnpm lint
+        working-directory: ./apps/zhp-accounts-frontend
 
       - name: Type check
         run: pnpm run check
+        working-directory: ./apps/zhp-accounts-frontend
 
       - name: Test
         run: pnpm test
+        working-directory: ./apps/zhp-accounts-frontend
 
       - name: Build
         run: pnpm build
+        working-directory: ./apps/zhp-accounts-frontend
 
       - name: Upload to Cloudflare
         run: pnpx wrangler versions upload
+        working-directory: ./apps/zhp-accounts-frontend
         env:
           CLOUDFLARE_API_TOKEN: 1234 #${{ secrets.CLOUDFLARE_API_TOKEN }} # TODO set it
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
