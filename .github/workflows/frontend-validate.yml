@@ -1,0 +1,49 @@
+name: Frontend - Build and deploy DEV
+
+on:
+  pull_request:
+    paths:
+      - 'apps/zhp-accounts-frontend/**'
+      - 'apps/zhp-accounts-types/**'
+
+jobs:
+  validate-pr:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+            lfs: true
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Type check
+        run: pnpm run check
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: Upload to Cloudflare
+        run: pnpx wrangler versions upload
+        env:
+          CLOUDFLARE_API_TOKEN: 1234 #${{ secrets.CLOUDFLARE_API_TOKEN }} # TODO set it
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
