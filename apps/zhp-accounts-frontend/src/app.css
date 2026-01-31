@@ -40,6 +40,21 @@
 :root {
 	font-family: 'Museo Sans', 'Trebuchet MS', sans-serif;
 	font-weight: 500;
+
+	--primary-color: #87a428;
+	--primary-color-light: #afca0b;
+	--primary-color-dark: #587d18;
+
+    --color-blue: #252e78;
+    --color-blue-light: #194093;
+
+    --color-red: #e30613;
+    --color-red-light: #e94f2D;
+
+    --color-yellow: #f8c409;
+
+    --color-purple: #5d2f88;
+    --color-purple-light: #80539b;
 }
 
 body {
@@ -48,14 +63,12 @@ body {
 }
 
 h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-button,
-.btn {
+h2 {
 	font-family: 'Museo', 'Trebuchet MS', sans-serif;
+	color: var(--primary-color);
 }
 
-/* Custom ZHP theme overrides can be added here later */
+.header-title {
+	color: var(--primary-color);
+	font-family: 'Museo', 'Trebuchet MS', sans-serif;
+}
