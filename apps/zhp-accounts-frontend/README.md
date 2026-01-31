@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ZHP Accounts Frontend
 
-## Getting Started
+Aplikacja frontendowa do zarządzania kontami Microsoft 365 dla członków ZHP.
 
-First, run the development server:
+## Technologie
+
+- **Svelte 5** - framework UI
+- **Vite 6** - bundler
+- **Tailwind CSS 4** - style
+- **Skeleton UI** - komponenty UI
+- **TypeScript** - typowanie
+- **Vitest** - testy
+
+## Architektura
+
+Aplikacja wykorzystuje wzorzec **Ports & Adapters** (Hexagonal Architecture):
+
+- `src/lib/ports/` - interfejsy (kontrakty)
+- `src/lib/adapters/` - implementacje
+- `src/lib/stores/` - stan aplikacji (Svelte stores)
+- `src/routes/` - komponenty stron
+
+### Tryb Mock
+
+Dodaj `?mock=true` do URL aby używać mockowanych danych zamiast prawdziwego API.
+
+## Skrypty
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Instalacja zależności
+pnpm install
+
+# Uruchomienie dev server
 pnpm dev
-# or
-bun dev
+
+# Build produkcyjny
+pnpm build
+
+# Podgląd buildu
+pnpm preview
+
+# Testy
+pnpm test
+pnpm test:watch
+pnpm test:ui
+
+# Linting
+pnpm lint
+pnpm lint:fix
+
+# Type check
+pnpm check
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Zmienne środowiskowe
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Utwórz plik `.env.local`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+VITE_API_BASE_URL=http://localhost:3000/api
+```
 
-## Learn More
+## Routing
 
-To learn more about Next.js, take a look at the following resources:
+Aplikacja używa hash-routingu (`svelte-spa-router`):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `#/` - Strona główna
+- `#/units` - Lista jednostek
+- `#/units/:id/members` - Członkowie jednostki
+- `#/profile` - Profil użytkownika
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Aplikacja jest deployowana jako statyczne pliki na Cloudflare Pages.

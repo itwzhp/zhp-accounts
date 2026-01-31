@@ -1,0 +1,12 @@
+name = "zhp-accounts-frontend"
+compatibility_date = "2026-01-24"
+pages_build_output_dir = "dist"
+
+# Assets-only configuration
+[assets]
+directory = "dist"
+html_handling = "none"
+not_found_handling = "single-page-application"
+
+[observability]
+enabled = true
