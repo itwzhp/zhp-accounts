@@ -4,4 +4,58 @@
 @import '@skeletonlabs/skeleton-svelte';
 @import '@skeletonlabs/skeleton/themes/cerberus';
 
+/* Fonts */
+@font-face {
+	font-family: 'Museo Sans';
+	src: url('/fonts/MuseoSans_500-pl-webfont.woff2') format('woff2');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Museo';
+	src: url('/fonts/Museo300-Regular-pl-webfont.woff2') format('woff2');
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Museo';
+	src: url('/fonts/Museo500-Regular-pl-webfont.woff2') format('woff2');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Museo';
+	src: url('/fonts/Museo700-Regular-pl-webfont.woff2') format('woff2');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+:root {
+	font-family: 'Museo Sans', 'Trebuchet MS', sans-serif;
+	font-weight: 500;
+}
+
+body {
+	font-family: 'Museo Sans', 'Trebuchet MS', sans-serif;
+	font-weight: 500;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button,
+.btn {
+	font-family: 'Museo', 'Trebuchet MS', sans-serif;
+}
+
 /* Custom ZHP theme overrides can be added here later */
