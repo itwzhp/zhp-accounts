@@ -49,8 +49,8 @@ jobs:
         working-directory: ./apps/zhp-accounts-frontend
 
       - name: Upload to Cloudflare
-        run: pnpx wrangler versions upload
+        run: pnpm exec wrangler versions upload
         working-directory: ./apps/zhp-accounts-frontend
         env:
-          CLOUDFLARE_API_TOKEN: 1234 #${{ secrets.CLOUDFLARE_API_TOKEN }} # TODO set it
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
