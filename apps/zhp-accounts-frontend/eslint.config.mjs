@@ -11,6 +11,16 @@ export default [
     languageOptions: {
       parserOptions: {
         parser: ts.parser
+      },
+      globals: {
+        document: 'readonly',
+        window: 'readonly',
+        HTMLElement: 'readonly',
+        navigator: 'readonly',
+        localStorage: 'readonly',
+        sessionStorage: 'readonly',
+        fetch: 'readonly',
+        console: 'readonly'
       }
     }
   },
