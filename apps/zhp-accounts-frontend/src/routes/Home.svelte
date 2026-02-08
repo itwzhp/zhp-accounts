@@ -104,19 +104,19 @@
         aria-label="Najczęstsze sprawy"
         class="flex flex-col gap-3 md:flex-row md:gap-4"
       >
-        {#each helpTabs as tab}
+        {#each helpTabs as tab (tab.id)}
           <button
             type="button"
             role="tab"
             aria-selected={expandedCard === tab.id}
             on:click={() => selectCard(tab.id)}
-            class={`flex-1 card  text-left transition-all variant-soft`}
+            class="flex-1 card  text-left transition-all variant-soft"
           >
-            <div class="flex items-center gap-3 border-b-2"  class:border-transparent={expandedCard !== tab.id} style={`color: var(--${tab.color})`}>
+            <div class="flex items-center gap-3 border-b-2"  class:border-transparent={expandedCard !== tab.id} style="color: var(--{tab.color})">
               <svelte:component
                 this={tab.icon}
                 class="w-8 h-8"
-                style={`color: var(--${tab.color})`}
+                style="color: var(--{tab.color})"
               />
               <span class="text-xl font-semibold text-black">{tab.title}</span>
             </div>
@@ -128,13 +128,15 @@
         class="mt-6 rounded-xl border-surface-200-700-token bg-surface-50-900-token p-5 md:p-6 relative"
         style={`min-height: ${maxContentHeight ? `${maxContentHeight}px` : "8rem"}`}
       >
-        {#each helpTabs as tab}
+        {#each helpTabs as tab (tab.id)}
           <p
             class="help-tab-content text-sm md:text-base text-surface-600-300-token leading-relaxed absolute top-0 left-0 w-full p-5 md:p-6 transition-opacity duration-300"
             class:opacity-0={expandedCard !== tab.id}
             class:opacity-100={expandedCard === tab.id}
             class:z-10={expandedCard === tab.id}
           >
+            <!-- Treść zawiera zaufane linki HTML z statycznej konfiguracji -->
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
             {@html tab.content}
           </p>
         {/each}
