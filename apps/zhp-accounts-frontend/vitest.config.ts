@@ -3,9 +3,11 @@ import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
-  plugins: [svelte({ 
-    hot: !process.env.VITEST
-  })],
+  plugins: [
+    svelte({ 
+      hot: !process.env.VITEST
+    })
+  ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -15,9 +17,16 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     include: ['src/**/*.{test,spec}.{js,ts}'],
     setupFiles: ['./src/setupTests.ts'],
+    css: false,
+    pool: 'vmThreads',
+    server: {
+      deps: {
+        inline: [/^(?!.*vitest).*$/]
+      }
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
