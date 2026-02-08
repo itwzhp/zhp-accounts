@@ -110,16 +110,15 @@
             role="tab"
             aria-selected={expandedCard === tab.id}
             on:click={() => selectCard(tab.id)}
-            class="flex-1 card  text-left transition-all variant-soft"
+            class="help-button"
+            class:selected={expandedCard === tab.id}
           >
-            <div class="flex items-center gap-3 border-b-2"  class:border-transparent={expandedCard !== tab.id} style="color: var(--{tab.color})">
-              <svelte:component
-                this={tab.icon}
-                class="w-8 h-8"
-                style="color: var(--{tab.color})"
-              />
-              <span class="text-xl font-semibold text-black">{tab.title}</span>
-            </div>
+            <svelte:component
+              this={tab.icon}
+              class="w-5 h-5"
+              style={expandedCard === tab.id ? 'color: white;' : `color: var(--${tab.color});`}
+            />
+            <span>{tab.title}</span>
           </button>
         {/each}
       </div>
@@ -209,3 +208,31 @@
   </section>
 
 </div>
+
+<style>
+  .help-button {
+    flex: 1;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    background-color: var(--button-grey-light);
+    color: inherit;
+    border: none;
+    cursor: pointer;
+    transition: all 150ms ease-in-out;
+  }
+
+  .help-button:hover:not(.selected) {
+    filter: brightness(1.08);
+  }
+
+  .help-button.selected {
+    background-color: var(--primary-color);
+    color: white;
+    cursor: default;
+  }
+</style>
