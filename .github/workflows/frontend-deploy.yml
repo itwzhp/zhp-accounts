@@ -48,7 +48,7 @@ jobs:
         working-directory: ./apps/zhp-accounts-frontend
 
       - name: Deploy to Cloudflare
-        run: pnpm exec wrangler deploy
+        run: pnpm exec wrangler pages deploy dist
         working-directory: ./apps/zhp-accounts-frontend
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
