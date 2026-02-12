@@ -27,7 +27,7 @@ function getApiBaseUrl(): string {
 /**
  * Create backend adapter based on mock mode
  */
-export function createBackendAdapter(): BackendPort {
+function createBackendAdapter(): BackendPort {
   if (isMockMode()) {
     console.info('[Adapters] Using MockBackendAdapter')
     return new MockBackendAdapter()
@@ -39,7 +39,7 @@ export function createBackendAdapter(): BackendPort {
 /**
  * Create auth adapter based on mock mode
  */
-export function createAuthAdapter(): AuthPort {
+function createAuthAdapter(): AuthPort {
   if (isMockMode()) {
     console.info('[Adapters] Using MockAuthAdapter')
     return new MockAuthAdapter()

@@ -1,12 +1,8 @@
-import type { ZhpAccount } from 'zhp-accounts-types'
-
 /**
  * Authentication result from login flow
  */
 export interface AuthResult {
-  token: string
-  account: ZhpAccount
-  expiresAt: number
+  userName: string
 }
 
 /**
@@ -16,9 +12,9 @@ export interface AuthResult {
 export interface AuthPort {
   /**
    * Initiate login flow with Microsoft 365
-   * Returns authentication result on success
+   * Returns authentication result on success and null on failure or cancellation
    */
-  login(): Promise<AuthResult>
+  login(): Promise<AuthResult | null>
 
   /**
    * Logout and clear session
@@ -29,11 +25,6 @@ export interface AuthPort {
    * Get current access token if available and not expired
    */
   getToken(): Promise<string | null>
-
-  /**
-   * Get current authenticated account info
-   */
-  getAccount(): Promise<ZhpAccount | null>
 
   /**
    * Check if user is currently authenticated

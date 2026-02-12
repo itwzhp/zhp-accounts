@@ -109,9 +109,11 @@
             type="button"
             role="tab"
             aria-selected={expandedCard === tab.id}
-            on:click={() => selectCard(tab.id)}
-            class="help-button"
-            class:selected={expandedCard === tab.id}
+            onclick={() => selectCard(tab.id)}
+            class="flex-1 rounded px-4 py-2 font-semibold flex items-center justify-center gap-3 border-none cursor-pointer transition-all duration-150 bg-button-grey-light hover:brightness-110"
+            class:bg-primary={expandedCard === tab.id}
+            class:text-white={expandedCard === tab.id}
+            class:cursor-default={expandedCard === tab.id}
           >
             <svelte:component
               this={tab.icon}
@@ -209,30 +211,4 @@
 
 </div>
 
-<style>
-  .help-button {
-    flex: 1;
-    border-radius: 0.5rem;
-    padding: 0.5rem 1rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    background-color: var(--button-grey-light);
-    color: inherit;
-    border: none;
-    cursor: pointer;
-    transition: all 150ms ease-in-out;
-  }
 
-  .help-button:hover:not(.selected) {
-    filter: brightness(1.08);
-  }
-
-  .help-button.selected {
-    background-color: var(--primary-color);
-    color: white;
-    cursor: default;
-  }
-</style>

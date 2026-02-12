@@ -1,5 +1,4 @@
 import type { AuthPort, AuthResult } from '@/lib/ports/auth'
-import type { ZhpAccount } from 'zhp-accounts-types'
 
 /**
  * Real auth adapter that handles Microsoft 365 OAuth flow.
@@ -18,11 +17,6 @@ export class RealAuthAdapter implements AuthPort {
 
   async getToken(): Promise<string | null> {
     // TODO: Implement token retrieval from MSAL
-    return null
-  }
-
-  async getAccount(): Promise<ZhpAccount | null> {
-    // TODO: Implement account retrieval
     return null
   }
 
