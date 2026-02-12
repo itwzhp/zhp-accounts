@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { getAuthAdapter } from "@/lib/adapters";
   import {
     Mail,
     MessageCircleQuestionMark,
@@ -63,6 +64,19 @@
   }
 
   onMount(() => {
+    const checkAuth = async () => {
+      try {
+        const authAdapter = getAuthAdapter();
+        const isAuthenticated = await authAdapter.isAuthenticated();
+        if (isAuthenticated) {
+          window.location.hash = '#/units';
+        }
+      } catch {
+        // Ignore auth errors on the public home page
+      }
+    };
+
+    checkAuth();
     calculateMaxHeight();
     window.addEventListener("resize", calculateMaxHeight);
 
@@ -71,6 +85,10 @@
     };
   });
 </script>
+
+<svelte:head>
+  <title>Konta ZHP</title>
+</svelte:head>
 
 <div class="container mx-auto px-4 py-8 max-w-6xl">
   <!-- Introduction Section -->

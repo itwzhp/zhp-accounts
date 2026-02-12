@@ -3,7 +3,8 @@
   import { onMount } from 'svelte'
   import { Users, LogOut } from 'lucide-svelte'
   import { routes } from './routes'
-  import { authStore } from './lib/stores/auth'
+  import { getAuthAdapter } from './lib/adapters'
+  import { link } from 'svelte-spa-router'
 
   let authState = $state({
     isAuthenticated: false,
@@ -11,32 +12,41 @@
     isLoading: false,
   })
 
-  onMount(() => {
-    // Initialize auth state from stored session
-    const unsubscribe = authStore.subscribe((state) => {
-      authState.isAuthenticated = state.isAuthenticated
-      authState.userName = state.userName ?? null
-      authState.isLoading = state.isLoading
-    })
-
-    authStore.init()
-
-    return unsubscribe
+  onMount(async () => {
+    authState.isLoading = true
+    try {
+      const authAdapter = getAuthAdapter()
+      authState.isAuthenticated = await authAdapter.isAuthenticated()
+    } finally {
+      authState.isLoading = false
+    }
   })
 
   async function handleLogin() {
-    const success = await authStore.login()
-    if (success) {
-      // Navigate to Units page
-      window.location.hash = '#/units'
+    authState.isLoading = true
+    try {
+      const authAdapter = getAuthAdapter()
+      const result = await authAdapter.login()
+      if (result) {
+        authState.isAuthenticated = true
+        authState.userName = result.userName
+        window.location.hash = '#/units'
+      }
+    } finally {
+      authState.isLoading = false
     }
   }
 
   async function handleLogout() {
-    const success = await authStore.logout()
-    if (success) {
-      // Navigate to Home page
+    authState.isLoading = true
+    try {
+      const authAdapter = getAuthAdapter()
+      await authAdapter.logout()
+      authState.isAuthenticated = false
+      authState.userName = null
       window.location.hash = '#/'
+    } finally {
+      authState.isLoading = false
     }
   }
 </script>
@@ -89,9 +99,11 @@
 
       <!-- Desktop Layout: Title left, Logo centered, Button right -->
       <div class="hidden md:flex items-center justify-between">
+        <a href="#/" use:link>
         <div class="header-title text-4xl font-semibold">
           Konta ZHP
         </div>
+        </a>
 
         <a href="https://zhp.pl" class="absolute left-1/2 transform -translate-x-1/2">
           <img

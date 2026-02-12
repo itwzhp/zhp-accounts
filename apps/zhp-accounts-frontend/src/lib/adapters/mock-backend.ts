@@ -1,85 +1,205 @@
-import type { BackendPort } from '@/lib/ports/backend'
-import type { ZhpUnit, ZhpMember } from 'zhp-accounts-types'
+import type { BackendQueryPort } from '@/lib/ports/backend-querying'
+import type { ZhpUnit, ZhpUnitType, ZhpMemberDetails, UnitsWithRoot, MembersWithUnit } from 'zhp-accounts-types'
 
 /**
  * Mock backend adapter that returns fake data for development/testing.
  */
-export class MockBackendAdapter implements BackendPort {
-  private readonly mockUnits: ZhpUnit[] = [
-    { id: 1, name: 'Chorągiew Stołeczna', region: 'mazowieckie', type: 'chorągiew' },
-    { id: 2, name: 'Hufiec Warszawa-Mokotów', region: 'mazowieckie', type: 'hufiec' },
-    { id: 3, name: 'Hufiec Kraków-Śródmieście', region: 'małopolskie', type: 'hufiec' },
-    { id: 4, name: '1 WDH "Czarna Jedynka"', region: 'mazowieckie', type: 'pjo' }
-  ]
-
-  private readonly mockMembers: ZhpMember[] = [
+export class MockBackendAdapter implements BackendQueryPort {
+  private readonly mockMembers: ZhpMemberDetails[] = [
     {
-      id: 1,
       name: 'Jan',
       surname: 'Kowalski',
       membershipNumber: 'AA001234',
-      district: 'Warszawa-Mokotów',
-      region: 'mazowieckie',
-      personalMail: 'jan.kowalski@example.com',
+      mail: 'jan.kowalski@zhp.pl',
+      canMailBeCorrected: true,
       isAdmin: false
     },
     {
-      id: 2,
       name: 'Anna',
       surname: 'Nowak',
       membershipNumber: 'AA005678',
-      district: 'Warszawa-Mokotów',
-      region: 'mazowieckie',
-      personalMail: 'anna.nowak@example.com',
+      mail: 'anna.nowak@zhp.pl',
+      canMailBeCorrected: false,
       isAdmin: true
     },
     {
-      id: 3,
       name: 'Piotr',
       surname: 'Wiśniewski',
       membershipNumber: 'BB001111',
-      district: 'Kraków-Śródmieście',
-      region: 'małopolskie',
+      mail: 'piotr.wisniewski@zhp.pl',
+      canMailBeCorrected: false,
+      isAdmin: false
+    },
+    {
+      name: 'Magdalena',
+      surname: 'Lewandowska',
+      membershipNumber: 'CC002222',
+      mail: 'magdalena.lewandowska@zhp.pl',
+      canMailBeCorrected: true,
+      isAdmin: true
+    },
+    {
+      name: 'Tomasz',
+      surname: 'Kamiński',
+      membershipNumber: 'DD003333',
+      mail: 'tomasz.kaminski@zhp.pl',
+      canMailBeCorrected: false,
+      isAdmin: false
+    },
+    {
+      name: 'Agnieszka',
+      surname: 'Szymańska',
+      membershipNumber: 'EE004444',
+      mail: null,
+      canMailBeCorrected: false,
       isAdmin: false
     }
   ]
 
-  async getHealth(): Promise<{ status: string; timestamp: string }> {
-    return {
-      status: 'ok',
-      timestamp: new Date().toISOString()
-    }
+  private readonly mockUnits: ZhpMockUnit[] = [
+    new ZhpMockUnit(1, 'Chorągiew Stołeczna', 'chorągiew'),
+    new ZhpMockUnit(2, 'Chorągiew Gdańska', 'chorągiew'),
+  ]
+
+  constructor() {
+    // Chorągiew Stołeczna subunits
+    const hufieckMokotow = new ZhpMockUnit(3, 'Hufiec Warszawa-Mokotów', 'hufiec')
+    hufieckMokotow.members.push(
+      this.mockMembers[0],  // Jan Kowalski
+      this.mockMembers[1],  // Anna Nowak
+      this.mockMembers[4]   // Tomasz Kamiński
+    )
+    hufieckMokotow.subunits.push(new ZhpMockUnit(8, '1 WDH Mokotów', 'pjo'))
+    hufieckMokotow.subunits.push(new ZhpMockUnit(9, '2 WDH Mokotów', 'pjo'))
+    this.mockUnits[0].subunits.push(hufieckMokotow)
+
+    const hufiecPraga = new ZhpMockUnit(4, 'Hufiec Praga', 'hufiec')
+    hufiecPraga.members.push(
+      this.mockMembers[2],  // Piotr Wiśniewski
+      this.mockMembers[5]   // Agnieszka Szymańska
+    )
+    hufiecPraga.subunits.push(new ZhpMockUnit(13, '1 WDH Praga', 'pjo'))
+    this.mockUnits[0].subunits.push(hufiecPraga)
+
+    const hufiecWawer = new ZhpMockUnit(6, 'Hufiec Warszawa-Wawer', 'hufiec')
+    hufiecWawer.members.push(
+      this.mockMembers[3],  // Magdalena Lewandowska
+      this.mockMembers[0]   // Jan Kowalski (reused)
+    )
+    hufiecWawer.subunits.push(new ZhpMockUnit(14, '1 WDH Wawer', 'pjo'))
+    this.mockUnits[0].subunits.push(hufiecWawer)
+
+    const hufiecPiaseczno = new ZhpMockUnit(7, 'Hufiec Warszawa-Piaseczno', 'hufiec')
+    hufiecPiaseczno.members.push(
+      this.mockMembers[1],  // Anna Nowak (reused)
+      this.mockMembers[5]   // Agnieszka Szymańska (reused)
+    )
+    hufiecPiaseczno.subunits.push(new ZhpMockUnit(15, '1 WDH Piaseczno', 'pjo'))
+    hufiecPiaseczno.subunits.push(new ZhpMockUnit(16, '2 WDH Piaseczno', 'pjo'))
+    this.mockUnits[0].subunits.push(hufiecPiaseczno)
+
+    // Chorągiew Gdańska subunits
+    const hufiecGdansk = new ZhpMockUnit(5, 'Hufiec Gdańsk', 'hufiec')
+    hufiecGdansk.members.push(
+      this.mockMembers[2],  // Piotr Wiśniewski (reused)
+      this.mockMembers[4]   // Tomasz Kamiński (reused)
+    )
+    hufiecGdansk.subunits.push(new ZhpMockUnit(17, '1 WDH Gdańsk', 'pjo'))
+    hufiecGdansk.subunits.push(new ZhpMockUnit(18, '2 WDH Gdańsk', 'pjo'))
+    this.mockUnits[1].subunits.push(hufiecGdansk)
+
+    const hufiecGdynia = new ZhpMockUnit(10, 'Hufiec Gdynia', 'hufiec')
+    hufiecGdynia.members.push(
+      this.mockMembers[3]   // Magdalena Lewandowska (reused)
+    )
+    hufiecGdynia.subunits.push(new ZhpMockUnit(19, '1 WDH Gdynia', 'pjo'))
+    this.mockUnits[1].subunits.push(hufiecGdynia)
+
+    const hufiecSopot = new ZhpMockUnit(11, 'Hufiec Sopot', 'hufiec')
+    hufiecSopot.members.push(
+      this.mockMembers[5],  // Agnieszka Szymańska (reused)
+      this.mockMembers[0]   // Jan Kowalski (reused)
+    )
+    hufiecSopot.subunits.push(new ZhpMockUnit(20, '1 WDH Sopot', 'pjo'))
+    this.mockUnits[1].subunits.push(hufiecSopot)
   }
 
-  async getUnits(): Promise<ZhpUnit[]> {
+  async getRootUnits(): Promise<ZhpUnit[]> {
+    console.info('[MockBackend] getRootUnits()')
     // Simulate network delay
     await this.delay(100)
-    return [...this.mockUnits]
+    const result = [...this.mockUnits]
+    console.info('[MockBackend] getRootUnits() -> ', result)
+    return result
   }
 
-  async getUnit(id: number): Promise<ZhpUnit | null> {
+  async getSubUnits(parentId: number): Promise<UnitsWithRoot> {
+    console.info('[MockBackend] getSubUnits(parentId)', parentId)
     await this.delay(50)
-    return this.mockUnits.find(u => u.id === id) ?? null
+    const parentUnit = this.findUnitRecursive(parentId, this.mockUnits)
+    if (!parentUnit) {
+      throw new Error(`Unit with id ${parentId} not found`)
+    }
+    const result = {
+      root: { id: parentUnit.id, name: parentUnit.name, type: parentUnit.type },
+      subunits: parentUnit.subunits
+    }
+    console.info('[MockBackend] getSubUnits(', parentId, ') -> ', result)
+    return result
   }
 
-  async getMembers(unitId: number): Promise<ZhpMember[]> {
+  private findUnitRecursive(id: number, units: ZhpMockUnit[]): ZhpMockUnit | undefined {
+    for (const unit of units) {
+      if (unit.id === id) {
+        return unit
+      }
+      const found = this.findUnitRecursive(id, unit.subunits)
+      if (found) {
+        return found
+      }
+    }
+    return undefined
+  }
+
+  async getMembers(unitId: number): Promise<MembersWithUnit> {
+    console.info('[MockBackend] getMembers(', unitId, ')')
     await this.delay(100)
-    // Return members based on unit - simplified logic
-    if (unitId === 2) {
-      return this.mockMembers.filter(m => m.district === 'Warszawa-Mokotów')
+    const unit = this.findUnitRecursive(unitId, this.mockUnits)
+    if (!unit) {
+      throw new Error(`Unit with id ${unitId} not found`)
     }
-    if (unitId === 3) {
-      return this.mockMembers.filter(m => m.district === 'Kraków-Śródmieście')
+    const result = {
+      unit: { id: unit.id, name: unit.name, type: unit.type },
+      members: unit.members
     }
-    return []
+    console.info('[MockBackend] getMembers(', unitId, ') -> ', result)
+    return result
   }
 
-  async getMember(id: number): Promise<ZhpMember | null> {
+  async getMember(membershipNumber: string): Promise<ZhpMemberDetails | null> {
+    console.info('[MockBackend] getMember(', membershipNumber, ')')
     await this.delay(50)
-    return this.mockMembers.find(m => m.id === id) ?? null
+    const result = this.mockMembers.find(m => m.membershipNumber === membershipNumber) ?? null
+    console.info('[MockBackend] getMember(', membershipNumber, ') -> ', result)
+    return result
   }
 
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms))
+  }
+}
+
+
+class ZhpMockUnit implements ZhpUnit {
+  id: number;
+  name: string;
+  type: ZhpUnitType;
+  subunits: ZhpMockUnit[] = []
+  members: ZhpMemberDetails[] = []
+
+  constructor(id: number, name: string, type: ZhpUnitType) {
+    this.id = id;
+    this.name = name;
+    this.type = type;
   }
 }

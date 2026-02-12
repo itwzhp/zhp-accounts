@@ -1,4 +1,4 @@
-import type { BackendPort } from '@/lib/ports/backend'
+import type { BackendQueryPort } from '@/lib/ports/backend-querying'
 import type { AuthPort } from '@/lib/ports/auth'
 import { RealBackendAdapter } from './real-backend'
 import { MockBackendAdapter } from './mock-backend'
@@ -27,7 +27,7 @@ function getApiBaseUrl(): string {
 /**
  * Create backend adapter based on mock mode
  */
-function createBackendAdapter(): BackendPort {
+function createBackendAdapter(): BackendQueryPort {
   if (isMockMode()) {
     console.info('[Adapters] Using MockBackendAdapter')
     return new MockBackendAdapter()
@@ -49,13 +49,13 @@ function createAuthAdapter(): AuthPort {
 }
 
 // Singleton instances
-let backendAdapter: BackendPort | null = null
+let backendAdapter: BackendQueryPort | null = null
 let authAdapter: AuthPort | null = null
 
 /**
  * Get the backend adapter singleton
  */
-export function getBackendAdapter(): BackendPort {
+export function getBackendAdapter(): BackendQueryPort {
   if (!backendAdapter) {
     backendAdapter = createBackendAdapter()
   }

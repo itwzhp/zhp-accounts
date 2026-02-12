@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { getBackendAdapter } from '@/lib/adapters'
+  import { getAuthAdapter, getBackendAdapter } from '@/lib/adapters'
   import type { ZhpMember, ZhpUnit } from 'zhp-accounts-types'
-  import { Users, Search, ArrowLeft } from 'lucide-svelte'
+  import { Users, ArrowLeft, UserCog } from 'lucide-svelte'
   import { link } from 'svelte-spa-router'
 
   export let params: { id: string } = { id: '' }
@@ -11,23 +11,21 @@
   let members: ZhpMember[] = []
   let loading = true
   let error: string | null = null
-  let searchQuery = ''
 
   $: unitId = parseInt(params.id, 10)
-  $: filteredMembers = members.filter(member =>
-    `${member.name} ${member.surname}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    member.membershipNumber.toLowerCase().includes(searchQuery.toLowerCase())
-  )
 
   onMount(async () => {
     try {
+      const authAdapter = getAuthAdapter()
+      const isAuthenticated = await authAdapter.isAuthenticated()
+      if (!isAuthenticated) {
+        window.location.hash = '#/'
+        return
+      }
       const backend = getBackendAdapter()
-      const [unitData, membersData] = await Promise.all([
-        backend.getUnit(unitId),
-        backend.getMembers(unitId)
-      ])
-      unit = unitData
-      members = membersData
+      const result = await backend.getMembers(unitId)
+      unit = result.unit
+      members = result.members
     } catch (e) {
       error = e instanceof Error ? e.message : 'Błąd ładowania danych'
     } finally {
@@ -36,10 +34,14 @@
   })
 </script>
 
+<svelte:head>
+  <title>Konta ZHP | {unit ? `${unit.name}` : 'Członkowie'}</title>
+</svelte:head>
+
 <div class="container mx-auto px-4 py-8 max-w-4xl">
-  <a href="/units" use:link class="inline-flex items-center gap-2 text-primary-500 hover:underline mb-4">
+  <a href="/units/{unitId}" use:link class="inline-flex items-center gap-2 text-primary-500 hover:underline mb-4">
     <ArrowLeft class="w-4 h-4" />
-    Powrót do jednostek
+    Powrót
   </a>
 
   <header class="mb-8">
@@ -48,25 +50,9 @@
         <span class="placeholder w-48 animate-pulse"></span>
       {:else if unit}
         {unit.name}
-      {:else}
-        Jednostka nieznaleziona
       {/if}
     </h1>
-    <p class="text-surface-600-300-token">
-      Lista członków jednostki
-    </p>
   </header>
-
-  <!-- Search -->
-  <div class="relative mb-6">
-    <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-surface-400" />
-    <input
-      type="text"
-      placeholder="Szukaj członka..."
-      bind:value={searchQuery}
-      class="input pl-10 w-full"
-    />
-  </div>
 
   {#if loading}
     <div class="text-center py-12">
@@ -77,11 +63,11 @@
     <div class="alert variant-filled-error">
       <p>{error}</p>
     </div>
-  {:else if filteredMembers.length === 0}
+  {:else if members.length === 0}
     <div class="text-center py-12">
       <Users class="w-12 h-12 mx-auto text-surface-400" />
       <p class="mt-4 text-surface-500-400-token">
-        {searchQuery ? 'Nie znaleziono członków' : 'Brak członków w tej jednostce'}
+        Brak członków w tej jednostce
       </p>
     </div>
   {:else}
@@ -91,23 +77,15 @@
           <tr>
             <th>Imię i nazwisko</th>
             <th>Nr ewidencyjny</th>
-            <th>Email</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          {#each filteredMembers as member (member.id)}
+          {#each members as member (member.membershipNumber)}
             <tr>
               <td class="font-medium">{member.name} {member.surname}</td>
               <td>{member.membershipNumber}</td>
-              <td>
-                {#if member.personalMail}
-                  <a href="mailto:{member.personalMail}" class="text-primary-500 hover:underline">
-                    {member.personalMail}
-                  </a>
-                {:else}
-                  <span class="text-surface-400">—</span>
-                {/if}
-              </td>
+              <td><a href="#/units/{unitId}/members/{member.membershipNumber}" class="underline text-blue"><UserCog class="w-4 h-4 inline-block mr-2" />Zarządzaj</a></td>
             </tr>
           {/each}
         </tbody>

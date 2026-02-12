@@ -28,7 +28,7 @@ export class MockAuthAdapter implements AuthPort {
     return this.token
   }
 
-    async isAuthenticated(): Promise<boolean> {
+  async isAuthenticated(): Promise<boolean> {
     return this.token !== null
   }
 
