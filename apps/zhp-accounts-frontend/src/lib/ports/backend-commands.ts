@@ -1,11 +1,21 @@
-import type { CreateAccountResponse, CreateAccountCommand, Result } from "zhp-accounts-types"
+import type {
+  CreateAccountResponse,
+  CreateAccountCommand,
+  ResetPasswordCommand,
+  ResetPasswordResponse,
+  ResetMfaCommand,
+  ResetMfaResponse,
+  FixEmailCommand,
+  FixEmailResponse,
+  Result,
+} from 'zhp-accounts-types'
 
 export interface BackendCommandPort {
-    createAccount(command: CreateAccountCommand): Promise<Result<CreateAccountResponse>>
+  createAccount(command: CreateAccountCommand): Promise<Result<CreateAccountResponse>>
 
-    resetPassword(membershipId : string): Promise<Result<void>>
+  resetPassword(command: ResetPasswordCommand): Promise<Result<ResetPasswordResponse>>
 
-    resetMfa(membershipId : string): Promise<Result<void>>
+  resetMfa(command: ResetMfaCommand): Promise<Result<ResetMfaResponse>>
 
-    fixEmail(membershipId : string): Promise<Result<void>>
+  fixEmail(command: FixEmailCommand): Promise<Result<FixEmailResponse>>
 }
