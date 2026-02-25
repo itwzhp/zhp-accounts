@@ -1,7 +1,7 @@
-import type { Result } from "zhp-accounts-types"
+import type { CreateAccountResponse, CreateAccountCommand, Result } from "zhp-accounts-types"
 
 export interface BackendCommandPort {
-    createAccount(membershipId : string): Promise<Result<void>>
+    createAccount(command: CreateAccountCommand): Promise<Result<CreateAccountResponse>>
 
     resetPassword(membershipId : string): Promise<Result<void>>
 

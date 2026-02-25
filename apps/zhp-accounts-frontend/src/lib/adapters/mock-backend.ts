@@ -5,6 +5,8 @@ import type { ZhpUnit, ZhpUnitType, ZhpMemberDetails, UnitsWithRoot, MembersWith
  * Mock backend adapter that returns fake data for development/testing.
  */
 export class MockBackendAdapter implements BackendQueryPort {
+  private readonly delayMs = 300;
+
   private readonly mockMembers: ZhpMemberDetails[] = [
     {
       name: 'Jan',
@@ -53,12 +55,20 @@ export class MockBackendAdapter implements BackendQueryPort {
       mail: null,
       canMailBeCorrected: false,
       isAdmin: false
+    },
+    {
+      name: 'Agnieszka',
+      surname: 'Malewska',
+      membershipNumber: 'XE005555',
+      mail: null,
+      canMailBeCorrected: false,
+      isAdmin: false
     }
   ]
 
   private readonly mockUnits: ZhpMockUnit[] = [
-    new ZhpMockUnit(1, 'Chorągiew Stołeczna', 'chorągiew'),
-    new ZhpMockUnit(2, 'Chorągiew Gdańska', 'chorągiew'),
+    new ZhpMockUnit(1, 'Chorągiew Stołeczna', 'choragiew'),
+    new ZhpMockUnit(2, 'Chorągiew Gdańska', 'choragiew'),
   ]
 
   constructor() {
@@ -76,7 +86,8 @@ export class MockBackendAdapter implements BackendQueryPort {
     const hufiecPraga = new ZhpMockUnit(4, 'Hufiec Praga', 'hufiec')
     hufiecPraga.members.push(
       this.mockMembers[2],  // Piotr Wiśniewski
-      this.mockMembers[5]   // Agnieszka Szymańska
+      this.mockMembers[5],   // Agnieszka Szymańska
+      this.mockMembers[6]    // Agnieszka Malewska
     )
     hufiecPraga.subunits.push(new ZhpMockUnit(13, '1 WDH Praga', 'pjo'))
     this.mockUnits[0].subunits.push(hufiecPraga)
@@ -127,7 +138,7 @@ export class MockBackendAdapter implements BackendQueryPort {
   async getRootUnits(): Promise<ZhpUnit[]> {
     console.info('[MockBackend] getRootUnits()')
     // Simulate network delay
-    await this.delay(100)
+    await this.delay(this.delayMs)
     const result = [...this.mockUnits]
     console.info('[MockBackend] getRootUnits() -> ', result)
     return result
@@ -135,7 +146,7 @@ export class MockBackendAdapter implements BackendQueryPort {
 
   async getSubUnits(parentId: number): Promise<UnitsWithRoot> {
     console.info('[MockBackend] getSubUnits(parentId)', parentId)
-    await this.delay(50)
+    await this.delay(this.delayMs)
     const parentUnit = this.findUnitRecursive(parentId, this.mockUnits)
     if (!parentUnit) {
       throw new Error(`Unit with id ${parentId} not found`)
@@ -163,7 +174,7 @@ export class MockBackendAdapter implements BackendQueryPort {
 
   async getMembers(unitId: number): Promise<MembersWithUnit> {
     console.info('[MockBackend] getMembers(', unitId, ')')
-    await this.delay(100)
+    await this.delay(this.delayMs)
     const unit = this.findUnitRecursive(unitId, this.mockUnits)
     if (!unit) {
       throw new Error(`Unit with id ${unitId} not found`)
@@ -178,7 +189,7 @@ export class MockBackendAdapter implements BackendQueryPort {
 
   async getMember(membershipNumber: string): Promise<ZhpMemberDetails | null> {
     console.info('[MockBackend] getMember(', membershipNumber, ')')
-    await this.delay(50)
+    await this.delay(this.delayMs)
     const result = this.mockMembers.find(m => m.membershipNumber === membershipNumber) ?? null
     console.info('[MockBackend] getMember(', membershipNumber, ') -> ', result)
     return result

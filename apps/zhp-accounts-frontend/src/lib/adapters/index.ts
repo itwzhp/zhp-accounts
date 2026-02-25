@@ -1,9 +1,12 @@
 import type { BackendQueryPort } from '@/lib/ports/backend-querying'
+import type { BackendCommandPort } from '@/lib/ports/backend-commands'
 import type { AuthPort } from '@/lib/ports/auth'
 import { RealBackendAdapter } from './real-backend'
 import { MockBackendAdapter } from './mock-backend'
 import { RealAuthAdapter } from './real-auth'
 import { MockAuthAdapter } from './mock-auth'
+import { MockBackendCommandsAdapter } from './mock-backend-commands'
+import { RealBackendCommandsAdapter } from './real-backend-commands'
 
 /**
  * Check if mock mode is enabled via URL parameter
@@ -48,9 +51,22 @@ function createAuthAdapter(): AuthPort {
   return new RealAuthAdapter()
 }
 
+/**
+ * Create backend commands adapter based on mock mode
+ */
+function createBackendCommandsAdapter(): BackendCommandPort {
+  if (isMockMode()) {
+    console.info('[Adapters] Using MockBackendCommandsAdapter')
+    return new MockBackendCommandsAdapter()
+  }
+  console.info('[Adapters] Using RealBackendCommandsAdapter')
+  return new RealBackendCommandsAdapter(getApiBaseUrl())
+}
+
 // Singleton instances
 let backendAdapter: BackendQueryPort | null = null
 let authAdapter: AuthPort | null = null
+let backendCommandsAdapter: BackendCommandPort | null = null
 
 /**
  * Get the backend adapter singleton
@@ -73,9 +89,20 @@ export function getAuthAdapter(): AuthPort {
 }
 
 /**
+ * Get the backend commands adapter singleton
+ */
+export function getBackendCommandsAdapter(): BackendCommandPort {
+  if (!backendCommandsAdapter) {
+    backendCommandsAdapter = createBackendCommandsAdapter()
+  }
+  return backendCommandsAdapter
+}
+
+/**
  * Reset adapters (useful for testing)
  */
 export function resetAdapters(): void {
   backendAdapter = null
   authAdapter = null
+  backendCommandsAdapter = null
 }

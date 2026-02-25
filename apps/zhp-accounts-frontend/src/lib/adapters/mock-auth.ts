@@ -8,7 +8,7 @@ export class MockAuthAdapter implements AuthPort {
 
   async login(): Promise<AuthResult | null> {
     // Simulate login delay
-    await this.delay(500)
+    await this.delay(1000)
 
     const result: AuthResult = {
       userName: 'Jan Kowalski'
