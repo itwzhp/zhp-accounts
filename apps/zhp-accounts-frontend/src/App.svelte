@@ -120,7 +120,7 @@
               <button
                 onclick={handleLogout}
                 disabled={authState.isLoading}
-                class="flex items-center gap-1 text-sm text-blue hover:text-blue-light transition disabled:opacity-50"
+                class="flex items-center gap-1 text-sm text-blue hover:text-blue-light  hover:underline transition disabled:opacity-50"
               >
                 <LogOut size={18} class="-mt-0.5"/>
                 <span class="hidden sm:inline ml-1">Wyloguj</span>

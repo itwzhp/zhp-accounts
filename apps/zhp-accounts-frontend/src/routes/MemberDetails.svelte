@@ -1,97 +1,107 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import { getAuthAdapter, getBackendAdapter } from '@/lib/adapters'
-  import type { ZhpMemberDetails } from 'zhp-accounts-types'
-  import { MailCheck, ShieldAlert, KeyRound, RefreshCw, MailPlus } from 'lucide-svelte'
-  import CreateAccountModal from '@/lib/components/CreateAccountModal.svelte'
-  import PageHeader from '@/lib/components/PageHeader.svelte'
+  import { onMount } from "svelte";
+  import { getAuthAdapter, getBackendAdapter } from "@/lib/adapters";
+  import type { ZhpMemberDetails } from "zhp-accounts-types";
+  import {
+    MailCheck,
+    ShieldAlert,
+    KeyRound,
+    RefreshCw,
+    MailPlus,
+    Mail,
+    IdCardLanyard
+  } from "lucide-svelte";
+  import CreateAccountModal from "@/lib/components/CreateAccountModal.svelte";
+  import PageHeader from "@/lib/components/PageHeader.svelte";
+    import CopyButton from "@/lib/components/CopyButton.svelte";
 
-  export let params: { unitId: string; memberId: string } = { unitId: '', memberId: '' }
+  export let params: { unitId: string; memberId: string } = {
+    unitId: "",
+    memberId: "",
+  };
 
-  let member: ZhpMemberDetails | null = null
-  let loading = true
-  let error: string | null = null
+  let member: ZhpMemberDetails | null = null;
+  let loading = true;
+  let error: string | null = null;
 
-  type ModalState = 'closed' | 'create-account'
+  type ModalState = "closed" | "create-account";
 
-  let modalState: ModalState = 'closed'
+  let modalState: ModalState = "closed";
 
-  $: unitId = parseInt(params.unitId, 10)
-  $: memberId = params.memberId
+  $: unitId = parseInt(params.unitId, 10);
+  $: memberId = params.memberId;
 
   onMount(async () => {
     try {
-      const authAdapter = getAuthAdapter()
-      const isAuthenticated = await authAdapter.isAuthenticated()
+      const authAdapter = getAuthAdapter();
+      const isAuthenticated = await authAdapter.isAuthenticated();
       if (!isAuthenticated) {
-        window.location.hash = '#/'
-        return
+        window.location.hash = "#/";
+        return;
       }
-      const backend = getBackendAdapter()
-      member = await backend.getMember(memberId)
+      const backend = getBackendAdapter();
+      member = await backend.getMember(memberId);
       if (!member) {
-        error = 'Nie znaleziono członka'
+        error = "Nie znaleziono członka";
       }
     } catch (e) {
-      error = e instanceof Error ? e.message : 'Błąd ładowania danych'
+      error = e instanceof Error ? e.message : "Błąd ładowania danych";
     } finally {
-      loading = false
+      loading = false;
     }
-  })
+  });
 
   async function handleCreateEmail() {
-    modalState = 'create-account'
+    modalState = "create-account";
   }
 
   function closeModal() {
-    modalState = 'closed'
+    modalState = "closed";
   }
 
   async function refreshMemberData() {
     try {
-      const backend = getBackendAdapter()
-      const updatedMember = await backend.getMember(memberId)
+      const backend = getBackendAdapter();
+      const updatedMember = await backend.getMember(memberId);
       if (updatedMember) {
-        member = updatedMember
+        member = updatedMember;
       }
     } catch (e) {
-      console.error('Failed to refresh member data:', e)
+      console.error("Failed to refresh member data:", e);
     }
   }
 
   async function handlePasswordReset() {
     // TODO: Implement
-    alert('Funkcja resetowania hasła zostanie wkrótce wdrożona')
+    alert("Funkcja resetowania hasła zostanie wkrótce wdrożona");
   }
 
   async function handleMFAReset() {
     // TODO: Implement
-    alert('Funkcja resetowania MFA zostanie wkrótce wdrożona')
+    alert("Funkcja resetowania MFA zostanie wkrótce wdrożona");
   }
 
   async function handleCorrectEmail() {
     // TODO: Implement
-    alert('Funkcja korekty emaila zostanie wkrótce wdrożona')
+    alert("Funkcja korekty emaila zostanie wkrótce wdrożona");
   }
 </script>
 
 <svelte:head>
-  <title>Konta ZHP | {member ? `${member.name} ${member.surname}` : 'Członek'}</title>
+  <title
+    >Konta ZHP | {member
+      ? `${member.name} ${member.surname}`
+      : "Członek"}</title
+  >
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8 max-w-4xl">
-  <PageHeader 
-    title="{member?.name} {member?.surname}" 
+  <PageHeader
+    title="{member?.name} {member?.surname}"
     showBackButton={true}
     fallbackUrl="#/units/{unitId}/members"
-    loading={loading}
-  >
-    {#snippet children()}
-      <p class="text-surface-600-300-token ml-2">
-        {member?.membershipNumber}
-      </p>
-    {/snippet}
-  </PageHeader>
+    {loading}
+  />
   {#if loading}
     <div class="text-center py-12">
       <div class="placeholder-circle w-12 h-12 mx-auto animate-pulse"></div>
@@ -102,91 +112,93 @@
       <p>{error}</p>
     </div>
   {:else if member}
-
     <div class="space-y-6">
       <div class="card">
         <div class="flex items-start gap-4">
           <div class="flex-1">
-            <h2 class="text-xl font-semibold mb-2">Status konta ZHP</h2>
-            
-            {#if member.mail === null}
-              <div class="space-y-4">
-                <p class="text-surface-600-300-token">
-                  Brak konta ZHP dla tej osoby.
-                </p>
+            <div class="space-y-4">
+
+              <p class="text-surface-600-300-token mb-2">
+                <IdCardLanyard class="w-5 h-5 inline-block mr-3 -mt-1" />{member.membershipNumber}
+                <CopyButton text={member.membershipNumber} />
+              </p>
+              <p class="text-surface-600-300-token mb-2">
+                <Mail class="w-5 h-5 inline-block mr-3 -mt-0.5" />{member.mail ?? "Brak konta email"}
+                {#if member.mail}<CopyButton text={member.mail}/>{/if}
+              </p>
+
+              {#if member.mail === null}
                 <button
                   onclick={handleCreateEmail}
-                  class="btn variant-filled-primary flex items-center gap-2"
+                  class="btn variant-filled-primary items-center gap-2 text-blue hover:underline mt-5"
                 >
                   <MailPlus class="w-4 h-4" />
                   Utwórz konto
                 </button>
-              </div>
-            {:else if member.isAdmin}
-              <div class="space-y-4">
+              {:else if member.isAdmin}
                 <p class="text-surface-600-300-token mb-2">
-                  Email: <a href="mailto:{member.mail}" class="text-blue hover:text-blue-light">{member.mail}</a>
+                  <a
+                    href="mailto:{member.mail}"
+                    class="text-blue hover:text-blue-light"
+                    ><Mail
+                      class="w-5 h-5 inline-block mr-3 -mt-0.5"
+                    />{member.mail}</a
+                  >
                 </p>
                 <div class="alert variant-filled-warning">
                   <div class="flex items-start gap-3">
                     <ShieldAlert class="w-5 h-5 flex-shrink-0 mt-0.5" />
                     <div>
                       <p class="font-semibold mb-1">Konto administracyjne</p>
-                      <p class="text-sm">
-                        To konto ma uprawnienia administracyjne. W przypadku problemów technicznych skontaktuj się z Wydziałem IT.
+                      <p class="">
+                        To konto ma uprawnienia administracyjne. <br /> W przypadku
+                        problemów technicznych skontaktuj się z Wydziałem IT.
                       </p>
                     </div>
                   </div>
                 </div>
-              </div>
-            {:else}
-              <div class="space-y-4">
-                <p class="text-surface-600-300-token mb-4">
-                  Email: <a href="mailto:{member.mail}" class="text-blue hover:text-blue-light">{member.mail}</a>
-                </p>
-                
-                <div class="flex flex-wrap gap-3">
+              {:else}
+                <div class="flex flex-col items-start gap-1 mt-6">
                   <button
                     onclick={handlePasswordReset}
-                    class="btn variant-filled flex items-center gap-2"
+                    class="btn variant-filled flex gap-2 text-blue hover:underline"
                   >
                     <KeyRound class="w-4 h-4" />
                     Reset hasła
                   </button>
-                  
+
                   <button
                     onclick={handleMFAReset}
-                    class="btn variant-filled flex items-center gap-2"
+                    class="btn variant-filled flex gap-2 text-blue hover:underline"
                   >
                     <RefreshCw class="w-4 h-4" />
                     Reset MFA
                   </button>
-                  
+
                   {#if member.canMailBeCorrected}
                     <button
                       onclick={handleCorrectEmail}
-                      class="btn variant-soft flex items-center gap-2"
+                      class="btn variant-soft flex gap-2 text-blue hover:underline"
                     >
                       <MailCheck class="w-4 h-4" />
                       Popraw adres email
                     </button>
                   {/if}
                 </div>
-              </div>
-            {/if}
+              {/if}
+            </div>
           </div>
         </div>
       </div>
-
     </div>
   {/if}
 </div>
 
 {#if member}
-<CreateAccountModal
-  isOpen={modalState === 'create-account'}
-  member={member}
-  onClose={closeModal}
-  onSuccess={refreshMemberData}
-/>
+  <CreateAccountModal
+    isOpen={modalState === "create-account"}
+    {member}
+    onClose={closeModal}
+    onSuccess={refreshMemberData}
+  />
 {/if}

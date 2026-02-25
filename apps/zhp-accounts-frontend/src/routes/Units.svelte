@@ -73,7 +73,7 @@
       <div class="">
         <h2 class="text-xl">Członkowie</h2>
         <p class="text-surface-600-300-token">
-          <a href="/units/{rootUnit.id}/members" use:link class="underline">Zarządzaj kontami członków z przydziałem<ChevronsRight class="inline w-4 h-4 mx-1 text-surface-400-300-token" /> </a>
+          <a href="/units/{rootUnit.id}/members" use:link class="hover:underline text-blue">Zarządzaj kontami członków z przydziałem<ChevronsRight class="inline w-4 h-4 mx-1 text-surface-400-300-token" /> </a>
         </p>
       </div>
     {/if}
@@ -87,7 +87,7 @@
         <a
           href="/units/{unit.id}"
           use:link
-          class="card p-4 flex items-center gap-4 hover:variant-soft-primary transition-colors"
+          class="card p-4 flex items-center gap-4 hover:variant-soft-primary transition-colors hover:underline"
         >
           {#if unit.type === 'pjo'}
             <Users class="w-6 h-6 text-primary -mt-0.5" />
@@ -97,7 +97,7 @@
             <Building2 class="w-6 h-6 text-primary -mt-1" />
           {/if}
           <div class="flex-1">
-            <h3 class="font-semibold">{unit.name}</h3>
+            <h3 class="font-semibold text-blue hover:text-blue-light">{unit.name}</h3>
           </div>
         </a>
       {/each}

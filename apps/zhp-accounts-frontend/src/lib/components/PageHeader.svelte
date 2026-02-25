@@ -1,16 +1,14 @@
 <script lang="ts">
     import { ArrowLeft } from "lucide-svelte";
-    import type { Snippet } from "svelte";
 
     interface Props {
         title: string;
         showBackButton: boolean;
         loading: boolean;
         fallbackUrl?: string;
-        children?: Snippet;
     }
 
-    let { title, showBackButton, loading, fallbackUrl, children }: Props =
+    let { title, showBackButton, loading, fallbackUrl }: Props =
         $props();
 
     function handleBack() {
@@ -39,8 +37,4 @@
             {title}
         {/if}
     </h1>
-
-    {#if children}
-        {@render children()}
-    {/if}
 </header>

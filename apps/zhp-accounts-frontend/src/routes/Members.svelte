@@ -2,7 +2,7 @@
   import { onMount } from 'svelte'
   import { getAuthAdapter, getBackendAdapter } from '@/lib/adapters'
   import type { ZhpMember, ZhpUnit } from 'zhp-accounts-types'
-  import { Users, UserCog } from 'lucide-svelte'
+  import { Users, User, UserCog } from 'lucide-svelte'
   import PageHeader from '@/lib/components/PageHeader.svelte'
 
   export let params: { id: string } = { id: '' }
@@ -76,9 +76,9 @@
         <tbody>
           {#each members as member (member.membershipNumber)}
             <tr>
-              <td class="font-medium">{member.name} {member.surname}</td>
+              <td class="font-medium"><User class="w-4 h-4 inline-block mr-2 -mt-1 text-primary-dark" />{member.name} {member.surname}</td>
               <td>{member.membershipNumber}</td>
-              <td><a href="#/units/{unitId}/members/{member.membershipNumber}" class="underline text-blue"><UserCog class="w-4 h-4 inline-block mr-2" />Zarządzaj</a></td>
+              <td><a href="#/units/{unitId}/members/{member.membershipNumber}" class="hover:underline text-blue"><UserCog class="w-4 h-4 inline-block mr-2 -mt-1" />Zarządzaj</a></td>
             </tr>
           {/each}
         </tbody>

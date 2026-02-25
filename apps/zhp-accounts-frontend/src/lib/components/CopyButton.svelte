@@ -25,7 +25,7 @@
 
 <button
   onclick={handleCopy}
-  class="btn btn-icon variant-soft"
+  class="btn btn-icon variant-soft p-0.5"
   title={title}
 >
   {#if copied}
