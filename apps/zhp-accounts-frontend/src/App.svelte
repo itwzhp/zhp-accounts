@@ -73,7 +73,7 @@
                 <button
                   onclick={handleLogout}
                   disabled={authState.isLoading}
-                  class="flex items-center gap-1 text-sm text-zhp-blue hover:text-zhp-blue-light transition disabled:opacity-50"
+                  class="flex items-center gap-1 text-sm text-blue hover:text-blue-light transition disabled:opacity-50"
                 >
                   <LogOut size={18} />
                   <span class="hidden sm:inline">Wyloguj</span>
@@ -120,7 +120,7 @@
               <button
                 onclick={handleLogout}
                 disabled={authState.isLoading}
-                class="flex items-center gap-1 text-sm text-zhp-blue hover:text-zhp-blue-light transition disabled:opacity-50"
+                class="flex items-center gap-1 text-sm text-blue hover:text-blue-light transition disabled:opacity-50"
               >
                 <LogOut size={18} />
                 <span class="hidden sm:inline">Wyloguj</span>

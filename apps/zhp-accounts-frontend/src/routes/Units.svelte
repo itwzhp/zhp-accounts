@@ -59,17 +59,16 @@
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8 max-w-4xl space-y-5">
-  <header class="mb-8 flex items-center gap-4">
-    {#if params?.id}
+  <header class="mb-8 flex items-center gap-1">
+    {#if rootUnit}
       <button
         onclick={handleBack}
-        class="btn btn-icon variant-soft-secondary hover:variant-filled-secondary transition-colors"
+        class="btn btn-icon variant-soft-secondary hover:variant-filled-secondary transition-colors text-blue hover:text-blue-light"
         title="Wróć do poprzedniej jednostki"
       >
         <ArrowLeft class="w-6 h-6" />
       </button>
-    {/if}
-    {#if rootUnit}
+
       <h1 class="text-3xl font-bold">{rootUnit.name}</h1>
     {/if}
   </header>

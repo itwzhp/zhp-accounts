@@ -3,7 +3,6 @@
   import { getAuthAdapter, getBackendAdapter } from '@/lib/adapters'
   import type { ZhpMemberDetails } from 'zhp-accounts-types'
   import { ArrowLeft, MailCheck, ShieldAlert, KeyRound, RefreshCw, MailPlus } from 'lucide-svelte'
-  import { link } from 'svelte-spa-router'
 
   export let params: { unitId: string; memberId: string } = { unitId: '', memberId: '' }
 
@@ -89,15 +88,6 @@
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8 max-w-4xl">
-  <button
-    onclick={handleBack}
-    class="inline-flex items-center gap-2 text-primary-500 hover:underline mb-4 bg-none border-none cursor-pointer p-0"
-    title="Wróć do poprzedniej strony"
-  >
-    <ArrowLeft class="w-4 h-4" />
-    Powrót
-  </button>
-
   {#if loading}
     <div class="text-center py-12">
       <div class="placeholder-circle w-12 h-12 mx-auto animate-pulse"></div>
@@ -108,11 +98,18 @@
       <p>{error}</p>
     </div>
   {:else if member}
-    <header class="mb-8">
+    <header class="mb-8 flex items-center gap-1">
+      <button
+        onclick={handleBack}
+        class="btn btn-icon variant-soft-secondary hover:variant-filled-secondary transition-colors text-blue hover:text-blue-light"
+        title="Wróć"
+      >
+        <ArrowLeft class="w-6 h-6" />
+      </button>
       <h1 class="text-3xl font-bold mb-2">
         {member.name} {member.surname}
       </h1>
-      <p class="text-surface-600-300-token">
+      <p class="text-surface-600-300-token ml-2">
         {member.membershipNumber}
       </p>
     </header>
@@ -140,7 +137,7 @@
             {:else if member.isAdmin}
               <div class="space-y-4">
                 <p class="text-surface-600-300-token mb-2">
-                  Email: <a href="mailto:{member.mail}" class="text-primary-500 hover:underline">{member.mail}</a>
+                  Email: <a href="mailto:{member.mail}" class="text-blue hover:text-blue-light">{member.mail}</a>
                 </p>
                 <div class="alert variant-filled-warning">
                   <div class="flex items-start gap-3">
@@ -157,7 +154,7 @@
             {:else}
               <div class="space-y-4">
                 <p class="text-surface-600-300-token mb-4">
-                  Email: <a href="mailto:{member.mail}" class="text-primary-500 hover:underline">{member.mail}</a>
+                  Email: <a href="mailto:{member.mail}" class="text-blue hover:text-blue-light">{member.mail}</a>
                 </p>
                 
                 <div class="flex flex-wrap gap-3">

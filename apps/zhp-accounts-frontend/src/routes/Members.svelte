@@ -3,7 +3,6 @@
   import { getAuthAdapter, getBackendAdapter } from '@/lib/adapters'
   import type { ZhpMember, ZhpUnit } from 'zhp-accounts-types'
   import { Users, ArrowLeft, UserCog } from 'lucide-svelte'
-  import { link } from 'svelte-spa-router'
 
   export let params: { id: string } = { id: '' }
 
@@ -47,16 +46,17 @@
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8 max-w-4xl">
-  <button
-    onclick={handleBack}
-    class="inline-flex items-center gap-2 text-primary-500 hover:underline mb-4 bg-none border-none cursor-pointer p-0"
-    title="Wróć do poprzedniej strony"
-  >
-    <ArrowLeft class="w-4 h-4" />
-    Powrót
-  </button>
 
-  <header class="mb-8">
+
+  <header class="mb-8  flex items-center gap-1">
+    <button
+    onclick={handleBack}
+    class="btn btn-icon variant-soft-secondary hover:variant-filled-secondary transition-colors text-blue hover:text-blue-light"
+    title="Wróć do poprzedniej strony"
+    >
+      <ArrowLeft class="w-6 h-6" />
+
+    </button>
     <h1 class="text-3xl font-bold mb-2">
       {#if loading}
         <span class="placeholder w-48 animate-pulse"></span>
