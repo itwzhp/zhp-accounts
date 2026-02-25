@@ -2,8 +2,9 @@
   import { onMount } from 'svelte'
   import { getAuthAdapter, getBackendAdapter } from '@/lib/adapters'
   import type { ZhpUnit } from 'zhp-accounts-types'
-  import { Building, Building2, ChevronsRight, Users, ArrowLeft } from 'lucide-svelte'
+  import { Building, Building2, ChevronsRight, Users } from 'lucide-svelte'
   import { link } from 'svelte-spa-router'
+  import PageHeader from '@/lib/components/PageHeader.svelte'
 
   const { params = undefined } = $props<{ id?: string } | undefined>()
 
@@ -37,14 +38,6 @@
     }
   }
 
-  function handleBack() {
-    if (window.history.length > 1) {
-      window.history.back()
-    } else {
-      window.history.replaceState(null, '', '#/units')
-    }
-  }
-
   onMount(() => {
     loadUnits(params?.id)
   })
@@ -59,19 +52,12 @@
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8 max-w-4xl space-y-5">
-  <header class="mb-8 flex items-center gap-1">
-    {#if rootUnit}
-      <button
-        onclick={handleBack}
-        class="btn btn-icon variant-soft-secondary hover:variant-filled-secondary transition-colors text-blue hover:text-blue-light"
-        title="Wróć do poprzedniej jednostki"
-      >
-        <ArrowLeft class="w-6 h-6" />
-      </button>
-
-      <h1 class="text-3xl font-bold">{rootUnit.name}</h1>
-    {/if}
-  </header>
+  <PageHeader 
+    title={rootUnit?.name ?? 'Zarządzanie kontami'} 
+    showBackButton={!!rootUnit}
+    fallbackUrl="#/units"
+    loading={loading}
+  />
 
   {#if loading}
     <div class="text-center py-12">
@@ -94,7 +80,7 @@
     {#if units.length !== 0}
     <div class="">
       {#if rootUnit}<h2 class="text-xl">Podjednostki</h2>{/if}
-      <p class="text-surface-600-300-token">
+      <p class="text-surface-600-300-token mb-3">
         Oto lista jednostek, do których masz uprawnienia. Kliknij na jednostkę, aby zarządzać kontami członków.
       </p>
       {#each units as unit (unit.id)}
@@ -104,11 +90,11 @@
           class="card p-4 flex items-center gap-4 hover:variant-soft-primary transition-colors"
         >
           {#if unit.type === 'pjo'}
-            <Users class="w-6 h-6 text-primary" />
+            <Users class="w-6 h-6 text-primary -mt-0.5" />
           {:else if unit.type === 'hufiec'}
-            <Building class="w-6 h-6 text-primary" />
+            <Building class="w-6 h-6 text-primary -mt-0.5" />
           {:else}
-            <Building2 class="w-6 h-6 text-primary" />
+            <Building2 class="w-6 h-6 text-primary -mt-1" />
           {/if}
           <div class="flex-1">
             <h3 class="font-semibold">{unit.name}</h3>

@@ -2,7 +2,8 @@
   import { onMount } from 'svelte'
   import { getAuthAdapter, getBackendAdapter } from '@/lib/adapters'
   import type { ZhpMember, ZhpUnit } from 'zhp-accounts-types'
-  import { Users, ArrowLeft, UserCog } from 'lucide-svelte'
+  import { Users, UserCog } from 'lucide-svelte'
+  import PageHeader from '@/lib/components/PageHeader.svelte'
 
   export let params: { id: string } = { id: '' }
 
@@ -12,14 +13,6 @@
   let error: string | null = null
 
   $: unitId = parseInt(params.id, 10)
-
-  function handleBack() {
-    if (window.history.length > 1) {
-      window.history.back()
-    } else {
-      window.history.replaceState(null, '', `#/units/${unitId}`)
-    }
-  }
 
   onMount(async () => {
     try {
@@ -47,24 +40,12 @@
 
 <div class="container mx-auto px-4 py-8 max-w-4xl">
 
-
-  <header class="mb-8  flex items-center gap-1">
-    <button
-    onclick={handleBack}
-    class="btn btn-icon variant-soft-secondary hover:variant-filled-secondary transition-colors text-blue hover:text-blue-light"
-    title="Wróć do poprzedniej strony"
-    >
-      <ArrowLeft class="w-6 h-6" />
-
-    </button>
-    <h1 class="text-3xl font-bold mb-2">
-      {#if loading}
-        <span class="placeholder w-48 animate-pulse"></span>
-      {:else if unit}
-        {unit.name}
-      {/if}
-    </h1>
-  </header>
+  <PageHeader 
+    title={unit?.name ?? ''} 
+    showBackButton={true}
+    fallbackUrl="#/units/{unitId}"
+    loading={loading}
+  />
 
   {#if loading}
     <div class="text-center py-12">

@@ -32,9 +32,9 @@
   $effect(() => {
     if (isOpen) {
       internalState = { type: 'confirm' }
-      dialogElement?.showModal()
+      dialogElement.showModal()
     } else {
-      dialogElement?.close()
+      dialogElement.close()
     }
   })
 

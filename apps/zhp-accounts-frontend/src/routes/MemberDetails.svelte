@@ -2,8 +2,9 @@
   import { onMount } from 'svelte'
   import { getAuthAdapter, getBackendAdapter } from '@/lib/adapters'
   import type { ZhpMemberDetails } from 'zhp-accounts-types'
-  import { ArrowLeft, MailCheck, ShieldAlert, KeyRound, RefreshCw, MailPlus } from 'lucide-svelte'
+  import { MailCheck, ShieldAlert, KeyRound, RefreshCw, MailPlus } from 'lucide-svelte'
   import CreateAccountModal from '@/lib/components/CreateAccountModal.svelte'
+  import PageHeader from '@/lib/components/PageHeader.svelte'
 
   export let params: { unitId: string; memberId: string } = { unitId: '', memberId: '' }
 
@@ -17,14 +18,6 @@
 
   $: unitId = parseInt(params.unitId, 10)
   $: memberId = params.memberId
-
-  function handleBack() {
-    if (window.history.length > 1) {
-      window.history.back()
-    } else {
-      window.history.replaceState(null, '', `#/units/${unitId}/members`)
-    }
-  }
 
   onMount(async () => {
     try {
@@ -87,6 +80,18 @@
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8 max-w-4xl">
+  <PageHeader 
+    title="{member?.name} {member?.surname}" 
+    showBackButton={true}
+    fallbackUrl="#/units/{unitId}/members"
+    loading={loading}
+  >
+    {#snippet children()}
+      <p class="text-surface-600-300-token ml-2">
+        {member?.membershipNumber}
+      </p>
+    {/snippet}
+  </PageHeader>
   {#if loading}
     <div class="text-center py-12">
       <div class="placeholder-circle w-12 h-12 mx-auto animate-pulse"></div>
@@ -97,21 +102,6 @@
       <p>{error}</p>
     </div>
   {:else if member}
-    <header class="mb-8 flex items-center gap-1">
-      <button
-        onclick={handleBack}
-        class="btn btn-icon variant-soft-secondary hover:variant-filled-secondary transition-colors text-blue hover:text-blue-light"
-        title="Wróć"
-      >
-        <ArrowLeft class="w-6 h-6" />
-      </button>
-      <h1 class="text-3xl font-bold mb-2">
-        {member.name} {member.surname}
-      </h1>
-      <p class="text-surface-600-300-token ml-2">
-        {member.membershipNumber}
-      </p>
-    </header>
 
     <div class="space-y-6">
       <div class="card">
