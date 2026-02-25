@@ -9,3 +9,4 @@ coverage
 
 # for now, we ignore the whole frontend as it's not built by docker
 zhp-accounts-frontend
+zhp-accounts-frontend-old

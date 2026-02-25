@@ -16,11 +16,17 @@ export default [
         document: 'readonly',
         window: 'readonly',
         HTMLElement: 'readonly',
+        HTMLDialogElement: 'readonly',
         navigator: 'readonly',
         localStorage: 'readonly',
         sessionStorage: 'readonly',
         fetch: 'readonly',
-        console: 'readonly'
+        console: 'readonly',
+        alert: 'readonly',
+        setTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearTimeout: 'readonly',
+        clearInterval: 'readonly'
       }
     }
   },
