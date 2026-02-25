@@ -2,7 +2,7 @@
   import { onMount } from 'svelte'
   import { getAuthAdapter, getBackendAdapter } from '@/lib/adapters'
   import type { ZhpUnit } from 'zhp-accounts-types'
-  import { Building, Building2, ChevronsRight, Users } from 'lucide-svelte'
+  import { Building, Building2, ChevronsRight, Users, ArrowLeft } from 'lucide-svelte'
   import { link } from 'svelte-spa-router'
 
   const { params = undefined } = $props<{ id?: string } | undefined>()
@@ -37,6 +37,14 @@
     }
   }
 
+  function handleBack() {
+    if (window.history.length > 1) {
+      window.history.back()
+    } else {
+      window.history.replaceState(null, '', '#/units')
+    }
+  }
+
   onMount(() => {
     loadUnits(params?.id)
   })
@@ -51,7 +59,16 @@
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8 max-w-4xl space-y-5">
-  <header class="mb-8">
+  <header class="mb-8 flex items-center gap-4">
+    {#if params?.id}
+      <button
+        onclick={handleBack}
+        class="btn btn-icon variant-soft-secondary hover:variant-filled-secondary transition-colors"
+        title="Wróć do poprzedniej jednostki"
+      >
+        <ArrowLeft class="w-6 h-6" />
+      </button>
+    {/if}
     {#if rootUnit}
       <h1 class="text-3xl font-bold">{rootUnit.name}</h1>
     {/if}

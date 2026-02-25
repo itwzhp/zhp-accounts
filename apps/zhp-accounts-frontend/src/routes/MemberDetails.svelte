@@ -15,6 +15,14 @@
   $: unitId = parseInt(params.unitId, 10)
   $: memberId = params.memberId
 
+  function handleBack() {
+    if (window.history.length > 1) {
+      window.history.back()
+    } else {
+      window.history.replaceState(null, '', `#/units/${unitId}/members`)
+    }
+  }
+
   onMount(async () => {
     try {
       const authAdapter = getAuthAdapter()
@@ -81,10 +89,14 @@
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8 max-w-4xl">
-  <a href="/units/{unitId}/members" use:link class="inline-flex items-center gap-2 text-primary-500 hover:underline mb-4">
+  <button
+    onclick={handleBack}
+    class="inline-flex items-center gap-2 text-primary-500 hover:underline mb-4 bg-none border-none cursor-pointer p-0"
+    title="Wróć do poprzedniej strony"
+  >
     <ArrowLeft class="w-4 h-4" />
     Powrót
-  </a>
+  </button>
 
   {#if loading}
     <div class="text-center py-12">
