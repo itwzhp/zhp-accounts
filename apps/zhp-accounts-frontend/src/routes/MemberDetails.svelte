@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { getAuthAdapter, getBackendAdapter, getBackendCommandsAdapter } from '@/lib/adapters'
-  import type { ZhpMemberDetails, CreateAccountResponse } from 'zhp-accounts-types'
-  import { ArrowLeft, MailCheck, ShieldAlert, KeyRound, RefreshCw, MailPlus, TriangleAlert } from 'lucide-svelte'
-  import CopyButton from '@/lib/components/CopyButton.svelte'
+  import { getAuthAdapter, getBackendAdapter } from '@/lib/adapters'
+  import type { ZhpMemberDetails } from 'zhp-accounts-types'
+  import { ArrowLeft, MailCheck, ShieldAlert, KeyRound, RefreshCw, MailPlus } from 'lucide-svelte'
+  import CreateAccountModal from '@/lib/components/CreateAccountModal.svelte'
 
   export let params: { unitId: string; memberId: string } = { unitId: '', memberId: '' }
 
@@ -11,16 +11,9 @@
   let loading = true
   let error: string | null = null
 
-  // Modal state using discriminated union
-  type ModalState = 
-    | { type: 'closed' }
-    | { type: 'create-account-confirm' }
-    | { type: 'create-account-loading' }
-    | { type: 'create-account-success', accountData: CreateAccountResponse }
-    | { type: 'create-account-error', error: string, errorCode: string }
+  type ModalState = 'closed' | 'create-account'
 
-  let modalState: ModalState = { type: 'closed' }
-  let dialogElement: HTMLDialogElement
+  let modalState: ModalState = 'closed'
 
   $: unitId = parseInt(params.unitId, 10)
   $: memberId = params.memberId
@@ -54,41 +47,23 @@
   })
 
   async function handleCreateEmail() {
-    modalState = { type: 'create-account-confirm' }
-    dialogElement?.showModal()
-  }
-
-  async function confirmCreateAccount() {
-    if (!member) return
-    
-    modalState = { type: 'create-account-loading' }
-    
-    try {
-      const commandsAdapter = getBackendCommandsAdapter()
-      const result = await commandsAdapter.createAccount({
-        membershipNumber: member.membershipNumber
-      })
-      
-      if (result.success) {
-        // Refresh member data to update UI
-        const backend = getBackendAdapter()
-        const updatedMember = await backend.getMember(memberId)
-        if (updatedMember) {
-          member = updatedMember
-        }
-        modalState = { type: 'create-account-success', accountData: result.data }
-      } else {
-        modalState = { type: 'create-account-error', error: result.error, errorCode: result.errorCode }
-      }
-    } catch (e) {
-      const errorMsg = e instanceof Error ? e.message : 'Nieznany błąd'
-      modalState = { type: 'create-account-error', error: errorMsg, errorCode: 'FRONT_ERROR' }
-    }
+    modalState = 'create-account'
   }
 
   function closeModal() {
-    modalState = { type: 'closed' }
-    dialogElement?.close()
+    modalState = 'closed'
+  }
+
+  async function refreshMemberData() {
+    try {
+      const backend = getBackendAdapter()
+      const updatedMember = await backend.getMember(memberId)
+      if (updatedMember) {
+        member = updatedMember
+      }
+    } catch (e) {
+      console.error('Failed to refresh member data:', e)
+    }
   }
 
   async function handlePasswordReset() {
@@ -217,103 +192,11 @@
   {/if}
 </div>
 
-<dialog bind:this={dialogElement} class="modal-dialog m-auto p-0 rounded-xl max-w-xl w-full backdrop:bg-black/50">
-  <div class="card p-6 w-full">
-    <h3 class="text-2xl font-bold mb-4">Utwórz konto ZHP</h3>
-    
-    {#if modalState.type === 'create-account-confirm' || modalState.type === 'create-account-loading' || modalState.type === 'create-account-error'}
-      <div class="space-y-4">
-        <p class="text-surface-600-300-token">
-          Czy chcesz założyć konto ZHP dla osoby <strong>{member?.name} {member?.surname}</strong>?
-        </p>
-        <p class="text-surface-600-300-token">
-          Po założeniu konta otrzymasz login i hasło tymczasowe, które należy przekazać tej osobie.
-        </p>
-        
-        {#if modalState.type === 'create-account-error'}
-          <div class="alert variant-filled-error">
-            <p class="font-semibold text-red flex items-center gap-2"><TriangleAlert class="w-5 h-5" /> Błąd tworzenia konta</p>
-            <p class="text-sm mt-1">{modalState.error}</p>
-            <p class="text-sm mt-1 font-mono">{modalState.errorCode}</p>
-          </div>
-        {/if}
-        
-        <div class="flex gap-3 justify-end mt-6">
-          <button
-            onclick={closeModal}
-            disabled={modalState.type === 'create-account-loading'}
-            class="btn variant-soft"
-          >
-            Anuluj
-          </button>
-          <button
-            onclick={confirmCreateAccount}
-            disabled={modalState.type === 'create-account-loading'}
-            class="btn variant-filled-primary flex items-center gap-2"
-          >
-            {#if modalState.type === 'create-account-loading'}
-              <div class="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
-              Tworzenie...
-            {:else}
-              <MailPlus class="w-4 h-4" />
-              Utwórz konto
-            {/if}
-          </button>
-        </div>
-      </div>
-    {:else if modalState.type === 'create-account-success'}
-      {@const accountData = modalState.accountData}
-      <div class="space-y-4">
-        <div class="alert variant-filled-success mb-4">
-          <p class="font-semibold">Konto zostało utworzone pomyślnie!</p>
-          <p class="text-sm mt-1">Przekaż poniższe dane osobie.</p>
-        </div>
-        
-        <div class="space-y-3">
-          <div>
-            <label for="account-email" class="block text-sm font-medium mb-1">Login (adres email)</label>
-            <div class="flex gap-2">
-              <input
-                id="account-email"
-                type="text"
-                readonly
-                value={accountData.email}
-                class="input flex-1 bg-surface-200-700-token"
-              />
-              <CopyButton text={accountData.email} title="Kopiuj login" />
-            </div>
-          </div>
-          
-          <div>
-            <label for="account-password" class="block text-sm font-medium mb-1">Hasło tymczasowe</label>
-            <div class="flex gap-2">
-              <input
-                id="account-password"
-                type="text"
-                readonly
-                value={accountData.password}
-                class="input flex-1 bg-surface-200-700-token font-mono"
-              />
-              <CopyButton text={accountData.password} title="Kopiuj hasło" />
-            </div>
-          </div>
-        </div>
-        
-        <div class="alert variant-soft-warning mt-4">
-          <p class="text-sm">
-            <strong>Ważne:</strong> Te dane nie będą widoczne po zamknięciu okna. Upewnij się, że są zapisane lub przekazane osobie.
-          </p>
-        </div>
-        
-        <div class="flex justify-end mt-6">
-          <button
-            onclick={closeModal}
-            class="btn variant-filled-primary"
-          >
-            Zamknij
-          </button>
-        </div>
-      </div>
-    {/if}
-  </div>
-</dialog>
+{#if member}
+<CreateAccountModal
+  isOpen={modalState === 'create-account'}
+  member={member}
+  onClose={closeModal}
+  onSuccess={refreshMemberData}
+/>
+{/if}
