@@ -7,20 +7,12 @@ export interface CreateAccountResponse {
     readonly password: string;
 }
 
-export interface ResetPasswordCommand {
-    readonly membershipId: string;
+export interface GenerateTapCommand {
+    readonly membershipNumber: string;
+    readonly email: string;
 }
 
-export interface ResetPasswordResponse {}
-
-export interface ResetMfaCommand {
-    readonly membershipId: string;
+export interface GenerateTapResponse {
+    readonly tap: string;
+    readonly expiresAt: string; // ISO 8601 UTC date-time string
 }
-
-export interface ResetMfaResponse {}
-
-export interface FixEmailCommand {
-    readonly membershipId: string;
-}
-
-export interface FixEmailResponse {}

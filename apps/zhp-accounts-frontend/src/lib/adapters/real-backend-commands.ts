@@ -2,12 +2,8 @@ import type { BackendCommandPort } from '@/lib/ports/backend-commands'
 import type {
   CreateAccountCommand,
   CreateAccountResponse,
-  ResetPasswordCommand,
-  ResetPasswordResponse,
-  ResetMfaCommand,
-  ResetMfaResponse,
-  FixEmailCommand,
-  FixEmailResponse,
+  GenerateTapCommand,
+  GenerateTapResponse,
   Result,
 } from 'zhp-accounts-types'
 
@@ -58,15 +54,7 @@ export class RealBackendCommandsAdapter implements BackendCommandPort {
     return this.sendCommand<CreateAccountResponse>('CreateAccount', command)
   }
 
-  async resetPassword(command: ResetPasswordCommand): Promise<Result<ResetPasswordResponse>> {
-    return this.sendCommand<ResetPasswordResponse>('ResetPassword', command)
-  }
-
-  async resetMfa(command: ResetMfaCommand): Promise<Result<ResetMfaResponse>> {
-    return this.sendCommand<ResetMfaResponse>('ResetMfa', command)
-  }
-
-  async fixEmail(command: FixEmailCommand): Promise<Result<FixEmailResponse>> {
-    return this.sendCommand<FixEmailResponse>('FixEmail', command)
+  async generateTap(command: GenerateTapCommand): Promise<Result<GenerateTapResponse>> {
+    return this.sendCommand<GenerateTapResponse>('GenerateTap', command)
   }
 }
