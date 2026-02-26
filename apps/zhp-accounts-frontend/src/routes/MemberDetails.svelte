@@ -136,15 +136,6 @@
                   Utwórz konto
                 </button>
               {:else if member.isAdmin}
-                <p class="text-surface-600-300-token mb-2">
-                  <a
-                    href="mailto:{member.mail}"
-                    class="text-blue hover:text-blue-light"
-                    ><Mail
-                      class="w-5 h-5 inline-block mr-3 -mt-0.5"
-                    />{member.mail}</a
-                  >
-                </p>
                 <div class="alert variant-filled-warning">
                   <div class="flex items-start gap-3">
                     <ShieldAlert class="w-5 h-5 flex-shrink-0 mt-0.5" />
