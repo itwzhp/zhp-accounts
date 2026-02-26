@@ -3,17 +3,16 @@
   import { getAuthAdapter, getBackendAdapter } from "@/lib/adapters";
   import type { ZhpMemberDetails } from "zhp-accounts-types";
   import {
-    MailCheck,
     ShieldAlert,
     KeyRound,
-    RefreshCw,
     MailPlus,
     Mail,
     IdCardLanyard
   } from "lucide-svelte";
   import CreateAccountModal from "@/lib/components/CreateAccountModal.svelte";
+  import GenerateTapModal from "@/lib/components/GenerateTapModal.svelte";
   import PageHeader from "@/lib/components/PageHeader.svelte";
-    import CopyButton from "@/lib/components/CopyButton.svelte";
+  import CopyButton from "@/lib/components/CopyButton.svelte";
 
   export let params: { unitId: string; memberId: string } = {
     unitId: "",
@@ -24,7 +23,7 @@
   let loading = true;
   let error: string | null = null;
 
-  type ModalState = "closed" | "create-account";
+  type ModalState = "closed" | "create-account" | "generate-tap";
 
   let modalState: ModalState = "closed";
 
@@ -71,19 +70,8 @@
     }
   }
 
-  async function handlePasswordReset() {
-    // TODO: Implement
-    alert("Funkcja resetowania hasła zostanie wkrótce wdrożona");
-  }
-
-  async function handleMFAReset() {
-    // TODO: Implement
-    alert("Funkcja resetowania MFA zostanie wkrótce wdrożona");
-  }
-
-  async function handleCorrectEmail() {
-    // TODO: Implement
-    alert("Funkcja korekty emaila zostanie wkrótce wdrożona");
+  async function handleAccessReset() {
+    modalState = "generate-tap";
   }
 </script>
 
@@ -151,30 +139,12 @@
               {:else}
                 <div class="flex flex-col items-start gap-1 mt-6">
                   <button
-                    onclick={handlePasswordReset}
+                    onclick={handleAccessReset}
                     class="btn variant-filled flex gap-2 text-blue hover:underline"
                   >
                     <KeyRound class="w-4 h-4" />
-                    Reset hasła
+                    Reset dostępu
                   </button>
-
-                  <button
-                    onclick={handleMFAReset}
-                    class="btn variant-filled flex gap-2 text-blue hover:underline"
-                  >
-                    <RefreshCw class="w-4 h-4" />
-                    Reset MFA
-                  </button>
-
-                  {#if member.canMailBeCorrected}
-                    <button
-                      onclick={handleCorrectEmail}
-                      class="btn variant-soft flex gap-2 text-blue hover:underline"
-                    >
-                      <MailCheck class="w-4 h-4" />
-                      Popraw adres email
-                    </button>
-                  {/if}
                 </div>
               {/if}
             </div>
@@ -191,5 +161,10 @@
     {member}
     onClose={closeModal}
     onSuccess={refreshMemberData}
+  />
+  <GenerateTapModal
+    isOpen={modalState === "generate-tap"}
+    {member}
+    onClose={closeModal}
   />
 {/if}

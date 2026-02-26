@@ -2,12 +2,8 @@ import type { BackendCommandPort } from '@/lib/ports/backend-commands'
 import type {
   CreateAccountCommand,
   CreateAccountResponse,
-  ResetPasswordCommand,
-  ResetPasswordResponse,
-  ResetMfaCommand,
-  ResetMfaResponse,
-  FixEmailCommand,
-  FixEmailResponse,
+  GenerateTapCommand,
+  GenerateTapResponse,
   Failure,
   Result,
   Success,
@@ -33,27 +29,17 @@ export class MockBackendCommandsAdapter implements BackendCommandPort {
     return result
   }
 
-  async resetPassword(command: ResetPasswordCommand): Promise<Result<ResetPasswordResponse>> {
-    console.info('[MockBackendCommands] resetPassword(', command, ')')
+  async generateTap(command: GenerateTapCommand): Promise<Result<GenerateTapResponse>> {
+    console.info('[MockBackendCommands] generateTap(', command, ')')
     await this.delay(this.delayMs)
-    const result = ok<ResetPasswordResponse>({})
-    console.info('[MockBackendCommands] resetPassword(', command, ') -> ', result)
-    return result
-  }
-
-  async resetMfa(command: ResetMfaCommand): Promise<Result<ResetMfaResponse>> {
-    console.info('[MockBackendCommands] resetMfa(', command, ')')
-    await this.delay(this.delayMs)
-    const result = ok<ResetMfaResponse>({})
-    console.info('[MockBackendCommands] resetMfa(', command, ') -> ', result)
-    return result
-  }
-
-  async fixEmail(command: FixEmailCommand): Promise<Result<FixEmailResponse>> {
-    console.info('[MockBackendCommands] fixEmail(', command, ')')
-    await this.delay(this.delayMs)
-    const result = ok<FixEmailResponse>({})
-    console.info('[MockBackendCommands] fixEmail(', command, ') -> ', result)
+    const expiresAt = new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString()
+    const result = command.membershipNumber.startsWith('X')
+      ? err('Nastąpił testowy błąd podczas generowania TAP')
+      : ok<GenerateTapResponse>({
+          tap: 'mock-temporary-access-pass-123456',
+          expiresAt,
+        })
+    console.info('[MockBackendCommands] generateTap(', command, ') -> ', result)
     return result
   }
 

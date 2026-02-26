@@ -43,7 +43,7 @@ export class MockBackendAdapter implements BackendQueryPort {
     {
       name: 'Tomasz',
       surname: 'Kamiński',
-      membershipNumber: 'DD003333',
+      membershipNumber: 'XD003333',
       mail: 'tomasz.kaminski@zhp.pl',
       canMailBeCorrected: false,
       isAdmin: false
