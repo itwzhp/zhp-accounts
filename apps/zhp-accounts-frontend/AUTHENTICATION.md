@@ -202,7 +202,7 @@ async getRootUnits(): Promise<ZhpUnit[]> {
 - ⏳ Backend token injection (deferred)
 
 ### Phase 2: Future
-- [ ] Add token to backend API requests
+- [X] Add token to backend API requests
 - [ ] Implement token refresh on 401 responses
 - [ ] Add token refresh timer as backup
 - [ ] Centralized error handling for token errors
@@ -210,13 +210,10 @@ async getRootUnits(): Promise<ZhpUnit[]> {
 ### Phase 3: Optional Enhancements
 - [ ] SSO (Single Sign-On) when testing across apps
 - [ ] Automatic redirect to login on 401 responses
-- [ ] Token expiry warning before logout
-- [ ] Multi-account support
 
 ## Security Notes
 
 ⚠️ **Important**:
-- Never commit `.env.local` to git (already in `.gitignore`)
 - Never hardcode credentials in source code
 - Use HTTPS in production (required by OAuth)
 - sessionStorage is cleared on tab close (good)

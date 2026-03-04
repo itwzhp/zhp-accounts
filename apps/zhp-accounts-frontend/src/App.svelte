@@ -22,6 +22,7 @@
       if (redirectResult) {
         authState.isAuthenticated = true
         authState.userName = redirectResult.userName
+        window.location.hash = '#/units'
       }
 
       // Check current authentication status

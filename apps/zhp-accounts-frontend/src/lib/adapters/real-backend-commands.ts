@@ -1,4 +1,5 @@
 import type { BackendCommandPort } from '@/lib/ports/backend-commands'
+import type { AuthPort } from '@/lib/ports/auth'
 import type {
   CreateAccountCommand,
   CreateAccountResponse,
@@ -12,17 +13,32 @@ import type {
  */
 export class RealBackendCommandsAdapter implements BackendCommandPort {
   private apiBaseUrl: string
+  private readonly authAdapter: AuthPort
 
-  constructor(apiBaseUrl: string) {
+  constructor(apiBaseUrl: string, authAdapter: AuthPort) {
     this.apiBaseUrl = apiBaseUrl
+    this.authAdapter = authAdapter
+  }
+
+  private async createAuthHeaders(): Promise<Record<string, string>> {
+    const token = await this.authAdapter.getToken()
+    if (!token) {
+      throw new Error('Missing access token for backend request')
+    }
+
+    return {
+      Authorization: `Bearer ${token}`
+    }
   }
 
   private async sendCommand<T>(commandName: string, command: unknown): Promise<Result<T>> {
     try {
+      const authHeaders = await this.createAuthHeaders()
       const response = await fetch(`${this.apiBaseUrl}/commands/${commandName}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...authHeaders,
         },
         body: JSON.stringify(command),
       })
