@@ -30,8 +30,11 @@ Dodaj `?mock=true` do URL aby używać mockowanych danych zamiast prawdziwego AP
 # Instalacja zależności
 pnpm install
 
-# Uruchomienie dev server
+# Uruchomienie dev server (z lokalnym backendem)
 pnpm dev
+
+# Testowanie z production backendem (frontonly mode)
+pnpm dev --mode frontonly
 
 # Build produkcyjny
 pnpm build
@@ -52,13 +55,26 @@ pnpm lint:fix
 pnpm check
 ```
 
-## Zmienne środowiskowe
+## Zmienne środowiskowe (Environment Variables)
 
-Utwórz plik `.env.local`:
+Konfiguracja jest zarządzana poprzez `.env.[mode]` pliki, które są przechowywane w repozytorium (bez sekretów):
 
-```env
-VITE_API_BASE_URL=http://localhost:3000/api
-```
+### Dostępne tryby
+
+- **`.env.development`** - Uruchamianie z lokalnymi backendem (`pnpm dev`)
+- **`.env.frontonly`** - Uruchamianie z production backendem (`pnpm dev --mode frontonly`)
+- **`.env.production`** - Build do produkcji (`pnpm build`)
+
+### Konfiguracja dla deweloperów
+
+Wszystkie ustawienia są już skonfigurowane w `.env.[mode]` plikach. **Nie trzeba nic dodawać do `.gitignore`**.
+
+Zmienne do ustawienia (placeholder values):
+- `VITE_MSAL_CLIENT_ID` - Azure App Registration Client ID
+- `VITE_MSAL_TENANT_ID` - Azure Tenant ID
+- `VITE_MSAL_BACKEND_SCOPE` - Backend API OAuth scope
+
+Szczegóły: zobacz [AUTHENTICATION.md](./AUTHENTICATION.md)
 
 ## Routing
 

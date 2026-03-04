@@ -11,6 +11,13 @@ export interface AuthResult {
  */
 export interface AuthPort {
   /**
+   * Handle redirect callback after authentication.
+   * Should be called on app initialization before checking isAuthenticated()
+   * Returns AuthResult if user just logged in via redirect, null otherwise
+   */
+  handleRedirectCallback(): Promise<AuthResult | null>
+
+  /**
    * Initiate login flow with Microsoft 365
    * Returns authentication result on success and null on failure or cancellation
    */
