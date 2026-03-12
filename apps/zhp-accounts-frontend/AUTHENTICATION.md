@@ -207,10 +207,6 @@ async getRootUnits(): Promise<ZhpUnit[]> {
 - [ ] Add token refresh timer as backup
 - [ ] Centralized error handling for token errors
 
-### Phase 3: Optional Enhancements
-- [ ] SSO (Single Sign-On) when testing across apps
-- [ ] Automatic redirect to login on 401 responses
-
 ## Security Notes
 
 ⚠️ **Important**:
