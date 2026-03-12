@@ -48,7 +48,7 @@
 </script>
 
 <svelte:head>
-  <title>Konta ZHP | {rootUnit ? rootUnit.name : 'Jednostki'}</title>
+  <title>Konto ZHP | {rootUnit ? rootUnit.name : 'Jednostki'}</title>
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8 max-w-4xl space-y-5">

@@ -77,7 +77,7 @@
 
 <svelte:head>
   <title
-    >Konta ZHP | {member
+    >Konto ZHP | {member
       ? `${member.name} ${member.surname}`
       : "Członek"}</title
   >

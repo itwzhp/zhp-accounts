@@ -87,7 +87,7 @@
 </script>
 
 <svelte:head>
-  <title>Konta ZHP</title>
+  <title>Konto ZHP</title>
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8 max-w-6xl">

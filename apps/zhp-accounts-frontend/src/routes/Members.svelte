@@ -35,7 +35,7 @@
 </script>
 
 <svelte:head>
-  <title>Konta ZHP | {unit ? `${unit.name}` : 'Członkowie'}</title>
+  <title>Konto ZHP | {unit ? `${unit.name}` : 'Członkowie'}</title>
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8 max-w-4xl">

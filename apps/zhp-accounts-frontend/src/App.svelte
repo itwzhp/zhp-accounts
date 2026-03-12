@@ -103,7 +103,7 @@
         </div>
 
         <div class="header-title text-3xl font-semibold">
-          Konta ZHP
+          Konto ZHP
         </div>
       </div>
 
@@ -111,7 +111,7 @@
       <div class="hidden md:flex items-center justify-between">
         <a href="#/" use:link>
         <div class="header-title text-4xl font-semibold">
-          Konta ZHP
+          Konto ZHP
         </div>
         </a>
 
