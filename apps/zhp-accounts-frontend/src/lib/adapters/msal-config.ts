@@ -26,7 +26,7 @@ export function getMsalConfig(): Configuration {
     },
     system: {
       loggerOptions: {
-        loggerCallback: (level, message, _containsPii) => {
+        loggerCallback: (level, message) => {
           if (import.meta.env.DEV) {
             console.log(`[MSAL ${level}]`, message)
           }
