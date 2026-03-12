@@ -1,0 +1,67 @@
+identity:
+  type: SystemAssigned
+location: Poland Central
+name: konta-zhp-backend
+properties:
+  configuration:
+    activeRevisionsMode: Single
+    ingress:
+      allowInsecure: false
+      external: true
+      stickySessions:
+        affinity: none
+      targetPort: 3000
+      traffic:
+      - latestRevision: true
+        weight: 100
+      transport: Auto
+    maxInactiveRevisions: 100
+    registries:
+    - identity: system-environment
+      server: zhpaccounts-cybcbyf5abbfdpg9.azurecr.io
+  environmentId: /subscriptions/35e22786-93ea-47c8-902a-16e9d0f03e17/resourceGroups/zhp-accounts/providers/Microsoft.App/managedEnvironments/managedEnvironment-zhpaccounts-978a
+  template:
+    containers:
+    - image: REPLACED_BY_CI
+      name: konta-zhp-backend
+      probes:
+      - failureThreshold: 2
+        httpGet:
+          path: /healthcheck/liveliness
+          port: 3000
+          scheme: HTTP
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 3
+        type: Liveness
+      - failureThreshold: 8
+        httpGet:
+          path: /healthcheck/readiness
+          port: 3000
+          scheme: HTTP
+        periodSeconds: 13
+        successThreshold: 1
+        timeoutSeconds: 20
+        type: Readiness
+      - failureThreshold: 240
+        httpGet:
+          path: /healthcheck/liveliness
+          port: 3000
+          scheme: HTTP
+        initialDelaySeconds: 1
+        periodSeconds: 1
+        successThreshold: 1
+        timeoutSeconds: 2
+        type: Startup
+      resources:
+        cpu: 0.25
+        memory: 0.5Gi
+    scale:
+      maxReplicas: 3
+      minReplicas: 0
+      rules:
+      - http:
+          metadata:
+            concurrentRequests: '30'
+        name: http-scaler
+  workloadProfileName: Consumption
