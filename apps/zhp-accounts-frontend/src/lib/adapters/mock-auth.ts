@@ -6,6 +6,11 @@ import type { AuthPort, AuthResult } from '@/lib/ports/auth'
 export class MockAuthAdapter implements AuthPort {
   private token: string | null = null
 
+  async handleRedirectCallback(): Promise<AuthResult | null> {
+    // Mock adapter doesn't handle redirects
+    return null
+  }
+
   async login(): Promise<AuthResult | null> {
     // Simulate login delay
     await this.delay(1000)

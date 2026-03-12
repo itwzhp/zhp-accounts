@@ -21,5 +21,11 @@
     "peacock.color": "#53671f",
     
     "npm.packageManager": "pnpm",
-    "npm.scriptRunner": "pnpm"
+    "npm.scriptRunner": "pnpm",
+    "chat.tools.terminal.autoApprove": {
+        "/^pnpm tsc --noEmit$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
 }

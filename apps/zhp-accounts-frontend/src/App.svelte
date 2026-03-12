@@ -16,6 +16,16 @@
     authState.isLoading = true
     try {
       const authAdapter = getAuthAdapter()
+
+      // Handle redirect callback from MSAL (checks if user just logged in)
+      const redirectResult = await authAdapter.handleRedirectCallback()
+      if (redirectResult) {
+        authState.isAuthenticated = true
+        authState.userName = redirectResult.userName
+        window.location.hash = '#/units'
+      }
+
+      // Check current authentication status
       authState.isAuthenticated = await authAdapter.isAuthenticated()
     } finally {
       authState.isLoading = false

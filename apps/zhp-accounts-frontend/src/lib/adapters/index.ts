@@ -24,7 +24,7 @@ function isMockMode(): boolean {
  */
 function getApiBaseUrl(): string {
   // Vite environment variable
-  return import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:3000/api'
+  return import.meta.env.VITE_API_BASE_URL
 }
 
 /**
@@ -36,7 +36,7 @@ function createBackendAdapter(): BackendQueryPort {
     return new MockBackendAdapter()
   }
   console.info('[Adapters] Using RealBackendAdapter')
-  return new RealBackendAdapter(getApiBaseUrl())
+  return new RealBackendAdapter(getApiBaseUrl(), getAuthAdapter())
 }
 
 /**
@@ -60,7 +60,7 @@ function createBackendCommandsAdapter(): BackendCommandPort {
     return new MockBackendCommandsAdapter()
   }
   console.info('[Adapters] Using RealBackendCommandsAdapter')
-  return new RealBackendCommandsAdapter(getApiBaseUrl())
+  return new RealBackendCommandsAdapter(getApiBaseUrl(), getAuthAdapter())
 }
 
 // Singleton instances
