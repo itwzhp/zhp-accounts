@@ -38,8 +38,11 @@ jobs:
       - name: Log in to Azure Container Registry
         if: github.event_name == 'push'
         run: |
-          ACR_NAME=$(echo "${{ vars.ACR_ENDPOINT }}" | cut -d. -f1)
-          az acr login --name "$ACR_NAME"
+          ACR_HOST="${{ vars.ACR_ENDPOINT }}"
+          ACR_HOST="${ACR_HOST%.azurecr.io}"
+          ACR_NAME="${ACR_HOST%%-*}"
+          ACR_SUFFIX="${ACR_HOST#*-}"
+          az acr login --name "$ACR_NAME" --suffix "$ACR_SUFFIX"
 
       - name: Extract metadata
         id: meta
