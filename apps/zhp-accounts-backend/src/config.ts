@@ -6,6 +6,7 @@
 interface Config {
   port: number;
   nodeEnv: "development" | "production" | "test";
+  isLocalInstance: boolean;
   logLevel: "debug" | "info" | "warn" | "error";
   enableCors: boolean;
   corsAllowedOrigins: string[];
@@ -13,12 +14,26 @@ interface Config {
   internalAuthJwtTtlSeconds: number;
 }
 
+function parseNodeEnv(
+  nodeEnv: string | undefined,
+): "development" | "production" | "test" {
+  if (nodeEnv === undefined || nodeEnv.length === 0) {
+    return "development";
+  }
+
+  if (nodeEnv === "development" || nodeEnv === "production" || nodeEnv === "test") {
+    return nodeEnv;
+  }
+
+  throw new Error(
+    `Unsupported NODE_ENV value: ${nodeEnv}. Expected one of: development, production, test.`,
+  );
+}
+
 function getConfig(): Config {
   const port = parseInt(process.env.PORT || "3000", 10);
-  const nodeEnv = (process.env.NODE_ENV || "development") as
-    | "development"
-    | "production"
-    | "test";
+  const nodeEnv = parseNodeEnv(process.env.NODE_ENV);
+  const isLocalInstance = nodeEnv !== "production";
   const logLevel = (process.env.LOG_LEVEL || "info") as
     | "debug"
     | "info"
@@ -44,6 +59,7 @@ function getConfig(): Config {
   return {
     port,
     nodeEnv,
+    isLocalInstance,
     logLevel,
     enableCors,
     corsAllowedOrigins,

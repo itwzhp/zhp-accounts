@@ -4,7 +4,7 @@ import { NullTipiQueryAdapter } from "@/adapters/tipi/null-tipi-query-adapter";
 import { config } from "@/config";
 import { MemberAccessDeniedError, getMember } from "@/use-cases/members/get-member";
 import { verifyInternalAuthToken } from "../internal-auth";
-import { getAzureRequestIdentity } from "../azure-auth";
+import { getRequestIdentity } from "../azure-auth";
 
 const router: ExpressRouter = Router();
 const entraMemberDetailsPort = new NullEntraMemberDetailsAdapter();
@@ -34,7 +34,7 @@ router.get("/members/:memberId", async (req: Request, res: Response): Promise<vo
 
   try {
     const authorizationHeader = readHeader(req, "authorization");
-    const requesterMemberNum = getAzureRequestIdentity(req)?.memberNum;
+    const requesterMemberNum = getRequestIdentity(req)?.memberNum;
     const internalAuthToken = readHeader(req, "x-internalauth");
 
     if (!authorizationHeader || !requesterMemberNum || !internalAuthToken) {

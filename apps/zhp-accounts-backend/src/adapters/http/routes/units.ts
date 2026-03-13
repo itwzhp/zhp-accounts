@@ -5,7 +5,7 @@ import { getMembers } from "@/use-cases/members/get-members";
 import { getRootUnits } from "@/use-cases/units/get-root-units";
 import { getSubUnits } from "@/use-cases/units/get-sub-units";
 import { generateInternalAuthToken, verifyInternalAuthToken } from "../internal-auth";
-import { getAzureRequestIdentity } from "../azure-auth";
+import { getRequestIdentity } from "../azure-auth";
 
 const router: ExpressRouter = Router();
 const tipiQueryPort = new NullTipiQueryAdapter();
@@ -36,7 +36,7 @@ function readHeader(request: Request, name: string): string | null {
 
 router.get("/units", async (_req: Request, res: Response): Promise<void> => {
   try {
-    const membershipNumber = getAzureRequestIdentity(_req)?.memberNum;
+    const membershipNumber = getRequestIdentity(_req)?.memberNum;
 
     if (!membershipNumber) {
       res.status(401).json({ error: "Unauthorized" });
@@ -75,7 +75,7 @@ router.get("/units/:parentId", async (req: Request, res: Response): Promise<void
 
   try {
     const authorizationHeader = readHeader(req, "authorization");
-    const membershipNumber = getAzureRequestIdentity(req)?.memberNum;
+    const membershipNumber = getRequestIdentity(req)?.memberNum;
     const internalAuthToken = readHeader(req, "x-internalauth");
 
     if (!authorizationHeader || !membershipNumber || !internalAuthToken) {
@@ -130,7 +130,7 @@ router.get("/units/:unitId/members", async (req: Request, res: Response): Promis
 
   try {
     const authorizationHeader = readHeader(req, "authorization");
-    const membershipNumber = getAzureRequestIdentity(req)?.memberNum;
+    const membershipNumber = getRequestIdentity(req)?.memberNum;
     const internalAuthToken = readHeader(req, "x-internalauth");
 
     if (!authorizationHeader || !membershipNumber || !internalAuthToken) {

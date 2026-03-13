@@ -98,6 +98,15 @@ All environment-specific configuration is managed via environment variables:
 - `NODE_ENV` (default: `development`) - Environment: `development|production|test`
 - `LOG_LEVEL` (default: `info`) - Log level: `debug|info|warn|error`
 
+### Local EasyAuth simulation
+
+Identity source is selected **only** by `NODE_ENV`:
+
+- `development` and `test`: identity is read from `Authorization: Bearer <jwt>`
+- `production`: identity is read from Azure EasyAuth headers (`x-ms-client-principal-*`)
+
+In local mode, bearer token payload is decoded without signature validation (development-only behavior).
+
 For Azure Container Services, set these in your container environment configuration or Azure Key Vault integration.
 
 ## Deployment
