@@ -29,7 +29,8 @@
         units = result.subunits
       } else {
         rootUnit = null
-        units = await backend.getRootUnits()
+        const result = await backend.getRootUnits()
+        units = result.units
       }
     } catch (e) {
       error = e instanceof Error ? e.message : 'Błąd ładowania jednostek'

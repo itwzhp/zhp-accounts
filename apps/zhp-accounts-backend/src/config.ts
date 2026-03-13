@@ -9,6 +9,8 @@ interface Config {
   logLevel: "debug" | "info" | "warn" | "error";
   enableCors: boolean;
   corsAllowedOrigins: string[];
+  internalAuthJwtSecret: string;
+  internalAuthJwtTtlSeconds: number;
 }
 
 function getConfig(): Config {
@@ -32,6 +34,12 @@ function getConfig(): Config {
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean);
+  const internalAuthJwtSecret =
+    process.env.INTERNAL_AUTH_JWT_SECRET || "zhp-accounts-internal-auth-dev-secret";
+  const internalAuthJwtTtlSeconds = Number.parseInt(
+    process.env.INTERNAL_AUTH_JWT_TTL_SECONDS || "600",
+    10,
+  );
 
   return {
     port,
@@ -39,6 +47,8 @@ function getConfig(): Config {
     logLevel,
     enableCors,
     corsAllowedOrigins,
+    internalAuthJwtSecret,
+    internalAuthJwtTtlSeconds,
   };
 }
 

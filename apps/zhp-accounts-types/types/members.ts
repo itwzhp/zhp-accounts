@@ -22,3 +22,7 @@ export interface MembersWithUnit {
     unit: ZhpUnit
     members: ZhpMember[]
 }
+
+export interface MembersWithUnitWithAuth extends MembersWithUnit {
+    internalAuthToken: string
+}

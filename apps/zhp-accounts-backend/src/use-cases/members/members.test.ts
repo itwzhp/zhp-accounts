@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { EntraMemberDetailsPort } from "@/use-cases/accounts/ports/entra-member-details-port";
 import type { TipiQueryPort } from "@/use-cases/accounts/ports/tipi-query-port";
-import { getMember } from "@/use-cases/members/get-member";
+import { MemberAccessDeniedError, getMember } from "@/use-cases/members/get-member";
 import { getMembers } from "@/use-cases/members/get-members";
 
 describe("members use-cases", (): void => {
@@ -36,7 +36,7 @@ describe("members use-cases", (): void => {
       }),
     };
 
-    const result = await getMember(entraPort, tipiPort, "abc");
+    const result = await getMember(entraPort, tipiPort, "abc", ["abc"]);
 
     expect(result).toEqual({
       mail: null,
@@ -46,5 +46,25 @@ describe("members use-cases", (): void => {
       name: "Jan",
       surname: "Kowalski",
     });
+  });
+
+  it("rejects member outside allowed member numbers", async (): Promise<void> => {
+    const entraPort: EntraMemberDetailsPort = {
+      getMemberDetails: async () => null,
+    };
+    const tipiPort: TipiQueryPort = {
+      getRootUnits: async () => null,
+      getSubUnits: async () => null,
+      getMembers: async () => null,
+      getMember: async () => ({
+        membershipNumber: "abc",
+        name: "Jan",
+        surname: "Kowalski",
+      }),
+    };
+
+    await expect(getMember(entraPort, tipiPort, "abc", ["xyz"])).rejects.toBeInstanceOf(
+      MemberAccessDeniedError,
+    );
   });
 });
