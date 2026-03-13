@@ -4,3 +4,5 @@
  */
 
 export type { Request, Response } from "express";
+export { getAzureRequestIdentity } from "@/adapters/http/azure-auth";
+export type { AzureRequestIdentity } from "@/adapters/http/azure-auth";

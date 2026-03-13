@@ -5,8 +5,8 @@
   "description": "",
   "exports": {
     ".": {
-      "types": "./index.d.ts"
+      "types": "./index.ts"
     }
   },
-  "types": "./index.d.ts"
+  "types": "./index.ts"
 }

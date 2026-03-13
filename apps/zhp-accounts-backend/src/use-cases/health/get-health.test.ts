@@ -5,6 +5,7 @@
 
 import { describe, it, expect } from "vitest";
 import { getHealth } from "@/use-cases/health/get-health";
+import { VERSION } from "@/version";
 
 describe("Health Use Case", (): void => {
   it("should return ok status", (): void => {
@@ -19,7 +20,7 @@ describe("Health Use Case", (): void => {
 
   it("should include version", (): void => {
     const health = getHealth();
-    expect(health.version).toBe(process.env.EXPECTED_VERSION);
+    expect(health.version).toBe(VERSION);
     expect(health.version).toBeTypeOf("string");
     expect(health.version).not.toBe("");
   });
