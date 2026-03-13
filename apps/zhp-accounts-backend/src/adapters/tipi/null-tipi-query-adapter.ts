@@ -56,16 +56,6 @@ const MEMBERSHIP_NUMBERS_BY_UNIT: Record<number, readonly string[]> = {
   11: ["EE004444", "AA001234"],
 };
 
-const ROOT_ACCESS_BY_MEMBER: Record<string, readonly number[]> = {
-  AA001234: [1],
-  AA005678: [1],
-  BB001111: [2],
-  CC002222: [1, 2],
-  XD003333: [1, 2],
-  EE004444: [1, 2],
-  XE005555: [1],
-};
-
 const UNITS_BY_ID: Map<number, ZhpUnit> = buildUnitIndex();
 const PARENT_BY_UNIT_ID: Map<number, number> = buildParentIndex();
 
@@ -105,26 +95,8 @@ function fallbackUnit(unitId: number): ZhpUnit {
   return { id: unitId, name: `Nieznana jednostka ${unitId}`, type: "pjo" };
 }
 
-function getAllowedRootIds(memberNum: string): readonly number[] {
-  const exact = ROOT_ACCESS_BY_MEMBER[memberNum];
-
-  if (exact) {
-    return exact;
-  }
-
-  if (memberNum.startsWith("AA")) {
-    return [1];
-  }
-
-  if (memberNum.startsWith("BB")) {
-    return [2];
-  }
-
-  if (memberNum.startsWith("CC")) {
+function getAllowedRootIds(): readonly number[] {
     return [1, 2];
-  }
-
-  return [];
 }
 
 function resolveRootId(unitId: number): number | null {
@@ -151,29 +123,25 @@ function resolveRootId(unitId: number): number | null {
   return null;
 }
 
-function hasAccessToUnit(memberNum: string, unitId: number): boolean {
+function hasAccessToUnit(_: string, unitId: number): boolean {
   const rootId = resolveRootId(unitId);
 
   if (rootId === null) {
     return false;
   }
 
-  return getAllowedRootIds(memberNum).includes(rootId);
+  return getAllowedRootIds().includes(rootId);
 }
 
 export class NullTipiQueryAdapter implements TipiQueryPort {
-  async getRootUnits(memberNum: string): Promise<ZhpUnit[]> {
-    const allowedRootIds = getAllowedRootIds(memberNum);
+  async getRootUnits(): Promise<ZhpUnit[]> {
+    const allowedRootIds = getAllowedRootIds();
 
     return ROOT_UNITS.filter((unit) => allowedRootIds.includes(unit.id)).map(cloneUnit);
   }
 
-  async getSubUnits(memberNum: string, parentId: number): Promise<UnitsWithRoot> {
+  async getSubUnits(_: string, parentId: number): Promise<UnitsWithRoot> {
     const root = cloneUnit(UNITS_BY_ID.get(parentId) ?? fallbackUnit(parentId));
-
-    if (!hasAccessToUnit(memberNum, parentId)) {
-      return { root, subunits: [] };
-    }
 
     const subunits = (SUBUNITS_BY_PARENT[parentId] ?? []).map(cloneUnit);
 

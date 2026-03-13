@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { getAuthAdapter, getBackendAdapter } from "@/lib/adapters";
+    import { UnauthenticatedError } from "@/lib/errors";
   import type { ZhpMemberDetails } from "zhp-accounts-types";
   import {
     ShieldAlert,
@@ -44,6 +45,10 @@
         error = "Nie znaleziono członka";
       }
     } catch (e) {
+      if (e instanceof UnauthenticatedError) {
+        window.location.hash = "#/";
+        return;
+      }
       error = e instanceof Error ? e.message : "Błąd ładowania danych";
     } finally {
       loading = false;

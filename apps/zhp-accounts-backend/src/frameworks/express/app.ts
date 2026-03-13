@@ -27,7 +27,7 @@ export function createApp(): express.Application {
       res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
       res.setHeader(
         "Access-Control-Allow-Headers",
-        "Content-Type, Authorization, Authorize"
+        "Content-Type, Authorization, Authorize, X-InternalAuth"
       );
       res.setHeader("Access-Control-Max-Age", "86400");
     }

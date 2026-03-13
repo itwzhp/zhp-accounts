@@ -52,7 +52,7 @@ function getConfig(): Config {
   const internalAuthJwtSecret =
     process.env.INTERNAL_AUTH_JWT_SECRET || "zhp-accounts-internal-auth-dev-secret";
   const internalAuthJwtTtlSeconds = Number.parseInt(
-    process.env.INTERNAL_AUTH_JWT_TTL_SECONDS || "600",
+    process.env.INTERNAL_AUTH_JWT_TTL_SECONDS || "1800",
     10,
   );
 

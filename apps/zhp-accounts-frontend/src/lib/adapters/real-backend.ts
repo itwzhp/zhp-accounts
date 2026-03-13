@@ -1,5 +1,6 @@
 import type { BackendQueryPort } from '@/lib/ports/backend-querying'
 import type { AuthPort } from '@/lib/ports/auth'
+import { UnauthenticatedError } from '@/lib/errors'
 import {
   getMemberInternalAuthToken,
   getUnitInternalAuthToken,
@@ -29,7 +30,7 @@ export class RealBackendAdapter implements BackendQueryPort {
   private async createAuthHeaders(): Promise<Record<string, string>> {
     const token = await this.authAdapter.getToken()
     if (!token) {
-      throw new Error('Missing access token for backend request')
+      throw new UnauthenticatedError('Missing access token for backend request')
     }
 
     return {
@@ -40,6 +41,9 @@ export class RealBackendAdapter implements BackendQueryPort {
   async getRootUnits(): Promise<RootUnitsWithAuth> {
     const headers = await this.createAuthHeaders()
     const response = await fetch(`${this.baseUrl}/units`, { headers })
+    if (response.status === 401) {
+      throw new UnauthenticatedError('Unauthorized')
+    }
     if (!response.ok) {
       throw new Error(`Failed to fetch units: ${response.statusText}`)
     }
@@ -55,7 +59,7 @@ export class RealBackendAdapter implements BackendQueryPort {
     const internalAuthToken = getUnitInternalAuthToken(parentId)
 
     if (!internalAuthToken) {
-      throw new Error('Missing internal auth token for unit request')
+      throw new UnauthenticatedError('Missing internal auth token for unit request')
     }
 
     const unitResponse = await fetch(`${this.baseUrl}/units/${parentId}`, {
@@ -65,6 +69,9 @@ export class RealBackendAdapter implements BackendQueryPort {
       },
     })
     
+    if (unitResponse.status === 401) {
+      throw new UnauthenticatedError('Unauthorized')
+    }
     if (!unitResponse.ok) {
       throw new Error(`Failed to fetch unit: ${unitResponse.statusText}`)
     }
@@ -84,7 +91,7 @@ export class RealBackendAdapter implements BackendQueryPort {
     const internalAuthToken = getUnitInternalAuthToken(unitId)
 
     if (!internalAuthToken) {
-      throw new Error('Missing internal auth token for members list request')
+      throw new UnauthenticatedError('Missing internal auth token for members list request')
     }
 
     const membersResponse = await fetch(`${this.baseUrl}/units/${unitId}/members`, {
@@ -94,6 +101,9 @@ export class RealBackendAdapter implements BackendQueryPort {
       },
     })
     
+    if (membersResponse.status === 401) {
+      throw new UnauthenticatedError('Unauthorized')
+    }
     if (!membersResponse.ok) {
       throw new Error(`Failed to fetch members: ${membersResponse.statusText}`)
     }
@@ -113,7 +123,7 @@ export class RealBackendAdapter implements BackendQueryPort {
     const internalAuthToken = getMemberInternalAuthToken(memberId)
 
     if (!internalAuthToken) {
-      throw new Error('Missing internal auth token for member request')
+      throw new UnauthenticatedError('Missing internal auth token for member request')
     }
 
     const response = await fetch(`${this.baseUrl}/members/${memberId}`, {
@@ -124,6 +134,9 @@ export class RealBackendAdapter implements BackendQueryPort {
     })
     if (response.status === 404) {
       return null
+    }
+    if (response.status === 401) {
+      throw new UnauthenticatedError('Unauthorized')
     }
     if (!response.ok) {
       throw new Error(`Failed to fetch member: ${response.statusText}`)
