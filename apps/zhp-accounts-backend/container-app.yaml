@@ -7,6 +7,19 @@ properties:
     activeRevisionsMode: Single
     ingress:
       allowInsecure: false
+      corsPolicy:
+        allowedOrigins:
+        - https://konto.zhp.pl
+        - http://localhost:5173
+        - https://zhp-accounts-frontend.zhp-gk.workers.dev # TODO usunąć po release
+        allowedMethods:
+        - GET
+        - POST
+        - OPTIONS
+        allowedHeaders:
+        - Content-Type
+        - Authorization
+        - Authorize
       external: true
       stickySessions:
         affinity: none
@@ -24,6 +37,9 @@ properties:
     containers:
     - image: REPLACED_BY_CI
       name: konta-zhp-backend
+      env:
+      - name: ENABLE_CORS
+        value: "false"
       probes:
       - failureThreshold: 2
         httpGet:

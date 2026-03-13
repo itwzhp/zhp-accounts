@@ -12,7 +12,6 @@ const server = app.listen(config.port, (): void => {
   console.info(
     `Server running on http://localhost:${config.port} [${config.nodeEnv}]`
   );
-  console.info(`Health check: http://localhost:${config.port}/healthcheck`);
 });
 
 // Graceful shutdown
