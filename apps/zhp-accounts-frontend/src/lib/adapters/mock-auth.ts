@@ -5,6 +5,7 @@ import type { AuthPort, AuthResult } from '@/lib/ports/auth'
  */
 export class MockAuthAdapter implements AuthPort {
   private token: string | null = null
+  private userName: string | null = null
 
   async handleRedirectCallback(): Promise<AuthResult | null> {
     // Mock adapter doesn't handle redirects
@@ -20,6 +21,7 @@ export class MockAuthAdapter implements AuthPort {
     }
 
     this.token = 'TEST_TOKEN'
+    this.userName = result.userName
 
     return result
   }
@@ -27,14 +29,19 @@ export class MockAuthAdapter implements AuthPort {
   async logout(): Promise<void> {
     await this.delay(100)
     this.token = null
+    this.userName = null
   }
 
   async getToken(): Promise<string | null> {
     return this.token
   }
 
-  async isAuthenticated(): Promise<boolean> {
-    return this.token !== null
+  async getAuthenticationStatus(): Promise<AuthResult | null> {
+    if (!this.token || !this.userName) {
+      return null
+    }
+
+    return { userName: this.userName }
   }
 
   private delay(ms: number): Promise<void> {

@@ -17,8 +17,8 @@
     try {
       loading = true
       const authAdapter = getAuthAdapter()
-      const isAuthenticated = await authAdapter.isAuthenticated()
-      if (!isAuthenticated) {
+      const authStatus = await authAdapter.getAuthenticationStatus()
+      if (!authStatus) {
         window.location.hash = '#/'
         return
       }

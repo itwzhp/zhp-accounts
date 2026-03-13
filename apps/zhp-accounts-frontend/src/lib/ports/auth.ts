@@ -11,8 +11,8 @@ export interface AuthResult {
  */
 export interface AuthPort {
   /**
-   * Handle redirect callback after authentication.
-   * Should be called on app initialization before checking isAuthenticated()
+    * Handle redirect callback after authentication.
+    * Should be called on app initialization before checking getAuthenticationStatus()
    * Returns AuthResult if user just logged in via redirect, null otherwise
    */
   handleRedirectCallback(): Promise<AuthResult | null>
@@ -34,7 +34,7 @@ export interface AuthPort {
   getToken(): Promise<string | null>
 
   /**
-   * Check if user is currently authenticated
+   * Get current authentication status
    */
-  isAuthenticated(): Promise<boolean>
+  getAuthenticationStatus(): Promise<AuthResult | null>
 }

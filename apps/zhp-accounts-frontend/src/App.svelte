@@ -7,7 +7,6 @@
   import { link } from 'svelte-spa-router'
 
   let authState = $state({
-    isAuthenticated: false,
     userName: null as string | null,
     isLoading: false,
   })
@@ -20,13 +19,13 @@
       // Handle redirect callback from MSAL (checks if user just logged in)
       const redirectResult = await authAdapter.handleRedirectCallback()
       if (redirectResult) {
-        authState.isAuthenticated = true
         authState.userName = redirectResult.userName
         window.location.hash = '#/units'
       }
 
       // Check current authentication status
-      authState.isAuthenticated = await authAdapter.isAuthenticated()
+      const authStatus = await authAdapter.getAuthenticationStatus()
+      authState.userName = authStatus?.userName ?? null
     } finally {
       authState.isLoading = false
     }
@@ -38,7 +37,6 @@
       const authAdapter = getAuthAdapter()
       const result = await authAdapter.login()
       if (result) {
-        authState.isAuthenticated = true
         authState.userName = result.userName
         window.location.hash = '#/units'
       }
@@ -52,7 +50,6 @@
     try {
       const authAdapter = getAuthAdapter()
       await authAdapter.logout()
-      authState.isAuthenticated = false
       authState.userName = null
       window.location.hash = '#/'
     } finally {
@@ -77,7 +74,7 @@
           </a>
 
           <div>
-            {#if authState.isAuthenticated && authState.userName}
+            {#if authState.userName}
               <div class="flex flex-col items-start gap-2">
                 <span class="text-sm md:text-base font-medium">{authState.userName}</span>
                 <button
@@ -124,7 +121,7 @@
         </a>
 
         <div>
-          {#if authState.isAuthenticated && authState.userName}
+          {#if authState.userName}
             <div class="flex flex-col items-start gap-2">
               <span class="text-sm md:text-base font-medium">{authState.userName}</span>
               <button

@@ -17,7 +17,7 @@ export class RealAuthAdapter implements AuthPort {
   private initializationPromise: Promise<void> | null = null
 
   private async ensureInitialized(): Promise<void> {
-    if (this.msalInstance) {
+    if (this.msalInstance && !this.isInitializing) {
       return
     }
 
@@ -158,19 +158,24 @@ export class RealAuthAdapter implements AuthPort {
     }
   }
 
-  async isAuthenticated(): Promise<boolean> {
+  async getAuthenticationStatus(): Promise<AuthResult | null> {
     try {
       await this.ensureInitialized()
 
       if (!this.msalInstance) {
-        return false
+        return null
       }
 
-      const accounts = this.msalInstance.getAllAccounts()
-      return accounts.length > 0
+      const account = this.getActiveAccount()
+      if (!account) {
+        return null
+      }
+
+      const userName = account.name || account.username || 'User'
+      return { userName }
     } catch (error) {
       console.error('Error checking authentication status:', error)
-      return false
+      return null
     }
   }
 }
