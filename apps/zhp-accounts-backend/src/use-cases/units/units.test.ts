@@ -12,7 +12,7 @@ describe("units use-cases", (): void => {
       getMember: async () => null,
     };
 
-    const result = await getRootUnits(port);
+    const result = await getRootUnits(port, "AL001234567");
 
     expect(result).toEqual([]);
   });
@@ -25,7 +25,7 @@ describe("units use-cases", (): void => {
       getMember: async () => null,
     };
 
-    const result = await getSubUnits(port, 123);
+    const result = await getSubUnits(port, "AL001234567", 123);
 
     expect(result).toEqual({
       root: { id: 0, name: "", type: "pjo" },

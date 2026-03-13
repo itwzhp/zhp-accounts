@@ -2,11 +2,13 @@ import type { MembersWithUnit, UnitsWithRoot, ZhpMember, ZhpUnit } from "zhp-acc
 import type { TipiQueryPort } from "@/use-cases/accounts/ports/tipi-query-port";
 
 export class NullTipiQueryAdapter implements TipiQueryPort {
-  async getRootUnits(): Promise<ZhpUnit[]> {
+  async getRootUnits(memberNum: string): Promise<ZhpUnit[]> {
+    void memberNum;
     return [];
   }
 
-  async getSubUnits(parentId: number): Promise<UnitsWithRoot> {
+  async getSubUnits(memberNum: string, parentId: number): Promise<UnitsWithRoot> {
+    void memberNum;
     void parentId;
     return {} as UnitsWithRoot;
   }

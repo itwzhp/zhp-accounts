@@ -3,6 +3,7 @@ import { NullTipiQueryAdapter } from "@/adapters/tipi/null-tipi-query-adapter";
 import { getMembers } from "@/use-cases/members/get-members";
 import { getRootUnits } from "@/use-cases/units/get-root-units";
 import { getSubUnits } from "@/use-cases/units/get-sub-units";
+import { getAzureRequestIdentity } from "../azure-auth";
 
 const router: ExpressRouter = Router();
 const tipiQueryPort = new NullTipiQueryAdapter();
@@ -19,7 +20,13 @@ function parseNumericPathParam(value: string): number | null {
 
 router.get("/units", async (_req: Request, res: Response): Promise<void> => {
   try {
-    const units = await getRootUnits(tipiQueryPort);
+    const membershipNumber = getAzureRequestIdentity(_req)?.memberNum;
+    if(!membershipNumber) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const units = await getRootUnits(tipiQueryPort, membershipNumber);
     res.status(200).json(units);
   } catch {
     res.status(500).json({ error: "Internal Server Error" });
@@ -35,7 +42,13 @@ router.get("/units/:parentId", async (req: Request, res: Response): Promise<void
   }
 
   try {
-    const payload = await getSubUnits(tipiQueryPort, parentId);
+    const membershipNumber = getAzureRequestIdentity(req)?.memberNum;
+    if (!membershipNumber) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+
+    const payload = await getSubUnits(tipiQueryPort, membershipNumber, parentId);
     res.status(200).json(payload);
   } catch {
     res.status(500).json({ error: "Internal Server Error" });
