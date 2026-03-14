@@ -1,5 +1,5 @@
-import type { MembersWithUnit, UnitsWithRoot, ZhpMember, ZhpUnit } from "zhp-accounts-types";
-import type { TipiQueryPort } from "@/use-cases/accounts/ports/tipi-query-port";
+import type { ZhpMember, ZhpUnit } from "zhp-accounts-types";
+import type { TipiQueryPort } from "@/ports/tipi-query-port";
 
 const ROOT_UNITS: readonly ZhpUnit[] = [
   { id: 1, name: "Chorągiew Stołeczna", type: "choragiew" },
@@ -57,7 +57,6 @@ const MEMBERSHIP_NUMBERS_BY_UNIT: Record<number, readonly string[]> = {
 };
 
 const UNITS_BY_ID: Map<number, ZhpUnit> = buildUnitIndex();
-const PARENT_BY_UNIT_ID: Map<number, number> = buildParentIndex();
 
 function buildUnitIndex(): Map<number, ZhpUnit> {
   const entries: ZhpUnit[] = [...ROOT_UNITS];
@@ -67,20 +66,6 @@ function buildUnitIndex(): Map<number, ZhpUnit> {
   }
 
   return new Map(entries.map((unit) => [unit.id, unit]));
-}
-
-function buildParentIndex(): Map<number, number> {
-  const index = new Map<number, number>();
-
-  for (const [parentIdRaw, subunits] of Object.entries(SUBUNITS_BY_PARENT)) {
-    const parentId = Number(parentIdRaw);
-
-    for (const subunit of subunits) {
-      index.set(subunit.id, parentId);
-    }
-  }
-
-  return index;
 }
 
 function cloneUnit(unit: ZhpUnit): ZhpUnit {
@@ -96,66 +81,30 @@ function fallbackUnit(unitId: number): ZhpUnit {
 }
 
 function getAllowedRootIds(): readonly number[] {
-    return [1, 2];
+  return [1, 2];
 }
 
-function resolveRootId(unitId: number): number | null {
-  if (ROOT_UNITS.some((unit) => unit.id === unitId)) {
-    return unitId;
-  }
-
-  let current = unitId;
-
-  while (PARENT_BY_UNIT_ID.has(current)) {
-    const parentId = PARENT_BY_UNIT_ID.get(current);
-
-    if (parentId === undefined) {
-      break;
-    }
-
-    if (ROOT_UNITS.some((unit) => unit.id === parentId)) {
-      return parentId;
-    }
-
-    current = parentId;
-  }
-
-  return null;
-}
-
-function hasAccessToUnit(_: string, unitId: number): boolean {
-  const rootId = resolveRootId(unitId);
-
-  if (rootId === null) {
-    return false;
-  }
-
-  return getAllowedRootIds().includes(rootId);
-}
-
-export class NullTipiQueryAdapter implements TipiQueryPort {
+export class MockTipiQueryAdapter implements TipiQueryPort {
   async getRootUnits(): Promise<ZhpUnit[]> {
     const allowedRootIds = getAllowedRootIds();
 
     return ROOT_UNITS.filter((unit) => allowedRootIds.includes(unit.id)).map(cloneUnit);
   }
 
-  async getSubUnits(_: string, parentId: number): Promise<UnitsWithRoot> {
-    const root = cloneUnit(UNITS_BY_ID.get(parentId) ?? fallbackUnit(parentId));
-
-    const subunits = (SUBUNITS_BY_PARENT[parentId] ?? []).map(cloneUnit);
-
-    return { root, subunits };
+  async getUnit(unitId: number): Promise<ZhpUnit> {
+    return cloneUnit(UNITS_BY_ID.get(unitId) ?? fallbackUnit(unitId));
   }
 
-  async getMembers(unitId: number): Promise<MembersWithUnit> {
-    const unit = cloneUnit(UNITS_BY_ID.get(unitId) ?? fallbackUnit(unitId));
+  async getSubUnits(_: string, parentId: number): Promise<ZhpUnit[]> {
+    return (SUBUNITS_BY_PARENT[parentId] ?? []).map(cloneUnit);
+  }
+
+  async getMembers(unitId: number): Promise<ZhpMember[]> {
     const membershipNumbers = MEMBERSHIP_NUMBERS_BY_UNIT[unitId] ?? [];
-    const members = membershipNumbers.map(
+
+    return membershipNumbers.map(
       (membershipNumber) => MEMBERS_BY_NUMBER[membershipNumber] ?? fallbackMember(membershipNumber),
     );
-
-    return { unit, members };
   }
 
   async getMember(membershipNumber: string): Promise<ZhpMember | null> {

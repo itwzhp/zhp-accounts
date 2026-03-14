@@ -1,92 +1,60 @@
+import type { Request } from "express";
 import { jwtVerify, SignJWT } from "jose";
+import { config } from "@/config";
 
-export interface InternalAuthTokenPayload {
-  sub: string;
-  allowedUnitIds: number[];
-  allowedMemberNumbers: string[];
-  iat: number;
-  exp: number;
-}
-
-interface InternalAuthTokenInput {
+interface InternalAuthTokenPayload {
   sub: string;
   allowedUnitIds: number[];
   allowedMemberNumbers: string[];
 }
 
-interface InternalAuthTokenOptions {
-  secret: string;
-  ttlSeconds: number;
-}
+const secretKey = new TextEncoder().encode(config.internalAuthJwtSecret);
 
-function getSecretKey(secret: string): Uint8Array {
-  return new TextEncoder().encode(secret);
-}
+function readHeader(request: Request, name: string): string | null {
+  const rawValue = request.headers[name.toLowerCase()];
 
-function isInternalAuthTokenPayload(value: unknown): value is InternalAuthTokenPayload {
-  if (typeof value !== "object" || value === null) {
-    return false;
+  if (typeof rawValue === "string") {
+    return rawValue;
   }
 
-  const payload = value as Record<string, unknown>;
+  if (Array.isArray(rawValue) && rawValue.length > 0) {
+    return rawValue[0] ?? null;
+  }
 
-  return (
-    typeof payload.sub === "string" &&
-    Array.isArray(payload.allowedUnitIds) &&
-    payload.allowedUnitIds.every((unitId) => typeof unitId === "number") &&
-    Array.isArray(payload.allowedMemberNumbers) &&
-    payload.allowedMemberNumbers.every((memberNumber) => typeof memberNumber === "string") &&
-    typeof payload.iat === "number" &&
-    typeof payload.exp === "number"
-  );
+  return null;
 }
 
-export async function generateInternalAuthToken(
-  input: InternalAuthTokenInput,
-  options: InternalAuthTokenOptions,
-): Promise<string> {
+export async function generateInternalAuthToken(input: InternalAuthTokenPayload): Promise<string> {
   const issuedAt = Math.floor(Date.now() / 1000);
-  const payload: InternalAuthTokenPayload = {
-    sub: input.sub,
+
+  return await new SignJWT({
     allowedUnitIds: [...new Set(input.allowedUnitIds)],
     allowedMemberNumbers: [...new Set(input.allowedMemberNumbers)],
-    iat: issuedAt,
-    exp: issuedAt + options.ttlSeconds,
-  };
-
-  return new SignJWT({
-    allowedUnitIds: payload.allowedUnitIds,
-    allowedMemberNumbers: payload.allowedMemberNumbers,
   })
     .setProtectedHeader({ alg: "HS256", typ: "JWT" })
-    .setSubject(payload.sub)
-    .setIssuedAt(payload.iat)
-    .setExpirationTime(payload.exp)
-    .sign(getSecretKey(options.secret));
+    .setSubject(input.sub)
+    .setIssuedAt(issuedAt)
+    .setExpirationTime(issuedAt + config.internalAuthJwtTtlSeconds)
+    .sign(secretKey);
 }
 
 export async function verifyInternalAuthToken(
-  token: string,
-  secret: string,
+  request: Request,
 ): Promise<InternalAuthTokenPayload | null> {
+  const token = readHeader(request, "x-internalauth");
+
+  if (!token) {
+    return null;
+  }
+
   try {
-    const verificationResult = await jwtVerify(token, getSecretKey(secret), {
+    const verificationResult = await jwtVerify<InternalAuthTokenPayload>(token, secretKey, {
       algorithms: ["HS256"],
       typ: "JWT",
     });
-    const payload = {
-      sub: verificationResult.payload.sub,
-      allowedUnitIds: verificationResult.payload.allowedUnitIds,
-      allowedMemberNumbers: verificationResult.payload.allowedMemberNumbers,
-      iat: verificationResult.payload.iat,
-      exp: verificationResult.payload.exp,
-    } as unknown;
 
-    if (!isInternalAuthTokenPayload(payload)) {
-      return null;
-    }
+    return verificationResult.payload;
 
-    return payload;
   } catch {
     return null;
   }

@@ -1,10 +1,25 @@
 import type { CreateAccountCommand, CreateAccountResponse } from "zhp-accounts-types";
-import type { EntraAccountCommandsPort } from "@/use-cases/accounts/ports/entra-account-commands-port";
+import {
+    getAuditLoggerPort,
+  getEntraAccountCommandsPort,
+  getTipiQueryPort,
+} from "@/frameworks/providers/service-provider";
 
 export async function createAccount(
-  port: EntraAccountCommandsPort,
   command: CreateAccountCommand,
-  login: string,
+  actorLogin: string,
 ): Promise<CreateAccountResponse> {
-  return port.createAccount(command.membershipNumber, login);
+  const entraPort = getEntraAccountCommandsPort();
+  const tipiPort = getTipiQueryPort();
+  const auditLogger = getAuditLoggerPort();
+
+  const accountOwner = await tipiPort.getMember(command.membershipNumber);
+
+  if (!accountOwner) {
+    throw new Error(`Member ${command.membershipNumber} not found`);
+  }
+
+  const result = await entraPort.createAccount(accountOwner);
+  await auditLogger.log(actorLogin, command.membershipNumber, "CreateAccount", {newEmail: result.email});
+  return result;
 }

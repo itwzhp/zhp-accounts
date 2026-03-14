@@ -1,4 +1,4 @@
-import type { EntraMemberDetailsPort } from "@/use-cases/accounts/ports/entra-member-details-port";
+import type { EntraMemberDetailsPort } from "@/ports/entra-member-details-port";
 import type { ZhpMemberDetails } from "zhp-accounts-types";
 
 const MOCK_MEMBER_DETAILS: Record<string, ZhpMemberDetails> = {
@@ -71,7 +71,7 @@ function fallbackDetails(memberId: string): ZhpMemberDetails {
   };
 }
 
-export class NullEntraMemberDetailsAdapter implements EntraMemberDetailsPort {
+export class MockEntraMemberDetailsAdapter implements EntraMemberDetailsPort {
   async getMemberDetails(memberId: string): Promise<ZhpMemberDetails | null> {
     return MOCK_MEMBER_DETAILS[memberId] ?? fallbackDetails(memberId);
   }

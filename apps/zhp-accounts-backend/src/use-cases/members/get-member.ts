@@ -1,35 +1,30 @@
-import type { EntraMemberDetailsPort } from "@/use-cases/accounts/ports/entra-member-details-port";
-import type { TipiQueryPort } from "@/use-cases/accounts/ports/tipi-query-port";
 import type { ZhpMemberDetails } from "zhp-accounts-types";
-
-export class MemberAccessDeniedError extends Error {
-  constructor(memberId: string) {
-    super(`Member ${memberId} is not allowed by internal auth token`);
-    this.name = "MemberAccessDeniedError";
-  }
-}
+import {
+  getEntraMemberDetailsPort,
+  getTipiQueryPort,
+} from "@/frameworks/providers/service-provider";
 
 export async function getMember(
-  entraPort: EntraMemberDetailsPort,
-  tipiPort: TipiQueryPort,
   memberId: string,
-  allowedMemberNumbers: readonly string[],
 ): Promise<ZhpMemberDetails> {
-  if (!allowedMemberNumbers.includes(memberId)) {
-    throw new MemberAccessDeniedError(memberId);
-  }
+  const entraPort = getEntraMemberDetailsPort();
+  const tipiPort = getTipiQueryPort();
 
   const [entraMemberDetails, tipiMember] = await Promise.all([
     entraPort.getMemberDetails(memberId),
     tipiPort.getMember(memberId),
   ]);
 
+  if (!tipiMember) {
+    throw new Error(`Member with ID ${memberId} not found in Tipi`);
+  }
+
   return {
     mail: entraMemberDetails?.mail ?? null,
     canMailBeCorrected: entraMemberDetails?.canMailBeCorrected ?? false,
     isAdmin: entraMemberDetails?.isAdmin ?? false,
     membershipNumber: memberId,
-    name: tipiMember?.name ?? "",
-    surname: tipiMember?.surname ?? "",
+    name: tipiMember.name,
+    surname: tipiMember.surname,
   };
 }

@@ -1,9 +1,12 @@
 import type { MembersWithUnit } from "zhp-accounts-types";
-import { EMPTY_UNIT } from "@/use-cases/accounts/defaults";
-import type { TipiQueryPort } from "@/use-cases/accounts/ports/tipi-query-port";
+import { getTipiQueryPort } from "@/frameworks/providers/service-provider";
 
-export async function getMembers(port: TipiQueryPort, unitId: number): Promise<MembersWithUnit> {
-  const payload = await port.getMembers(unitId);
+export async function getMembers(unitId: number): Promise<MembersWithUnit> {
+  const port = getTipiQueryPort();
+  const membersPromise = port.getMembers(unitId);
+  const unitPromise = port.getUnit(unitId);
 
-  return payload ?? { unit: EMPTY_UNIT, members: [] };
+  const [members, unit] = await Promise.all([membersPromise, unitPromise]);
+
+  return { unit, members };
 }

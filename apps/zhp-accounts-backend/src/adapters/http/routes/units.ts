@@ -1,14 +1,12 @@
 import { Router, type Request, type Response, type Router as ExpressRouter } from "express";
-import { NullTipiQueryAdapter } from "@/adapters/tipi/null-tipi-query-adapter";
-import { config } from "@/config";
 import { getMembers } from "@/use-cases/members/get-members";
 import { getRootUnits } from "@/use-cases/units/get-root-units";
 import { getSubUnits } from "@/use-cases/units/get-sub-units";
-import { generateInternalAuthToken, verifyInternalAuthToken } from "../internal-auth";
+import { generateInternalAuthToken } from "../internal-auth";
 import { getRequestIdentity } from "../azure-auth";
+import { performFullAuth } from "../full-auth";
 
 const router: ExpressRouter = Router();
-const tipiQueryPort = new NullTipiQueryAdapter();
 
 function parseNumericPathParam(value: string): number | null {
   const parsed = Number.parseInt(value, 10);
@@ -20,20 +18,6 @@ function parseNumericPathParam(value: string): number | null {
   return parsed;
 }
 
-function readHeader(request: Request, name: string): string | null {
-  const rawValue = request.headers[name.toLowerCase()];
-
-  if (typeof rawValue === "string") {
-    return rawValue;
-  }
-
-  if (Array.isArray(rawValue) && rawValue.length > 0) {
-    return rawValue[0] ?? null;
-  }
-
-  return null;
-}
-
 router.get("/units", async (_req: Request, res: Response): Promise<void> => {
   try {
     const membershipNumber = getRequestIdentity(_req)?.memberNum;
@@ -43,16 +27,12 @@ router.get("/units", async (_req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const units = await getRootUnits(tipiQueryPort, membershipNumber);
+    const units = await getRootUnits(membershipNumber);
     const internalAuthToken = await generateInternalAuthToken(
       {
         sub: membershipNumber,
         allowedUnitIds: units.map((unit) => unit.id),
         allowedMemberNumbers: [],
-      },
-      {
-        secret: config.internalAuthJwtSecret,
-        ttlSeconds: config.internalAuthJwtTtlSeconds,
       },
     );
 
@@ -74,40 +54,19 @@ router.get("/units/:parentId", async (req: Request, res: Response): Promise<void
   }
 
   try {
-    const authorizationHeader = readHeader(req, "authorization");
-    const membershipNumber = getRequestIdentity(req)?.memberNum;
-    const internalAuthToken = readHeader(req, "x-internalauth");
+    const authResult = await performFullAuth(req, res, undefined, parentId);
 
-    if (!authorizationHeader || !membershipNumber || !internalAuthToken) {
-      res.status(401).json({ error: "Unauthorized" });
+    if (!authResult) {
       return;
     }
+    const membershipNumber = authResult.memberNum;
 
-    const verifiedToken = await verifyInternalAuthToken(
-      internalAuthToken,
-      config.internalAuthJwtSecret,
-    );
-
-    if (!verifiedToken || verifiedToken.sub !== membershipNumber) {
-      res.status(401).json({ error: "Unauthorized" });
-      return;
-    }
-
-    if (!verifiedToken.allowedUnitIds.includes(parentId)) {
-      res.status(403).json({ error: "Forbidden" });
-      return;
-    }
-
-    const payload = await getSubUnits(tipiQueryPort, membershipNumber, parentId);
+    const payload = await getSubUnits(membershipNumber, parentId);
     const refreshedInternalAuthToken = await generateInternalAuthToken(
       {
         sub: membershipNumber,
         allowedUnitIds: [payload.root.id, ...payload.subunits.map((unit) => unit.id)],
         allowedMemberNumbers: [],
-      },
-      {
-        secret: config.internalAuthJwtSecret,
-        ttlSeconds: config.internalAuthJwtTtlSeconds,
       },
     );
 
@@ -129,40 +88,19 @@ router.get("/units/:unitId/members", async (req: Request, res: Response): Promis
   }
 
   try {
-    const authorizationHeader = readHeader(req, "authorization");
-    const membershipNumber = getRequestIdentity(req)?.memberNum;
-    const internalAuthToken = readHeader(req, "x-internalauth");
+    const authResult = await performFullAuth(req, res, undefined, unitId);
 
-    if (!authorizationHeader || !membershipNumber || !internalAuthToken) {
-      res.status(401).json({ error: "Unauthorized" });
+    if (!authResult) {
       return;
     }
+    const membershipNumber = authResult.memberNum;
 
-    const verifiedToken = await verifyInternalAuthToken(
-      internalAuthToken,
-      config.internalAuthJwtSecret,
-    );
-
-    if (!verifiedToken || verifiedToken.sub !== membershipNumber) {
-      res.status(401).json({ error: "Unauthorized" });
-      return;
-    }
-
-    if (!verifiedToken.allowedUnitIds.includes(unitId)) {
-      res.status(403).json({ error: "Forbidden" });
-      return;
-    }
-
-    const payload = await getMembers(tipiQueryPort, unitId);
+    const payload = await getMembers(unitId);
     const refreshedInternalAuthToken = await generateInternalAuthToken(
       {
         sub: membershipNumber,
         allowedUnitIds: [unitId],
         allowedMemberNumbers: payload.members.map((member) => member.membershipNumber),
-      },
-      {
-        secret: config.internalAuthJwtSecret,
-        ttlSeconds: config.internalAuthJwtTtlSeconds,
       },
     );
 

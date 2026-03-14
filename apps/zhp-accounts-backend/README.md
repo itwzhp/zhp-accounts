@@ -32,11 +32,6 @@ pnpm install
 pnpm run dev
 ```
 
-**With Docker Compose:**
-```bash
-docker-compose up
-```
-
 The server runs on `http://localhost:3000`
 
 ### Endpoints
@@ -51,7 +46,7 @@ The server runs on `http://localhost:3000`
 pnpm run test
 
 # Watch mode
-pnpm run test
+pnpm run test:ui
 
 # Coverage report
 pnpm run test:coverage
@@ -73,21 +68,11 @@ pnpm run lint:fix
 docker build -t zhp-accounts-backend:latest .
 ```
 
-**Development image (with hot-reload):**
-```bash
-docker build -f Dockerfile.dev -t zhp-accounts-backend:dev .
-```
-
 ### Running
 
 **Production:**
 ```bash
 docker run -p 3000:3000 -e NODE_ENV=production zhp-accounts-backend:latest
-```
-
-**Development:**
-```bash
-docker-compose up
 ```
 
 ## Environment Variables
@@ -113,12 +98,6 @@ For Azure Container Services, set these in your container environment configurat
 
 CI/CD pipeline automatically builds and pushes Docker image to Azure Container Registry when pushing to main branch.
 
-### GitHub Secrets Required
-
-- `ACR_ENDPOINT` - Azure Container Registry endpoint (e.g., `myregistry.azurecr.io`)
-- `ACR_USERNAME` - ACR username
-- `ACR_PASSWORD` - ACR password or token
-
 See `.github/workflows/backend-docker.yml` for workflow details.
 
 ## Project Structure
@@ -129,13 +108,9 @@ src/
 ├── config.ts                         # Configuration management
 ├── adapters/                         # External interfaces
 │   ├── http/
-│   │   ├── index.ts
-│   │   └── routes/
-│   └── database/                     # (Placeholder for DB adapter)
+│       └── routes/
 ├── use-cases/                        # Business logic
-│   └── health/
 ├── entities/                         # Domain models
 └── frameworks/                       # Framework integration
     └── express/
-        └── app.ts
 ```

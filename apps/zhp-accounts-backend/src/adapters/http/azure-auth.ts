@@ -11,8 +11,8 @@ interface AzureClientPrincipal {
 }
 
 export interface AzureRequestIdentity {
-  login: string | null;
-  memberNum: string | null;
+  login: string;
+  memberNum: string;
 }
 
 function readHeader(request: Request, name: string): string | null {
@@ -89,23 +89,17 @@ function readStringClaim(
   return typeof claimValue === "string" ? claimValue : null;
 }
 
-function getBearerRequestIdentity(request: Request): AzureRequestIdentity {
+function getBearerRequestIdentity(request: Request): AzureRequestIdentity | null{
   const bearerToken = getBearerToken(request);
 
   if (!bearerToken) {
-    return {
-      login: null,
-      memberNum: null,
-    };
+    return null;
   }
 
   const payload = decodeJwtPayload(bearerToken);
 
   if (!payload) {
-    return {
-      login: null,
-      memberNum: null,
-    };
+    return null;
   }
 
   const login =
@@ -114,13 +108,17 @@ function getBearerRequestIdentity(request: Request): AzureRequestIdentity {
     readStringClaim(payload, "name");
   const memberNum = readStringClaim(payload, "memberNum");
 
+  if (!login || !memberNum) {
+    return null;
+  }
+
   return {
     login,
     memberNum,
   };
 }
 
-function getAzureRequestIdentity(request: Request): AzureRequestIdentity {
+function getAzureRequestIdentity(request: Request): AzureRequestIdentity | null {
   const login = readHeader(request, "x-ms-client-principal-name");
   const clientPrincipal = decodeClientPrincipal(
     readHeader(request, "x-ms-client-principal"),
@@ -128,13 +126,17 @@ function getAzureRequestIdentity(request: Request): AzureRequestIdentity {
   const memberNum =
     clientPrincipal?.claims?.find((claim): boolean => claim.typ === "memberNum")?.val ?? null;
 
+  if (!login || !memberNum) {
+    return null;
+  }
+
   return {
     login,
     memberNum,
   };
 }
 
-export function getRequestIdentity(request: Request): AzureRequestIdentity {
+export function getRequestIdentity(request: Request): AzureRequestIdentity | null {
   if (config.isLocalInstance) {
     return getBearerRequestIdentity(request);
   }

@@ -1,10 +1,14 @@
 import type { GenerateTapCommand, GenerateTapResponse } from "zhp-accounts-types";
-import type { EntraAccountCommandsPort } from "@/use-cases/accounts/ports/entra-account-commands-port";
+import { getAuditLoggerPort, getEntraAccountCommandsPort } from "@/frameworks/providers/service-provider";
 
 export async function generateTap(
-  port: EntraAccountCommandsPort,
-  command: GenerateTapCommand,
-  login: string,
+    command: GenerateTapCommand,
+    actorLogin: string
 ): Promise<GenerateTapResponse> {
-  return port.generateTap(command.membershipNumber, command.email, login);
+    const port = getEntraAccountCommandsPort();
+    const auditLogger = getAuditLoggerPort();
+
+    var result = await port.generateTap(command.membershipNumber);
+    await auditLogger.log(actorLogin, command.membershipNumber, "GenerateTAP");
+    return result;
 }

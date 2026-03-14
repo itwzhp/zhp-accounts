@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Request } from "express";
-import { getRequestIdentity } from "@/adapters/http/azure-auth";
+import { getRequestIdentity } from "./azure-auth";
 
 const mockConfig = vi.hoisted(() => ({ isLocalInstance: true }));
 
@@ -61,10 +61,7 @@ describe("getRequestIdentity in local mode", (): void => {
 
     const identity = getRequestIdentity(request);
 
-    expect(identity).toEqual({
-      login: null,
-      memberNum: null,
-    });
+    expect(identity).toBeNull();
   });
 
   it("returns empty identity when bearer payload does not contain memberNum", (): void => {
@@ -74,10 +71,7 @@ describe("getRequestIdentity in local mode", (): void => {
 
     const identity = getRequestIdentity(request);
 
-    expect(identity).toEqual({
-      login: "person@zhp.net.pl",
-      memberNum: null,
-    });
+    expect(identity).toBeNull();
   });
 });
 
@@ -89,14 +83,14 @@ describe("getRequestIdentity in production mode", (): void => {
   it("extracts login and memberNum from Azure EasyAuth headers", (): void => {
     const request = buildRequest({
       authorization: `Bearer ${TEST_BEARER_TOKEN}`,
-      "x-ms-client-principal-name": "karol.grodzicki@zhp.net.pl",
+      "x-ms-client-principal-name": "karol.grodzicki2@zhp.net.pl",
       "x-ms-client-principal": CLIENT_PRINCIPAL,
     });
 
     const identity = getRequestIdentity(request);
 
     expect(identity).toEqual({
-      login: "karol.grodzicki@zhp.net.pl",
+      login: "karol.grodzicki2@zhp.net.pl",
       memberNum: "AL005047071",
     });
   });
