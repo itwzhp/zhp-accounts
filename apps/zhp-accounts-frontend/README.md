@@ -83,7 +83,6 @@ Aplikacja używa hash-routingu (`svelte-spa-router`):
 - `#/` - Strona główna
 - `#/units` - Lista jednostek
 - `#/units/:id/members` - Członkowie jednostki
-- `#/profile` - Profil użytkownika
 
 ## Deployment
 

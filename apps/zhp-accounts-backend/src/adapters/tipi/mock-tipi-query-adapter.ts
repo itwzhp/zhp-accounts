@@ -37,7 +37,7 @@ const SUBUNITS_BY_PARENT: Record<number, readonly ZhpUnit[]> = {
 };
 
 const MEMBERS_BY_NUMBER: Record<string, ZhpMember> = {
-  AA001234: { name: "Jan", surname: "Kowalski", membershipNumber: "AA001234" },
+  AA001234: { name: "Jan", surname: "Krüger", membershipNumber: "AA001234" },
   AA005678: { name: "Anna", surname: "Nowak", membershipNumber: "AA005678" },
   BB001111: { name: "Piotr", surname: "Wiśniewski", membershipNumber: "BB001111" },
   CC002222: { name: "Magdalena", surname: "Lewandowska", membershipNumber: "CC002222" },
