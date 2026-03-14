@@ -80,10 +80,13 @@ jobs:
 
       - name: Deploy Container App settings
         if: github.event_name == 'push'
+        env:
+          INTERNAL_AUTH_JWT_SECRET: ${{ secrets.INTERNAL_AUTH_JWT_SECRET }}
         run: |
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
           IMAGE="${{ vars.ACR_ENDPOINT }}/zhp/accounts-backend:sha-${SHORT_SHA}"
-          sed -i "s|image: .*|image: ${IMAGE}|" apps/zhp-accounts-backend/container-app.yaml
+          sed -i "s|{{IMAGE_NAME}}|${IMAGE}|g" apps/zhp-accounts-backend/container-app.yaml
+          sed -i "s|{{INTERNAL_AUTH_JWT_SECRET}}|${INTERNAL_AUTH_JWT_SECRET}|g" apps/zhp-accounts-backend/container-app.yaml
           az containerapp update \
             --name ${{ vars.ACA_APP_NAME }} \
             --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \

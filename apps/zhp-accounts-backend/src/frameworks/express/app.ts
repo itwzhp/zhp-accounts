@@ -8,6 +8,7 @@ import { config } from "@/config";
 import healthRoutes from "@/adapters/http/routes/health";
 import membersRoutes from "@/adapters/http/routes/members";
 import unitsRoutes from "@/adapters/http/routes/units";
+import commandsRoutes from "@/adapters/http/routes/commands";
 
 export function createApp(): express.Application {
   const app = express();
@@ -46,6 +47,7 @@ export function createApp(): express.Application {
   app.use(healthRoutes);
   app.use(unitsRoutes);
   app.use(membersRoutes);
+  app.use(commandsRoutes);
 
   // Health check for container orchestration
   app.get("/", (_req, res): void => {

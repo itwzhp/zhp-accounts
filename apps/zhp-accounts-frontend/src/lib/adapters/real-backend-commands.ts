@@ -1,5 +1,7 @@
 import type { BackendCommandPort } from '@/lib/ports/backend-commands'
 import type { AuthPort } from '@/lib/ports/auth'
+import { UnauthenticatedError } from '@/lib/errors'
+import { getMemberInternalAuthToken } from '@/lib/adapters/internal-auth-cache'
 import type {
   CreateAccountCommand,
   CreateAccountResponse,
@@ -23,7 +25,7 @@ export class RealBackendCommandsAdapter implements BackendCommandPort {
   private async createAuthHeaders(): Promise<Record<string, string>> {
     const token = await this.authAdapter.getToken()
     if (!token) {
-      throw new Error('Missing access token for backend request')
+      throw new UnauthenticatedError('Missing access token for backend request')
     }
 
     return {
@@ -31,14 +33,32 @@ export class RealBackendCommandsAdapter implements BackendCommandPort {
     }
   }
 
-  private async sendCommand<T>(commandName: string, command: unknown): Promise<Result<T>> {
+  private async createCommandHeaders(membershipNumber: string): Promise<Record<string, string>> {
+    const authHeaders = await this.createAuthHeaders()
+    const internalAuthToken = getMemberInternalAuthToken(membershipNumber)
+
+    if (!internalAuthToken) {
+      throw new UnauthenticatedError('Missing internal auth token for command request')
+    }
+
+    return {
+      ...authHeaders,
+      'X-InternalAuth': internalAuthToken,
+    }
+  }
+
+  private async sendCommand<T>(
+    commandName: string,
+    command: unknown,
+    membershipNumber: string,
+  ): Promise<Result<T>> {
     try {
-      const authHeaders = await this.createAuthHeaders()
+      const commandHeaders = await this.createCommandHeaders(membershipNumber)
       const response = await fetch(`${this.apiBaseUrl}/commands/${commandName}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...authHeaders,
+          ...commandHeaders,
         },
         body: JSON.stringify(command),
       })
@@ -67,10 +87,10 @@ export class RealBackendCommandsAdapter implements BackendCommandPort {
   }
 
   async createAccount(command: CreateAccountCommand): Promise<Result<CreateAccountResponse>> {
-    return this.sendCommand<CreateAccountResponse>('CreateAccount', command)
+    return this.sendCommand<CreateAccountResponse>('CreateAccount', command, command.membershipNumber)
   }
 
   async generateTap(command: GenerateTapCommand): Promise<Result<GenerateTapResponse>> {
-    return this.sendCommand<GenerateTapResponse>('GenerateTap', command)
+    return this.sendCommand<GenerateTapResponse>('GenerateTap', command, command.membershipNumber)
   }
 }
