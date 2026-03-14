@@ -5,7 +5,7 @@ export class ConsoleAuditLoggerAdapter implements AuditLoggerPort {
     actorLogin: string,
     subjectMembershipNumber: string,
     action: string,
-    details?: Record<string, any>,
+    details?: Record<string, unknown>,
   ): Promise<void> {
     const entry = {
       actorLogin,

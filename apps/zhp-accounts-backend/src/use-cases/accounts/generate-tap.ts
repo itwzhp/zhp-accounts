@@ -8,7 +8,7 @@ export async function generateTap(
     const port = getEntraAccountCommandsPort();
     const auditLogger = getAuditLoggerPort();
 
-    var result = await port.generateTap(command.membershipNumber);
+    const result = await port.generateTap(command.membershipNumber);
     await auditLogger.log(actorLogin, command.membershipNumber, "GenerateTAP");
     return result;
 }

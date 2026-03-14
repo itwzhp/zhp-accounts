@@ -27,12 +27,12 @@ export function createApp(): express.Application {
   app.use(membersRoutes);
   app.use(commandsRoutes);
 
-  app.get("/", (_req, res): void => {
+  app.get("/", (_, res): void => {
     res.status(200).json({ message: "ZHP Accounts API" });
   });
 
   // 404 handler
-  app.use((_req, res): void => {
+  app.use((_, res): void => {
     res.status(404).json({ error: "Not Found" });
   });
 

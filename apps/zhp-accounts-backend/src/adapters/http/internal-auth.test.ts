@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { generateInternalAuthToken, verifyInternalAuthToken } from "./internal-auth";
 
-function buildRequestWithInternalAuth(token: string): { headers: Record<string, string> } {
+function buildRequestWithInternalAuth(token: string): any {
   return {
     headers: {
       "x-internalauth": token,
@@ -24,7 +24,7 @@ describe("internal auth token", (): void => {
       allowedMemberNumbers: ["AA001234", "AA005678"],
     });
 
-    const payload = await verifyInternalAuthToken(buildRequestWithInternalAuth(token) as any);
+    const payload = await verifyInternalAuthToken(buildRequestWithInternalAuth(token));
 
     expect(payload).toMatchObject({
       sub: "AA001234",
@@ -43,7 +43,7 @@ describe("internal auth token", (): void => {
     const invalidToken = token.slice(0, -2) + "xx";
 
     const payload = await verifyInternalAuthToken(
-      buildRequestWithInternalAuth(invalidToken) as any,
+      buildRequestWithInternalAuth(invalidToken),
     );
 
     expect(payload).toBeNull();
@@ -64,7 +64,7 @@ describe("internal auth token", (): void => {
 
       nowSpy.mockReturnValue(issuedAtMs + (mockConfig.internalAuthJwtTtlSeconds + 1) * 1000);
 
-      const payload = await verifyInternalAuthToken(buildRequestWithInternalAuth(token) as any);
+      const payload = await verifyInternalAuthToken(buildRequestWithInternalAuth(token));
 
       expect(payload).toBeNull();
     } finally {
