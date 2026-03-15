@@ -20,6 +20,7 @@ properties:
         - Content-Type
         - Authorization
         - Authorize
+        - X-InternalAuth
       external: true
       stickySessions:
         affinity: none
@@ -32,14 +33,20 @@ properties:
     registries:
     - identity: system-environment
       server: zhpaccounts-cybcbyf5abbfdpg9.azurecr.io
+    secrets:
+    - name: internal-auth-jwt-secret
+      value: {{INTERNAL_AUTH_JWT_SECRET}}
+    - name: microsoft-provider-authentication-secret
   environmentId: /subscriptions/35e22786-93ea-47c8-902a-16e9d0f03e17/resourceGroups/zhp-accounts/providers/Microsoft.App/managedEnvironments/managedEnvironment-zhpaccounts-978a
   template:
     containers:
-    - image: REPLACED_BY_CI
+    - image: {{IMAGE_NAME}}
       name: konta-zhp-backend
       env:
       - name: ENABLE_CORS
         value: "false"
+      - name: INTERNAL_AUTH_JWT_SECRET
+        secretRef: internal-auth-jwt-secret
       probes:
       - failureThreshold: 2
         httpGet:

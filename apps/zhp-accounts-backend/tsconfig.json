@@ -23,8 +23,7 @@
       "@/adapters/*": ["src/adapters/*"],
       "@/use-cases/*": ["src/use-cases/*"],
       "@/entities/*": ["src/entities/*"],
-      "@/frameworks/*": ["src/frameworks/*"],
-      "zhp-accounts-types": ["../zhp-accounts-types"]
+      "@/frameworks/*": ["src/frameworks/*"]
     }
   },
   "include": ["src"],

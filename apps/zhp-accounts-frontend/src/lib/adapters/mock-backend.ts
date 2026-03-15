@@ -1,5 +1,13 @@
 import type { BackendQueryPort } from '@/lib/ports/backend-querying'
-import type { ZhpUnit, ZhpUnitType, ZhpMemberDetails, UnitsWithRoot, MembersWithUnit } from 'zhp-accounts-types'
+import { rememberMemberInternalAuthToken, rememberUnitInternalAuthToken } from '@/lib/adapters/internal-auth-cache'
+import type {
+  MembersWithUnitWithAuth,
+  RootUnitsWithAuth,
+  UnitsWithRootWithAuth,
+  ZhpMemberDetails,
+  ZhpUnit,
+  ZhpUnitType,
+} from 'zhp-accounts-types'
 
 /**
  * Mock backend adapter that returns fake data for development/testing.
@@ -135,16 +143,20 @@ export class MockBackendAdapter implements BackendQueryPort {
     this.mockUnits[1].subunits.push(hufiecSopot)
   }
 
-  async getRootUnits(): Promise<ZhpUnit[]> {
+  async getRootUnits(): Promise<RootUnitsWithAuth> {
     console.info('[MockBackend] getRootUnits()')
     // Simulate network delay
     await this.delay(this.delayMs)
-    const result = [...this.mockUnits]
+    const result = {
+      units: [...this.mockUnits],
+      internalAuthToken: 'mock-internal-auth-root'
+    }
+    rememberUnitInternalAuthToken(result.units.map((unit) => unit.id), result.internalAuthToken)
     console.info('[MockBackend] getRootUnits() -> ', result)
     return result
   }
 
-  async getSubUnits(parentId: number): Promise<UnitsWithRoot> {
+  async getSubUnits(parentId: number): Promise<UnitsWithRootWithAuth> {
     console.info('[MockBackend] getSubUnits(parentId)', parentId)
     await this.delay(this.delayMs)
     const parentUnit = this.findUnitRecursive(parentId, this.mockUnits)
@@ -153,8 +165,13 @@ export class MockBackendAdapter implements BackendQueryPort {
     }
     const result = {
       root: { id: parentUnit.id, name: parentUnit.name, type: parentUnit.type },
-      subunits: parentUnit.subunits
+      subunits: parentUnit.subunits,
+      internalAuthToken: `mock-internal-auth-units-${parentUnit.id}`
     }
+    rememberUnitInternalAuthToken(
+      [result.root.id, ...result.subunits.map((subunit) => subunit.id)],
+      result.internalAuthToken,
+    )
     console.info('[MockBackend] getSubUnits(', parentId, ') -> ', result)
     return result
   }
@@ -172,7 +189,7 @@ export class MockBackendAdapter implements BackendQueryPort {
     return undefined
   }
 
-  async getMembers(unitId: number): Promise<MembersWithUnit> {
+  async getMembers(unitId: number): Promise<MembersWithUnitWithAuth> {
     console.info('[MockBackend] getMembers(', unitId, ')')
     await this.delay(this.delayMs)
     const unit = this.findUnitRecursive(unitId, this.mockUnits)
@@ -181,8 +198,10 @@ export class MockBackendAdapter implements BackendQueryPort {
     }
     const result = {
       unit: { id: unit.id, name: unit.name, type: unit.type },
-      members: unit.members
+      members: unit.members,
+      internalAuthToken: `mock-internal-auth-${unit.id}`
     }
+    rememberMemberInternalAuthToken(unit.members.map((member) => member.membershipNumber), result.internalAuthToken)
     console.info('[MockBackend] getMembers(', unitId, ') -> ', result)
     return result
   }

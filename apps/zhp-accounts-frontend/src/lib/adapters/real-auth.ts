@@ -113,7 +113,7 @@ export class RealAuthAdapter implements AuthPort {
     } catch (error) {
       console.error('Logout failed:', error)
       // Don't throw on logout errors to prevent UI from breaking
-      console.log('Continuing with logout despite error...')
+      console.info('Continuing with logout despite error...')
     }
   }
 
@@ -143,7 +143,7 @@ export class RealAuthAdapter implements AuthPort {
       } catch (error) {
         // If silent acquisition fails due to interaction required, try redirect
         if (error instanceof InteractionRequiredAuthError) {
-          console.log('Token acquisition requires interaction, redirecting to login...')
+          console.info('Token acquisition requires interaction, redirecting to login...')
           await this.msalInstance.acquireTokenRedirect({ ...tokenRequest, account })
           // acquireTokenRedirect causes a redirect, won't reach here
           return null

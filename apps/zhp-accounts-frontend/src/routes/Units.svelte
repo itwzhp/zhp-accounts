@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
   import { getAuthAdapter, getBackendAdapter } from '@/lib/adapters'
+    import { UnauthenticatedError } from '@/lib/errors'
   import type { ZhpUnit } from 'zhp-accounts-types'
   import { Building, Building2, ChevronsRight, Users } from 'lucide-svelte'
   import { link } from 'svelte-spa-router'
@@ -29,18 +29,19 @@
         units = result.subunits
       } else {
         rootUnit = null
-        units = await backend.getRootUnits()
+        const result = await backend.getRootUnits()
+        units = result.units
       }
     } catch (e) {
+      if (e instanceof UnauthenticatedError) {
+        window.location.hash = '#/'
+        return
+      }
       error = e instanceof Error ? e.message : 'Błąd ładowania jednostek'
     } finally {
       loading = false
     }
   }
-
-  onMount(() => {
-    loadUnits(params?.id)
-  })
 
   $effect(() => {
     loadUnits(params?.id)

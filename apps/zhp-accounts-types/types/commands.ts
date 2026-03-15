@@ -9,7 +9,6 @@ export interface CreateAccountResponse {
 
 export interface GenerateTapCommand {
     readonly membershipNumber: string;
-    readonly email: string;
 }
 
 export interface GenerateTapResponse {

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { getAuthAdapter, getBackendAdapter } from '@/lib/adapters'
+    import { UnauthenticatedError } from '@/lib/errors'
   import type { ZhpMember, ZhpUnit } from 'zhp-accounts-types'
   import { Users, User, UserCog } from 'lucide-svelte'
   import PageHeader from '@/lib/components/PageHeader.svelte'
@@ -27,6 +28,10 @@
       unit = result.unit
       members = result.members
     } catch (e) {
+      if (e instanceof UnauthenticatedError) {
+        window.location.hash = '#/'
+        return
+      }
       error = e instanceof Error ? e.message : 'Błąd ładowania danych'
     } finally {
       loading = false

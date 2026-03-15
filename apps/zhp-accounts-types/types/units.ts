@@ -17,3 +17,12 @@ export interface UnitsWithRoot {
     root: ZhpUnit
     subunits: ZhpUnit[]
 }
+
+export interface RootUnitsWithAuth {
+    units: ZhpUnit[]
+    internalAuthToken: string
+}
+
+export interface UnitsWithRootWithAuth extends UnitsWithRoot {
+    internalAuthToken: string
+}

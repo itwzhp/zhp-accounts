@@ -4,7 +4,9 @@
  */
 
 export interface Health {
-  status: "ok" | "degraded" | "down";
+  status: HealthStatus;
   timestamp: string;
   version: string;
 }
+
+export type HealthStatus = "ok" | "degraded" | "down";

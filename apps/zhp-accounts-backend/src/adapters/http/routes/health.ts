@@ -8,12 +8,14 @@ import { getHealth } from "@/use-cases/health/get-health";
 
 const router: ExpressRouter = Router();
 
-router.get("/healthcheck/readiness", (_req: Request, res: Response): void => {
-  const health = getHealth();
-  res.status(200).json(health);
+router.get("/healthcheck/readiness", async (_: Request, res: Response): Promise<void> => {
+  const health = await getHealth();
+  const statusCode = health.status === "down" ? 503 : 200;
+
+  res.status(statusCode).json(health);
 });
 
-router.get("/healthcheck/liveliness", (_req: Request, res: Response): void => {
+router.get("/healthcheck/liveliness", (_: Request, res: Response): void => {
   res.status(200).send('{"status":"ok"}');
 });
 
