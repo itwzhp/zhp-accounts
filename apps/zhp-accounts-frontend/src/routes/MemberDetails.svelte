@@ -5,6 +5,7 @@
   import type { ZhpMemberDetails } from "zhp-accounts-types";
   import {
     ShieldAlert,
+    TriangleAlert,
     KeyRound,
     MailPlus,
     Mail,
@@ -121,13 +122,29 @@
               </p>
 
               {#if member.mail === null}
-                <button
-                  onclick={handleCreateEmail}
-                  class="btn variant-filled-primary items-center gap-2 text-blue hover:underline mt-5"
-                >
-                  <MailPlus class="w-4 h-4" />
-                  Utwórz konto
-                </button>
+                {#if member.hasAllRequiredConsents}
+                  <button
+                    onclick={handleCreateEmail}
+                    class="btn variant-filled-primary items-center gap-2 text-blue hover:underline mt-5"
+                  >
+                    <MailPlus class="w-4 h-4" />
+                    Utwórz konto
+                  </button>
+                {:else}
+                  <button
+                    class="btn variant-filled-primary items-center gap-2 mt-5"
+                    disabled
+                  >
+                    <MailPlus class="w-4 h-4" />
+                    Załóż konto
+                  </button>
+                  <div class="alert variant-filled-warning mt-4">
+                    <div class="flex items-start gap-3">
+                      <TriangleAlert class="w-5 h-5 flex-shrink-0 mt-0.5" />
+                      <p>Aby móc założyć konto, poproś tę osobę o uzupełnienie brakujących zgód w Tipi</p>
+                    </div>
+                  </div>
+                {/if}
               {:else if member.isAdmin}
                 <div class="alert variant-filled-warning">
                   <div class="flex items-start gap-3">
@@ -142,15 +159,33 @@
                   </div>
                 </div>
               {:else}
-                <div class="flex flex-col items-start gap-1 mt-6">
-                  <button
-                    onclick={handleAccessReset}
-                    class="btn variant-filled flex gap-2 text-blue hover:underline"
-                  >
-                    <KeyRound class="w-4 h-4" />
-                    Reset dostępu
-                  </button>
-                </div>
+                {#if member.hasAllRequiredConsents}
+                  <div class="flex flex-col items-start gap-1 mt-6">
+                    <button
+                      onclick={handleAccessReset}
+                      class="btn variant-filled flex gap-2 text-blue hover:underline"
+                    >
+                      <KeyRound class="w-4 h-4" />
+                      Reset dostępu
+                    </button>
+                  </div>
+                {:else}
+                  <div class="alert variant-filled-warning mt-4">
+                    <div class="flex items-start gap-3">
+                      <TriangleAlert class="w-5 h-5 flex-shrink-0 mt-0.5" />
+                      <p>Aby móc zarządzać tym kontem, poproś tę osobę o uzupełnienie brakujących zgód w Tipi</p>
+                    </div>
+                  </div>
+                  <div class="flex flex-col items-start gap-1 mt-6">
+                    <button
+                      class="btn variant-filled flex gap-2"
+                      disabled
+                    >
+                      <KeyRound class="w-4 h-4" />
+                      Reset dostępu
+                    </button>
+                  </div>
+                {/if}
               {/if}
             </div>
           </div>

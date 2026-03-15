@@ -22,7 +22,8 @@ export class MockBackendAdapter implements BackendQueryPort {
       membershipNumber: 'AA001234',
       mail: 'jan.kowalski@zhp.pl',
       canMailBeCorrected: true,
-      isAdmin: false
+      isAdmin: false,
+      hasAllRequiredConsents: true
     },
     {
       name: 'Anna',
@@ -30,7 +31,8 @@ export class MockBackendAdapter implements BackendQueryPort {
       membershipNumber: 'AA005678',
       mail: 'anna.nowak@zhp.pl',
       canMailBeCorrected: false,
-      isAdmin: true
+      isAdmin: true,
+      hasAllRequiredConsents: true
     },
     {
       name: 'Piotr',
@@ -38,7 +40,8 @@ export class MockBackendAdapter implements BackendQueryPort {
       membershipNumber: 'BB001111',
       mail: 'piotr.wisniewski@zhp.pl',
       canMailBeCorrected: false,
-      isAdmin: false
+      isAdmin: false,
+      hasAllRequiredConsents: false
     },
     {
       name: 'Magdalena',
@@ -46,7 +49,8 @@ export class MockBackendAdapter implements BackendQueryPort {
       membershipNumber: 'CC002222',
       mail: 'magdalena.lewandowska@zhp.pl',
       canMailBeCorrected: true,
-      isAdmin: true
+      isAdmin: true,
+      hasAllRequiredConsents: true
     },
     {
       name: 'Tomasz',
@@ -54,7 +58,8 @@ export class MockBackendAdapter implements BackendQueryPort {
       membershipNumber: 'XD003333',
       mail: 'tomasz.kaminski@zhp.pl',
       canMailBeCorrected: false,
-      isAdmin: false
+      isAdmin: false,
+      hasAllRequiredConsents: false
     },
     {
       name: 'Agnieszka',
@@ -62,7 +67,8 @@ export class MockBackendAdapter implements BackendQueryPort {
       membershipNumber: 'EE004444',
       mail: null,
       canMailBeCorrected: false,
-      isAdmin: false
+      isAdmin: false,
+      hasAllRequiredConsents: true
     },
     {
       name: 'Agnieszka',
@@ -70,7 +76,8 @@ export class MockBackendAdapter implements BackendQueryPort {
       membershipNumber: 'XE005555',
       mail: null,
       canMailBeCorrected: false,
-      isAdmin: false
+      isAdmin: false,
+      hasAllRequiredConsents: false
     }
   ]
 

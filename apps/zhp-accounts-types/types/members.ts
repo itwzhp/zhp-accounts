@@ -4,6 +4,7 @@ export interface ZhpMember {
     name: string
     surname: string
     membershipNumber: string
+    hasAllRequiredConsents: boolean
 }
 
 export interface ZhpMemberDetails extends ZhpMember {

@@ -16,7 +16,11 @@ export async function createAccount(
   const accountOwner = await tipiPort.getMember(command.membershipNumber);
 
   if (!accountOwner) {
-    throw new Error(`Member ${command.membershipNumber} not found`);
+    throw new Error(`Nie znaleziono osoby o numerze ${command.membershipNumber}`);
+  }
+
+  if (!accountOwner.hasAllRequiredConsents) {
+    throw new Error(`Osoba ${command.membershipNumber} nie ma wymaganych zgód w Tipi`);
   }
 
   const result = await entraPort.createAccount(accountOwner);

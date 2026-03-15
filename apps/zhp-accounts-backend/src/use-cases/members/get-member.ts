@@ -10,7 +10,7 @@ export async function getMember(
   const entraPort = getEntraMemberDetailsPort();
   const tipiPort = getTipiQueryPort();
 
-  const [entraMemberDetails, tipiMember] = await Promise.all([
+  const [entraMember, tipiMember] = await Promise.all([
     entraPort.getMemberDetails(memberId),
     tipiPort.getMember(memberId),
   ]);
@@ -20,11 +20,12 @@ export async function getMember(
   }
 
   return {
-    mail: entraMemberDetails?.mail ?? null,
-    canMailBeCorrected: entraMemberDetails?.canMailBeCorrected ?? false,
-    isAdmin: entraMemberDetails?.isAdmin ?? false,
+    mail: entraMember?.mail ?? null,
+    canMailBeCorrected: false,
+    isAdmin: entraMember?.isAdmin ?? false,
     membershipNumber: memberId,
     name: tipiMember.name,
     surname: tipiMember.surname,
+    hasAllRequiredConsents: tipiMember.hasAllRequiredConsents,
   };
 }

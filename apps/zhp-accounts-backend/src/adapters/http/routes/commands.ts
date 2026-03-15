@@ -33,10 +33,9 @@ function parseGenerateTapCommand(body: unknown): GenerateTapCommand | null {
 
   const parsed = body as {
     membershipNumber?: unknown;
-    email?: unknown;
   };
 
-  if (!isNonEmptyString(parsed.membershipNumber) || !isNonEmptyString(parsed.email)) {
+  if (!isNonEmptyString(parsed.membershipNumber)) {
     return null;
   }
 

@@ -37,13 +37,13 @@ const SUBUNITS_BY_PARENT: Record<number, readonly ZhpUnit[]> = {
 };
 
 const MEMBERS_BY_NUMBER: Record<string, ZhpMember> = {
-  AA001234: { name: "Jan", surname: "Krüger", membershipNumber: "AA001234" },
-  AA005678: { name: "Anna", surname: "Nowak", membershipNumber: "AA005678" },
-  BB001111: { name: "Piotr", surname: "Wiśniewski", membershipNumber: "BB001111" },
-  CC002222: { name: "Magdalena", surname: "Lewandowska", membershipNumber: "CC002222" },
-  XD003333: { name: "Tomasz", surname: "Kamiński", membershipNumber: "XD003333" },
-  EE004444: { name: "Agnieszka", surname: "Szymańska", membershipNumber: "EE004444" },
-  XE005555: { name: "Agnieszka", surname: "Malewska", membershipNumber: "XE005555" },
+  AA001234: { name: "Jan", surname: "Krüger", membershipNumber: "AA001234", hasAllRequiredConsents: true },
+  AA005678: { name: "Anna", surname: "Nowak", membershipNumber: "AA005678", hasAllRequiredConsents: true },
+  BB001111: { name: "Piotr", surname: "Wiśniewski", membershipNumber: "BB001111", hasAllRequiredConsents: false },
+  CC002222: { name: "Magdalena", surname: "Lewandowska", membershipNumber: "CC002222", hasAllRequiredConsents: true },
+  XD003333: { name: "Tomasz", surname: "Kamiński", membershipNumber: "XD003333", hasAllRequiredConsents: false },
+  EE004444: { name: "Agnieszka", surname: "Szymańska", membershipNumber: "EE004444", hasAllRequiredConsents: true },
+  XE005555: { name: "Agnieszka", surname: "Malewska", membershipNumber: "XE005555", hasAllRequiredConsents: false },
 };
 
 const MEMBERSHIP_NUMBERS_BY_UNIT: Record<number, readonly string[]> = {
@@ -73,7 +73,7 @@ function cloneUnit(unit: ZhpUnit): ZhpUnit {
 }
 
 function fallbackMember(membershipNumber: string): ZhpMember {
-  return { name: "Nieznany", surname: "Członek", membershipNumber };
+  return { name: "Nieznany", surname: "Członek", membershipNumber, hasAllRequiredConsents: false };
 }
 
 function fallbackUnit(unitId: number): ZhpUnit {
