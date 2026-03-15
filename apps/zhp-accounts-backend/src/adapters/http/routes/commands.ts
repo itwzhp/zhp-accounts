@@ -10,12 +10,25 @@ function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
 }
 
+function parseOptionalNotificationEmail(value: unknown): string | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  if (!isNonEmptyString(value)) {
+    return undefined;
+  }
+
+  return value.trim();
+}
+
 function parseCreateAccountCommand(body: unknown): CreateAccountCommand | null {
   if (typeof body !== "object" || body === null || Array.isArray(body)) {
     return null;
   }
 
-  const membershipNumber = (body as { membershipNumber?: unknown }).membershipNumber;
+  const parsed = body as { membershipNumber?: unknown; notificationEmail?: unknown };
+  const membershipNumber = parsed.membershipNumber;
 
   if (!isNonEmptyString(membershipNumber)) {
     return null;
@@ -23,6 +36,7 @@ function parseCreateAccountCommand(body: unknown): CreateAccountCommand | null {
 
   return {
     membershipNumber: membershipNumber.trim(),
+    notificationEmail: parseOptionalNotificationEmail(parsed.notificationEmail),
   };
 }
 
@@ -33,6 +47,7 @@ function parseGenerateTapCommand(body: unknown): GenerateTapCommand | null {
 
   const parsed = body as {
     membershipNumber?: unknown;
+    notificationEmail?: unknown;
   };
 
   if (!isNonEmptyString(parsed.membershipNumber)) {
@@ -41,6 +56,7 @@ function parseGenerateTapCommand(body: unknown): GenerateTapCommand | null {
 
   return {
     membershipNumber: parsed.membershipNumber.trim(),
+    notificationEmail: parseOptionalNotificationEmail(parsed.notificationEmail),
   };
 }
 

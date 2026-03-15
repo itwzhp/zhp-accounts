@@ -27,16 +27,33 @@
 
   let internalState: InternalState = $state({ type: 'confirm' })
   let dialogElement: HTMLDialogElement
+  let sendByEmail = $state(false)
+  let notificationEmail = $state('')
 
   // Show/hide dialog based on isOpen prop
   $effect(() => {
     if (isOpen) {
       internalState = { type: 'confirm' }
+      sendByEmail = false
+      notificationEmail = ''
       dialogElement.showModal()
     } else {
       dialogElement.close()
     }
   })
+
+  function getNotificationEmail(): string | undefined {
+    if (!sendByEmail) {
+      return undefined
+    }
+
+    const trimmedEmail = notificationEmail.trim()
+    if (!trimmedEmail) {
+      return undefined
+    }
+
+    return trimmedEmail
+  }
 
   async function confirmCreateAccount() {
     internalState = { type: 'loading' }
@@ -44,7 +61,8 @@
     try {
       const commandsAdapter = getBackendCommandsAdapter()
       const result = await commandsAdapter.createAccount({
-        membershipNumber: member.membershipNumber
+        membershipNumber: member.membershipNumber,
+        notificationEmail: getNotificationEmail(),
       })
       
       if (result.success) {
@@ -76,6 +94,27 @@
         <p class="text-surface-600-300-token">
           Po założeniu konta otrzymasz login i hasło tymczasowe, które należy przekazać tej osobie.
         </p>
+
+        <label class="flex items-center gap-2">
+          <input
+            type="checkbox"
+            bind:checked={sendByEmail}
+          />
+          <span>Wyślij hasło mailem</span>
+        </label>
+
+        {#if sendByEmail}
+          <div>
+            <label for="notification-email-create" class="block text-sm font-medium mb-1">Adres email do powiadomienia</label>
+            <input
+              id="notification-email-create"
+              type="email"
+              bind:value={notificationEmail}
+              class="input w-full"
+              placeholder="przykladowy@mail.pl"
+            />
+          </div>
+        {/if}
         
         {#if internalState.type === 'error'}
           <div class="alert variant-filled-error">

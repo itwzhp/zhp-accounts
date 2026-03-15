@@ -1,5 +1,6 @@
 export interface CreateAccountCommand {
     readonly membershipNumber: string;
+    readonly notificationEmail?: string;
 }
 
 export interface CreateAccountResponse {
@@ -9,6 +10,7 @@ export interface CreateAccountResponse {
 
 export interface GenerateTapCommand {
     readonly membershipNumber: string;
+    readonly notificationEmail?: string;
 }
 
 export interface GenerateTapResponse {

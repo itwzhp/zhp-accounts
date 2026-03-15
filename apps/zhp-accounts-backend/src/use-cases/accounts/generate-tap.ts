@@ -1,5 +1,5 @@
 import type { GenerateTapCommand, GenerateTapResponse } from "zhp-accounts-types";
-import { getAuditLoggerPort, getEntraAccountCommandsPort, getEntraMemberDetailsPort } from "@/frameworks/providers/service-provider";
+import { getAuditLoggerPort, getEntraAccountCommandsPort, getEntraMemberDetailsPort, getMailNotificationPort } from "@/frameworks/providers/service-provider";
 
 export async function generateTap(
     command: GenerateTapCommand,
@@ -8,6 +8,7 @@ export async function generateTap(
     const commandPort = getEntraAccountCommandsPort();
     const queryPort = getEntraMemberDetailsPort();
     const auditLogger = getAuditLoggerPort();
+    const mailNotification = getMailNotificationPort();
 
     const existingAccount = await queryPort.getMemberDetails(command.membershipNumber);
     if(!existingAccount){
@@ -18,6 +19,17 @@ export async function generateTap(
     }
 
     const result = await commandPort.generateTap(command.membershipNumber);
+    if (command.notificationEmail) {
+        try {
+            await mailNotification.notifyAboutGeneratedTap(command.notificationEmail, result);
+        } catch (error) {
+            console.error("Failed to send TAP notification", {
+                membershipNumber: command.membershipNumber,
+                notificationEmail: command.notificationEmail,
+                error,
+            });
+        }
+    }
     await auditLogger.log(actorLogin, command.membershipNumber, "GenerateTAP");
     return result;
 }
