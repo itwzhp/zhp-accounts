@@ -49,8 +49,12 @@ function getConfig(): Config {
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean);
-  const internalAuthJwtSecret =
-    process.env.INTERNAL_AUTH_JWT_SECRET || "zhp-accounts-internal-auth-dev-secret";
+
+  const internalAuthJwtSecretEnv = process.env.INTERNAL_AUTH_JWT_SECRET;
+  if (!internalAuthJwtSecretEnv && nodeEnv === "production") {
+    throw new Error("INTERNAL_AUTH_JWT_SECRET is required in production");
+  }
+  const internalAuthJwtSecret = internalAuthJwtSecretEnv || "zhp-accounts-internal-auth-dev-secret";
   const internalAuthJwtTtlSeconds = Number.parseInt(
     process.env.INTERNAL_AUTH_JWT_TTL_SECONDS || "1800",
     10,

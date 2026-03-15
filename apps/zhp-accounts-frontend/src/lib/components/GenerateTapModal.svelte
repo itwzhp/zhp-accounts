@@ -47,8 +47,7 @@
     try {
       const commandsAdapter = getBackendCommandsAdapter()
       const result = await commandsAdapter.generateTap({
-        membershipNumber: member.membershipNumber,
-        email: member.mail
+        membershipNumber: member.membershipNumber
       })
       
       if (result.success) {
