@@ -1,3 +1,6 @@
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 import { describe, expect, it, vi } from "vitest";
 import type { HealthCheckPort } from "@/ports/health-check-port";
 import { getHealth } from "@/use-cases/health/get-health";

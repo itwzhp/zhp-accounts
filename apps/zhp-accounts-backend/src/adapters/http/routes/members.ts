@@ -21,6 +21,11 @@ router.get("/members/:memberId", async (req: Request, res: Response): Promise<vo
 
     const member = await getMember(memberId);
 
+    if (member == null) {
+      res.status(404).json({ error: "Member not found" });
+      return;
+    }
+
     res.status(200).json(member);
   } catch {
     res.status(500).json({ error: "Internal Server Error" });

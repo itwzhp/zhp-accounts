@@ -1,3 +1,14 @@
+export function getSessionStorage(): Storage | null {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  try {
+    return window.sessionStorage;
+  } catch {
+    return null;
+  }
+}
 const UNIT_STORAGE_PREFIX = 'zhp-accounts-internal-auth:unit:'
 const MEMBER_STORAGE_PREFIX = 'zhp-accounts-internal-auth:member:'
 

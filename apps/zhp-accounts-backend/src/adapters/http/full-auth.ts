@@ -17,12 +17,12 @@ export async function performFullAuth(req: Request, res: Response, requiredMembe
       return null;
     }
 
-    if (requiredMembershipNumber && !verifiedToken.allowedMemberNumbers.includes(requiredMembershipNumber)) {
+    if (requiredMembershipNumber !== undefined && !verifiedToken.allowedMemberNumbers.includes(requiredMembershipNumber)) {
       res.status(403).json({ error: "Forbidden" });
       return null;
     }
 
-    if (requiredUnitId && !verifiedToken.allowedUnitIds.includes(requiredUnitId)) {
+    if (requiredUnitId !== undefined && !verifiedToken.allowedUnitIds.includes(requiredUnitId)) {
       res.status(403).json({ error: "Forbidden" });
       return null;
     }

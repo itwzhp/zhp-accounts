@@ -108,6 +108,6 @@ export class MockTipiQueryAdapter implements TipiQueryPort {
   }
 
   async getMember(membershipNumber: string): Promise<ZhpMember | null> {
-    return MEMBERS_BY_NUMBER[membershipNumber] ?? fallbackMember(membershipNumber);
+    return MEMBERS_BY_NUMBER[membershipNumber] ?? null;
   }
 }
