@@ -42,7 +42,6 @@ function parseGenerateTapCommand(body: unknown): GenerateTapCommand | null {
 
   return {
     membershipNumber: parsed.membershipNumber.trim(),
-    email: parsed.email.trim(),
   };
 }
 

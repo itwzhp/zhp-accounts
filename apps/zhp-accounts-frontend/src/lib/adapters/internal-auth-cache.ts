@@ -1,4 +1,4 @@
-export function getSessionStorage(): Storage | null {
+function getSessionStorage(): Storage | null {
   if (typeof window === 'undefined') {
     return null;
   }
@@ -21,14 +21,6 @@ function getUnitStorageKey(unitId: number): string {
 
 function getMemberStorageKey(memberId: string): string {
   return `${MEMBER_STORAGE_PREFIX}${memberId}`
-}
-
-function getSessionStorage(): Storage | null {
-  if (typeof window === 'undefined') {
-    return null
-  }
-
-  return window.sessionStorage
 }
 
 export function rememberUnitInternalAuthToken(unitIds: number[], token: string): void {
