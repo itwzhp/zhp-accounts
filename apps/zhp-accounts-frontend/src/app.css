@@ -22,7 +22,7 @@
 /* Fonts */
 @font-face {
 	font-family: 'Museo Sans';
-	src: url('/fonts/MuseoSans_500-pl-webfont.woff2') format('woff2');
+	src: url('/fonts/MuseoSans_500-webfont.woff2') format('woff2');
 	font-weight: 500;
 	font-style: normal;
 	font-display: swap;
@@ -30,7 +30,7 @@
 
 @font-face {
 	font-family: 'Museo';
-	src: url('/fonts/Museo300-Regular-pl-webfont.woff2') format('woff2');
+	src: url('/fonts/Museo300-Regular-webfont.woff2') format('woff2');
 	font-weight: 300;
 	font-style: normal;
 	font-display: swap;
@@ -38,7 +38,7 @@
 
 @font-face {
 	font-family: 'Museo';
-	src: url('/fonts/Museo500-Regular-pl-webfont.woff2') format('woff2');
+	src: url('/fonts/Museo500-Regular-webfont.woff2') format('woff2');
 	font-weight: 500;
 	font-style: normal;
 	font-display: swap;
@@ -46,7 +46,7 @@
 
 @font-face {
 	font-family: 'Museo';
-	src: url('/fonts/Museo700-Regular-pl-webfont.woff2') format('woff2');
+	src: url('/fonts/Museo700-Regular-webfont.woff2') format('woff2');
 	font-weight: 700;
 	font-style: normal;
 	font-display: swap;
