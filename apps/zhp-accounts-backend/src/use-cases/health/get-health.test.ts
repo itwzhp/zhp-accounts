@@ -1,7 +1,4 @@
-afterEach(() => {
-  vi.restoreAllMocks();
-});
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { HealthCheckPort } from "@/ports/health-check-port";
 import { getHealth } from "@/use-cases/health/get-health";
 import * as serviceProvider from "@/frameworks/providers/service-provider";
@@ -15,6 +12,10 @@ function createCheck(name: string, status: "ok" | "degraded" | "down"): HealthCh
 }
 
 describe("getHealth", (): void => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+  
   it("returns ok when all checks are ok", async (): Promise<void> => {
     vi.spyOn(serviceProvider, "getHealthChecks").mockReturnValue([
       createCheck("tipi", "ok"),
