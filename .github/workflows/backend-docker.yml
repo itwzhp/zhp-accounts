@@ -84,7 +84,7 @@ jobs:
           INTERNAL_AUTH_JWT_SECRET: ${{ secrets.INTERNAL_AUTH_JWT_SECRET }}
           AUDIT_ELASTIC_USERNAME: ${{ vars.ELASTIC_USERNAME }}
           AUDIT_ELASTIC_PASSWORD: ${{ secrets.ELASTIC_PASSWORD }}
-          AUDIT_ELASTIC_ENDPOINT: ${{ vars.ELASTIC_ENDPOINT }}
+          AUDIT_ELASTIC_ENDPOINT: ${{ vars.ELASTIC_URL }}
           AUDIT_ENV_NAMESPACE: test
         run: |
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
