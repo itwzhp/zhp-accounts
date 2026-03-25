@@ -34,8 +34,9 @@ describe("getRequestIdentity in local mode", (): void => {
     const identity = getRequestIdentity(request);
 
     expect(identity).toEqual({
-      login: "karol.grodzicki@zhp.net.pl",
-      memberNum: "AL005047071",
+      id: "9c9a7e73-c878-46ac-85c2-1308fe4add42",
+      upn: "karol.grodzicki@zhp.net.pl",
+      membershipNumber: "AL005047071",
     });
   });
 
@@ -44,13 +45,16 @@ describe("getRequestIdentity in local mode", (): void => {
       authorization: `Bearer ${TEST_BEARER_TOKEN}`,
       "x-ms-client-principal-name": "azure.user@zhp.net.pl",
       "x-ms-client-principal": CLIENT_PRINCIPAL,
+      "x-ms-client-principal-id": "9c9a7e73-c878-46ac-85c2-1308fe4add42",
+      "x-ms-client-principal-idp": "aad",
     });
 
     const identity = getRequestIdentity(request);
 
     expect(identity).toEqual({
-      login: "karol.grodzicki@zhp.net.pl",
-      memberNum: "AL005047071",
+      id: "9c9a7e73-c878-46ac-85c2-1308fe4add42",
+      upn: "karol.grodzicki@zhp.net.pl",
+      membershipNumber: "AL005047071",
     });
   });
 
@@ -80,18 +84,21 @@ describe("getRequestIdentity in production mode", (): void => {
     mockConfig.isLocalInstance = false;
   });
 
-  it("extracts login and memberNum from Azure EasyAuth headers", (): void => {
+  it("extracts upn and memberNumber from Azure EasyAuth headers", (): void => {
     const request = buildRequest({
       authorization: `Bearer ${TEST_BEARER_TOKEN}`,
       "x-ms-client-principal-name": "karol.grodzicki2@zhp.net.pl",
       "x-ms-client-principal": CLIENT_PRINCIPAL,
+      "x-ms-client-principal-id": "9c9a7e73-c878-46ac-85c2-1308fe4add42",
+      "x-ms-client-principal-idp": "aad",
     });
 
     const identity = getRequestIdentity(request);
 
     expect(identity).toEqual({
-      login: "karol.grodzicki2@zhp.net.pl",
-      memberNum: "AL005047071",
+      id: "9c9a7e73-c878-46ac-85c2-1308fe4add42",
+      upn: "karol.grodzicki2@zhp.net.pl",
+      membershipNumber: "AL005047071",
     });
   });
 });

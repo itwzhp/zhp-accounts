@@ -1,9 +1,14 @@
-import type { GenerateTapCommand, GenerateTapResponse } from "zhp-accounts-types";
-import { getAuditLoggerPort, getEntraAccountCommandsPort, getEntraMemberDetailsPort, getMailNotificationPort } from "@/frameworks/providers/service-provider";
+import type { GenerateTapCommand, GenerateTapResponse, Account } from "zhp-accounts-types";
+import {
+  getAuditLoggerPort,
+  getEntraAccountCommandsPort,
+  getEntraMemberDetailsPort,
+  getMailNotificationPort,
+} from "@/frameworks/providers/service-provider";
 
 export async function generateTap(
-    command: GenerateTapCommand,
-    actorLogin: string
+  command: GenerateTapCommand,
+    actor: Account,
 ): Promise<GenerateTapResponse> {
     const commandPort = getEntraAccountCommandsPort();
     const queryPort = getEntraMemberDetailsPort();
@@ -30,6 +35,36 @@ export async function generateTap(
             });
         }
     }
-    await auditLogger.log(actorLogin, command.membershipNumber, "GenerateTAP");
+    try {
+        await auditLogger.log({
+            level: "info",
+            message: "Temporary access pass generated",
+            eventType: "change",
+            action: "user-tap-generate",
+            outcome: "success",
+            actor: {
+                id: actor.id,
+                upn: actor.upn,
+                membershipNumber: actor.membershipNumber,
+            },
+            target: {
+                id: existingAccount.id,
+                upn: existingAccount.upn,
+                membershipNumber: existingAccount.membershipNumber,
+            },
+            authentication: {
+                validUntil: result.expiresAt,
+            },
+        });
+    } catch (error) {
+        console.error("Audit logging failed for GenerateTap", {
+            action: "user-tap-generate",
+            actorUpn: actor.upn,
+            actorId: actor.id,
+            targetMembershipNumber: command.membershipNumber,
+            error,
+        });
+    }
+
     return result;
 }

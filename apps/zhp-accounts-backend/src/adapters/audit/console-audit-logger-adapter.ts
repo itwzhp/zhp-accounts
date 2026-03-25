@@ -1,20 +1,14 @@
-import type { AuditLoggerPort } from "@/ports/audit-logger-port";
+import type { AuditLog, AuditLoggerPort } from "@/ports/audit-logger-port";
 
 export class ConsoleAuditLoggerAdapter implements AuditLoggerPort {
-  async log(
-    actorLogin: string,
-    subjectMembershipNumber: string,
-    action: string,
-    details?: Record<string, unknown>,
-  ): Promise<void> {
-    const entry = {
-      actorLogin,
-      subjectMembershipNumber,
-      action,
-      details: details ?? null,
+  async log(entry: AuditLog): Promise<void> {
+    const output = {
+      ...entry,
+      level: entry.level ?? "info",
+      outcome: entry.outcome ?? "success",
       timestamp: new Date().toISOString(),
     };
 
-    console.info("[AuditLog]", entry);
+    console.info("[AuditLog]", output);
   }
 }

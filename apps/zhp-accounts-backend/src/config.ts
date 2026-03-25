@@ -12,6 +12,13 @@ interface Config {
   corsAllowedOrigins: string[];
   internalAuthJwtSecret: string;
   internalAuthJwtTtlSeconds: number;
+  auditLoggerMode: "console" | "elastic";
+  auditEnvironmentNamespace: string;
+  auditElasticEndpoint: string | null;
+  auditElasticApiKey: string | null;
+  auditElasticUsername: string | null;
+  auditElasticPassword: string | null;
+  auditElasticRequestTimeoutMs: number;
 }
 
 function parseNodeEnv(
@@ -28,6 +35,27 @@ function parseNodeEnv(
   throw new Error(
     `Unsupported NODE_ENV value: ${nodeEnv}. Expected one of: development, production, test.`,
   );
+}
+
+function parseAuditLoggerMode(mode: string | undefined, fallback: "console" | "elastic"): "console" | "elastic" {
+  if (!mode) {
+    return fallback;
+  }
+
+  if (mode === "console" || mode === "elastic") {
+    return mode;
+  }
+
+  throw new Error(`Unsupported AUDIT_LOGGER_MODE value: ${mode}. Expected one of: console, elastic.`);
+}
+
+function nullable(value: string | undefined): string | null {
+  if (!value) {
+    return null;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
 }
 
 function getConfig(): Config {
@@ -60,6 +88,36 @@ function getConfig(): Config {
     10,
   );
 
+  const auditLoggerMode = parseAuditLoggerMode(
+    process.env.AUDIT_LOGGER_MODE,
+    nodeEnv === "production" ? "elastic" : "console",
+  );
+  const auditEnvironmentNamespace = process.env.AUDIT_ENV_NAMESPACE ||
+    (nodeEnv === "production" ? "prod" : nodeEnv === "test" ? "test" : "dev");
+  const auditElasticEndpoint = nullable(process.env.AUDIT_ELASTIC_ENDPOINT);
+  const auditElasticApiKey = nullable(process.env.AUDIT_ELASTIC_API_KEY);
+  const auditElasticUsername = nullable(process.env.AUDIT_ELASTIC_USERNAME);
+  const auditElasticPassword = nullable(process.env.AUDIT_ELASTIC_PASSWORD);
+  const auditElasticRequestTimeoutMs = Number.parseInt(
+    process.env.AUDIT_ELASTIC_REQUEST_TIMEOUT_MS || "3000",
+    10,
+  );
+
+  if (auditLoggerMode === "elastic") {
+    if (!auditElasticEndpoint) {
+      throw new Error("AUDIT_ELASTIC_ENDPOINT is required when AUDIT_LOGGER_MODE=elastic");
+    }
+
+    const hasApiKey = Boolean(auditElasticApiKey);
+    const hasBasicAuth = Boolean(auditElasticUsername) && Boolean(auditElasticPassword);
+
+    if (!hasApiKey && !hasBasicAuth) {
+      throw new Error(
+        "AUDIT_LOGGER_MODE=elastic requires AUDIT_ELASTIC_API_KEY or AUDIT_ELASTIC_USERNAME + AUDIT_ELASTIC_PASSWORD",
+      );
+    }
+  }
+
   return {
     port,
     nodeEnv,
@@ -69,6 +127,13 @@ function getConfig(): Config {
     corsAllowedOrigins,
     internalAuthJwtSecret,
     internalAuthJwtTtlSeconds,
+    auditLoggerMode,
+    auditEnvironmentNamespace,
+    auditElasticEndpoint,
+    auditElasticApiKey,
+    auditElasticUsername,
+    auditElasticPassword,
+    auditElasticRequestTimeoutMs,
   };
 }
 

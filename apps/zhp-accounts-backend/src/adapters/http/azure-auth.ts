@@ -1,5 +1,6 @@
 import type { Request } from "express";
 import { config } from "@/config";
+import type { Account } from "zhp-accounts-types";
 
 interface AzureClientPrincipalClaim {
   typ: string;
@@ -8,11 +9,6 @@ interface AzureClientPrincipalClaim {
 
 interface AzureClientPrincipal {
   claims?: AzureClientPrincipalClaim[];
-}
-
-export interface AzureRequestIdentity {
-  login: string;
-  memberNum: string;
 }
 
 function readHeader(request: Request, name: string): string | null {
@@ -89,7 +85,7 @@ function readStringClaim(
   return typeof claimValue === "string" ? claimValue : null;
 }
 
-function getBearerRequestIdentity(request: Request): AzureRequestIdentity | null{
+function getBearerRequestIdentity(request: Request): Account | null{
   const bearerToken = getBearerToken(request);
 
   if (!bearerToken) {
@@ -102,41 +98,47 @@ function getBearerRequestIdentity(request: Request): AzureRequestIdentity | null
     return null;
   }
 
-  const login =
+  const upn =
     readStringClaim(payload, "upn") ??
     readStringClaim(payload, "unique_name") ??
     readStringClaim(payload, "name");
-  const memberNum = readStringClaim(payload, "memberNum");
+  const memberNumber = readStringClaim(payload, "memberNum");
+  const id =
+    readStringClaim(payload, "oid") ??
+    readStringClaim(payload, "http://schemas.microsoft.com/identity/claims/objectidentifier");
 
-  if (!login || !memberNum) {
+  if (!upn || !memberNumber || !id) {
     return null;
   }
 
   return {
-    login,
-    memberNum,
+    id,
+    upn,
+    membershipNumber: memberNumber,
   };
 }
 
-function getAzureRequestIdentity(request: Request): AzureRequestIdentity | null {
-  const login = readHeader(request, "x-ms-client-principal-name");
+function getAzureRequestIdentity(request: Request): Account | null {
+  const upn = readHeader(request, "x-ms-client-principal-name");
   const clientPrincipal = decodeClientPrincipal(
     readHeader(request, "x-ms-client-principal"),
   );
-  const memberNum =
+  const memberNumber =
     clientPrincipal?.claims?.find((claim): boolean => claim.typ === "memberNum")?.val ?? null;
+  const id = readHeader(request, "x-ms-client-principal-id");
 
-  if (!login || !memberNum) {
+  if (!upn || !memberNumber || !id) {
     return null;
   }
 
   return {
-    login,
-    memberNum,
+    id,
+    upn,
+    membershipNumber: memberNumber,
   };
 }
 
-export function getRequestIdentity(request: Request): AzureRequestIdentity | null {
+export function getRequestIdentity(request: Request): Account | null {
   if (config.isLocalInstance) {
     return getBearerRequestIdentity(request);
   }

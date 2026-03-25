@@ -1,0 +1,4 @@
+- [ ] implementacja portów Tipi
+- [ ] implementacja portów Mail
+- [ ] implementacja portów entra
+- [ ] implementacja portów AUDIT

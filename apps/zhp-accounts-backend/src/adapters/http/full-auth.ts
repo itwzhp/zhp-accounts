@@ -1,9 +1,11 @@
 import type { Request, Response } from "express";
-import { AzureRequestIdentity, getRequestIdentity } from "./azure-auth";
+import type { Account } from "zhp-accounts-types";
+
+import { getRequestIdentity } from "./azure-auth";
 import { verifyInternalAuthToken } from "./internal-auth";
 
 export async function performFullAuth(req: Request, res: Response, requiredMembershipNumber? :string, requiredUnitId? :number)
-: Promise<AzureRequestIdentity | null> {
+: Promise<Account | null> {
     const requesterIdentity = getRequestIdentity(req);
     if (!requesterIdentity) {
       res.status(401).json({ error: "Unauthorized" });
@@ -12,7 +14,7 @@ export async function performFullAuth(req: Request, res: Response, requiredMembe
 
     const verifiedToken = await verifyInternalAuthToken(req);
 
-    if (!verifiedToken || verifiedToken.sub !== requesterIdentity.memberNum) {
+    if (!verifiedToken || verifiedToken.sub !== requesterIdentity.membershipNumber) {
       res.status(401).json({ error: "Unauthorized" });
       return null;
     }

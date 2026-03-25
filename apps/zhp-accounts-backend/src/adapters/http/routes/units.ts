@@ -20,12 +20,12 @@ function parseNumericPathParam(value: string): number | null {
 
 router.get("/units", async (_req: Request, res: Response): Promise<void> => {
   try {
-    const membershipNumber = getRequestIdentity(_req)?.memberNum;
-
-    if (!membershipNumber) {
+    const requestIdentity = getRequestIdentity(_req);
+    if (!requestIdentity) {
       res.status(401).json({ error: "Unauthorized" });
       return;
     }
+    const membershipNumber = requestIdentity.membershipNumber;
 
     const units = await getRootUnits(membershipNumber);
     const internalAuthToken = await generateInternalAuthToken(
@@ -59,7 +59,7 @@ router.get("/units/:parentId", async (req: Request, res: Response): Promise<void
     if (!authResult) {
       return;
     }
-    const membershipNumber = authResult.memberNum;
+    const membershipNumber = authResult.membershipNumber;
 
     const payload = await getSubUnits(membershipNumber, parentId);
     const refreshedInternalAuthToken = await generateInternalAuthToken(
@@ -93,7 +93,7 @@ router.get("/units/:unitId/members", async (req: Request, res: Response): Promis
     if (!authResult) {
       return;
     }
-    const membershipNumber = authResult.memberNum;
+    const membershipNumber = authResult.membershipNumber;
 
     const payload = await getMembers(unitId);
     const refreshedInternalAuthToken = await generateInternalAuthToken(

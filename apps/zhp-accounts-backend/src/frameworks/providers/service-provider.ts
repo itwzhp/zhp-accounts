@@ -8,7 +8,9 @@ import { MockTipiQueryAdapter } from "@/adapters/tipi/mock-tipi-query-adapter";
 import { MockEntraMemberDetailsAdapter } from "@/adapters/entra/mock-entra-member-details-adapter";
 import { MockEntraAccountCommandsAdapter } from "@/adapters/entra/mock-entra-account-commands-adapter";
 import { ConsoleAuditLoggerAdapter } from "@/adapters/audit/console-audit-logger-adapter";
+import { ElasticAuditLoggerAdapter } from "@/adapters/audit/elastic-audit-logger-adapter";
 import { ConsoleMailNotificationAdapter } from "@/adapters/mail/console-mail-notification-adapter";
+import { config } from "@/config";
 import { TipiHealthCheckAdapter } from "@/adapters/tipi/tipi-health-check-adapter";
 import { EntraHealthCheckAdapter } from "@/adapters/entra/entra-health-check-adapter";
 import { AuditHealthCheckAdapter } from "@/adapters/audit/audit-health-check-adapter";
@@ -46,7 +48,9 @@ export function getEntraAccountCommandsPort(): EntraAccountCommandsPort {
 
 export function getAuditLoggerPort(): AuditLoggerPort {
   if (!auditLoggerPort) {
-    auditLoggerPort = new ConsoleAuditLoggerAdapter();
+    auditLoggerPort = config.auditLoggerMode === "elastic"
+      ? new ElasticAuditLoggerAdapter()
+      : new ConsoleAuditLoggerAdapter();
   }
 
   return auditLoggerPort;
@@ -65,7 +69,7 @@ export function getHealthChecks(): HealthCheckPort[] {
     healthChecks = [
       new TipiHealthCheckAdapter(),
       new EntraHealthCheckAdapter(),
-      new AuditHealthCheckAdapter(),
+      new AuditHealthCheckAdapter(getAuditLoggerPort()),
     ];
   }
 

@@ -1,5 +1,5 @@
-import type { EntraMember } from "@/entities/entra-member";
+import type { EntraAccount } from "zhp-accounts-types";
 
 export interface EntraMemberDetailsPort {
-  getMemberDetails(memberId: string): Promise<EntraMember | null>;
+  getMemberDetails(memberId: string): Promise<EntraAccount | null>;
 }

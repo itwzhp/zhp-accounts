@@ -163,10 +163,10 @@
                 id="account-email"
                 type="text"
                 readonly
-                value={accountData.email}
+                value={accountData.account.upn}
                 class="input flex-1 bg-surface-200-700-token"
               />
-              <CopyButton text={accountData.email} title="Kopiuj login" />
+              <CopyButton text={accountData.account.upn} title="Kopiuj login" />
             </div>
           </div>
           

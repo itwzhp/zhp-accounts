@@ -20,7 +20,7 @@ export async function getMember(
   }
 
   return {
-    mail: entraMember?.mail ?? null,
+    mail: entraMember?.upn ?? null,
     canMailBeCorrected: false,
     isAdmin: entraMember?.isAdmin ?? false,
     membershipNumber: memberId,

@@ -5,4 +5,4 @@
 
 export type { Request, Response } from "express";
 export { getRequestIdentity } from "@/adapters/http/azure-auth";
-export type { AzureRequestIdentity } from "@/adapters/http/azure-auth";
+export type { Account as AuditUser } from "zhp-accounts-types";

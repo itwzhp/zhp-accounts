@@ -8,10 +8,16 @@ import type { EntraAccountCommandsPort } from "@/ports/entra-account-commands-po
 export class MockEntraAccountCommandsAdapter implements EntraAccountCommandsPort {
   async createAccount(accountOwner: ZhpMember): Promise<CreateAccountResponse> {
     const localPart = `${accountOwner.name}.${accountOwner.surname}`.toLowerCase().replace(/\s+/g, ".");
+    const email = `${localPart}@example.zhp.pl`;
 
     return {
-      email: `${localPart}@example.zhp.pl`,
       password: "TempPassword123!",
+      account: {
+        id: `mock-${accountOwner.membershipNumber}`,
+        upn: email,
+        membershipNumber: accountOwner.membershipNumber,
+        isAdmin: false,
+      },
     };
   }
 

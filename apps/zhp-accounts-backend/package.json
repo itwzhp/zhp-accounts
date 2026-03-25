@@ -18,6 +18,7 @@
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^9.3.4",
     "express": "^4.21.1",
     "jose": "^6.0.11"
   },

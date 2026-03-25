@@ -1,4 +1,4 @@
-import type { CreateAccountCommand, CreateAccountResponse } from "zhp-accounts-types";
+import type { CreateAccountCommand, CreateAccountResponse, Account } from "zhp-accounts-types";
 import {
   getAuditLoggerPort,
   getEntraAccountCommandsPort,
@@ -8,7 +8,7 @@ import {
 
 export async function createAccount(
   command: CreateAccountCommand,
-  actorLogin: string,
+  actor: Account,
 ): Promise<CreateAccountResponse> {
   const entraPort = getEntraAccountCommandsPort();
   const tipiPort = getTipiQueryPort();
@@ -37,6 +37,33 @@ export async function createAccount(
       });
     }
   }
-  await auditLogger.log(actorLogin, command.membershipNumber, "CreateAccount", {newEmail: result.email});
+
+  try {
+    await auditLogger.log({
+      level: "info",
+      message: "Mailbox account created",
+      eventType: "creation",
+      action: "user-mailbox-create",
+      outcome: "success",
+      actor: {
+        id: actor.id,
+        upn: actor.upn,
+        membershipNumber: actor.membershipNumber,
+      },
+      target: {
+        id: result.account.id,
+        upn: result.account.upn,
+        membershipNumber: result.account.membershipNumber,
+      },
+    });
+  } catch (error) {
+    console.error("Audit logging failed for CreateAccount", {
+      action: "user-mailbox-create",
+      actorUpn: actor.upn,
+      actorId: actor.id,
+      targetMembershipNumber: command.membershipNumber,
+      error,
+    });
+  }
   return result;
 }

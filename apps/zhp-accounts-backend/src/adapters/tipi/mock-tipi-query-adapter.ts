@@ -43,12 +43,13 @@ const MEMBERS_BY_NUMBER: Record<string, ZhpMember> = {
   CC002222: { name: "Magdalena", surname: "Lewandowska", membershipNumber: "CC002222", hasAllRequiredConsents: true },
   XD003333: { name: "Tomasz", surname: "Kamiński", membershipNumber: "XD003333", hasAllRequiredConsents: false },
   EE004444: { name: "Agnieszka", surname: "Szymańska", membershipNumber: "EE004444", hasAllRequiredConsents: true },
+  FF006666: { name: "Marta", surname: "Przybysz", membershipNumber: "FF006666", hasAllRequiredConsents: true },
   XE005555: { name: "Agnieszka", surname: "Malewska", membershipNumber: "XE005555", hasAllRequiredConsents: false },
 };
 
 const MEMBERSHIP_NUMBERS_BY_UNIT: Record<number, readonly string[]> = {
   3: ["AA001234", "AA005678", "XD003333"],
-  4: ["BB001111", "EE004444", "XE005555"],
+  4: ["BB001111", "EE004444", "FF006666", "XE005555"],
   5: ["BB001111", "XD003333"],
   6: ["CC002222", "AA001234"],
   7: ["AA005678", "EE004444"],

@@ -1,11 +1,13 @@
+import type { EntraAccount } from "./accounts";
+
 export interface CreateAccountCommand {
     readonly membershipNumber: string;
     readonly notificationEmail?: string;
 }
 
 export interface CreateAccountResponse {
-    readonly email: string;
     readonly password: string;
+    readonly account: EntraAccount;
 }
 
 export interface GenerateTapCommand {

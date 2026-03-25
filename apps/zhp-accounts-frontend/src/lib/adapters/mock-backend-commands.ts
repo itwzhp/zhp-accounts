@@ -22,8 +22,13 @@ export class MockBackendCommandsAdapter implements BackendCommandPort {
     const result = command.membershipNumber.startsWith('X')
       ? err('Nastąpił testowy błąd podczas tworzenia konta')
       : ok<CreateAccountResponse>({
-          email: `${command.membershipNumber.toLowerCase()}@example.zhp.pl`,
           password: 'TempPassword123!',
+          account: {
+            id: `mock-${command.membershipNumber}`,
+            upn: `${command.membershipNumber.toLowerCase()}@example.zhp.pl`,
+            membershipNumber: command.membershipNumber,
+            isAdmin: false,
+          },
         })
     console.info('[MockBackendCommands] createAccount(', command, ') -> ', result)
     return result

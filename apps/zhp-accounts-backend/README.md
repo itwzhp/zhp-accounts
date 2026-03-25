@@ -82,6 +82,12 @@ All environment-specific configuration is managed via environment variables:
 - `PORT` (default: `3000`) - Server port
 - `NODE_ENV` (default: `development`) - Environment: `development|production|test`
 - `LOG_LEVEL` (default: `info`) - Log level: `debug|info|warn|error`
+- `AUDIT_LOGGER_MODE` (default: `elastic` for production, otherwise `console`) - Audit sink mode: `console|elastic`
+- `AUDIT_ENV_NAMESPACE` (default: `dev|test|prod` based on `NODE_ENV`) - ECS `data_stream.namespace`
+- `AUDIT_ELASTIC_ENDPOINT` (required when `AUDIT_LOGGER_MODE=elastic`) - Elastic endpoint URL
+- `AUDIT_ELASTIC_API_KEY` (preferred) - Elastic API key for audit writes
+- `AUDIT_ELASTIC_USERNAME` and `AUDIT_ELASTIC_PASSWORD` (alternative) - Basic auth credentials
+- `AUDIT_ELASTIC_REQUEST_TIMEOUT_MS` (default: `3000`) - Audit request timeout
 
 ### Local EasyAuth simulation
 

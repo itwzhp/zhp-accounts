@@ -72,7 +72,7 @@ router.post("/commands/CreateAccount", async (req: Request, res: Response): Prom
       return;
     }
 
-    const payload = await createAccount(command, authResult.login);
+    const payload = await createAccount(command, authResult);
 
     res.status(200).json(payload);
   } catch {
@@ -92,7 +92,7 @@ router.post("/commands/GenerateTap", async (req: Request, res: Response): Promis
       return;
     }
 
-    const payload = await generateTap(command, authResult.login);
+    const payload = await generateTap(command, authResult);
 
     res.status(200).json(payload);
   } catch {
