@@ -36,8 +36,10 @@ properties:
     secrets:
     - name: internal-auth-jwt-secret
       value: {{INTERNAL_AUTH_JWT_SECRET}}
-    - name: audit-elastic-api-key
-      value: {{AUDIT_ELASTIC_API_KEY}}
+    - name: audit-elastic-username
+      value: {{AUDIT_ELASTIC_USERNAME}}
+    - name: audit-elastic-password
+      value: {{AUDIT_ELASTIC_PASSWORD}}
     - name: microsoft-provider-authentication-secret
   environmentId: /subscriptions/35e22786-93ea-47c8-902a-16e9d0f03e17/resourceGroups/zhp-accounts/providers/Microsoft.App/managedEnvironments/managedEnvironment-zhpaccounts-978a
   template:
@@ -55,8 +57,10 @@ properties:
         value: {{AUDIT_ENV_NAMESPACE}}
       - name: AUDIT_ELASTIC_ENDPOINT
         value: {{AUDIT_ELASTIC_ENDPOINT}}
-      - name: AUDIT_ELASTIC_API_KEY
-        secretRef: audit-elastic-api-key
+      - name: AUDIT_ELASTIC_USERNAME
+        secretRef: audit-elastic-username
+      - name: AUDIT_ELASTIC_PASSWORD
+        secretRef: audit-elastic-password
       - name: AUDIT_ELASTIC_REQUEST_TIMEOUT_MS
         value: "3000"
       probes:

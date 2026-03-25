@@ -82,15 +82,17 @@ jobs:
         if: github.event_name == 'push'
         env:
           INTERNAL_AUTH_JWT_SECRET: ${{ secrets.INTERNAL_AUTH_JWT_SECRET }}
-          AUDIT_ELASTIC_API_KEY: ${{ secrets.AUDIT_ELASTIC_API_KEY }}
-          AUDIT_ELASTIC_ENDPOINT: ${{ vars.AUDIT_ELASTIC_ENDPOINT }}
+          AUDIT_ELASTIC_USERNAME: ${{ vars.ELASTIC_USERNAME }}
+          AUDIT_ELASTIC_PASSWORD: ${{ secrets.ELASTIC_PASSWORD }}
+          AUDIT_ELASTIC_ENDPOINT: ${{ vars.ELASTIC_ENDPOINT }}
           AUDIT_ENV_NAMESPACE: test
         run: |
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
           IMAGE="${{ vars.ACR_ENDPOINT }}/zhp/accounts-backend:sha-${SHORT_SHA}"
           sed -i "s|{{IMAGE_NAME}}|${IMAGE}|g" apps/zhp-accounts-backend/container-app.yaml
           sed -i "s|{{INTERNAL_AUTH_JWT_SECRET}}|${INTERNAL_AUTH_JWT_SECRET}|g" apps/zhp-accounts-backend/container-app.yaml
-          sed -i "s|{{AUDIT_ELASTIC_API_KEY}}|${AUDIT_ELASTIC_API_KEY}|g" apps/zhp-accounts-backend/container-app.yaml
+          sed -i "s|{{AUDIT_ELASTIC_USERNAME}}|${AUDIT_ELASTIC_USERNAME}|g" apps/zhp-accounts-backend/container-app.yaml
+          sed -i "s|{{AUDIT_ELASTIC_PASSWORD}}|${AUDIT_ELASTIC_PASSWORD}|g" apps/zhp-accounts-backend/container-app.yaml
           sed -i "s|{{AUDIT_ELASTIC_ENDPOINT}}|${AUDIT_ELASTIC_ENDPOINT}|g" apps/zhp-accounts-backend/container-app.yaml
           sed -i "s|{{AUDIT_ENV_NAMESPACE}}|${AUDIT_ENV_NAMESPACE}|g" apps/zhp-accounts-backend/container-app.yaml
           az containerapp update \

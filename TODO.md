@@ -2,3 +2,6 @@
 - [ ] implementacja portów Mail
 - [ ] implementacja portów entra
 - [ ] implementacja portów AUDIT
+  - [X] Uzupełnić sekret AUDIT_ELASTIC_API_KEY	
+  - [X] Uzupełnić var AUDIT_ELASTIC_ENDPOINT
+  - [ ] full test
