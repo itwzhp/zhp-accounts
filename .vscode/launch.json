@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend: Debug (TSX)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/zhp-accounts-backend",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "--import",
+        "tsx"
+      ],
+      "args": [
+        "src/main.ts"
+      ],
+      "env": {
+        "NODE_ENV": "development",
+        "PORT": "3000",
+        "LOG_LEVEL": "debug"
+      },
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "console": "integratedTerminal"
+    }
+  ]
+}

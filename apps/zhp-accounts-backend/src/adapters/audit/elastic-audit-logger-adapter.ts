@@ -110,7 +110,12 @@ export class ElasticAuditLoggerAdapter implements AuditLoggerPort {
     }
 
     async checkElasticAuditHealth(): Promise<boolean> {
-        return this.client.ping();
+        try {
+            const sec = await this.client.security.authenticate();
+            return sec.roles.includes("zhp-accounts-logs-writer");
+        } catch (error) {
+            return false;
+        }
     }
 }
 
