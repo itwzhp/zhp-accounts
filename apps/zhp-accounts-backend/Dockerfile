@@ -63,6 +63,7 @@ USER nodejs
 
 # Default environment
 ENV NODE_ENV=production
+ENV AUDIT_ENV_NAMESPACE=prod
 ENV PORT=3000
 ENV LOG_LEVEL=info
 

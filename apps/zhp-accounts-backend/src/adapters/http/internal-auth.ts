@@ -33,6 +33,7 @@ export async function generateInternalAuthToken(input: InternalAuthTokenPayload)
   })
     .setProtectedHeader({ alg: "HS256", typ: "JWT" })
     .setSubject(input.sub)
+    .setAudience(config.internalAuthJwtAudience)
     .setIssuedAt(issuedAt)
     .setExpirationTime(issuedAt + config.internalAuthJwtTtlSeconds)
     .sign(secretKey);
@@ -50,6 +51,7 @@ export async function verifyInternalAuthToken(
   try {
     const verificationResult = await jwtVerify<InternalAuthTokenPayload>(token, secretKey, {
       algorithms: ["HS256"],
+      audience: config.internalAuthJwtAudience,
       typ: "JWT",
     });
 

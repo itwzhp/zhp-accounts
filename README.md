@@ -10,6 +10,23 @@ Repozytorium zawiera frontend, backend i współdzielone typy dla aplikacji Kont
 
 ## Adresy
 
+### Środowiska
+
+- `dev`:
+  - backend: `http://localhost:3000`
+  - frontend: `http://localhost:5173`
+- `test`:
+  - backend: `https://konto-backend.zhp.pl`
+  - frontend: `https://zhp-accounts-frontend.zhp-gk.workers.dev`
+- `prod`:
+  - backend: `https://konto-backend-prod.zhp.pl`
+  - frontend: `https://konto.zhp.pl`
+
+### Deploy
+
+- `test`: automatycznie po merge do `main`
+- `prod`: ręcznie, przez workflow dispatch uruchamiany przez zespół `itwzhp/wydzial-it`
+
 ### Lokalnie
 
 - Frontend dev: http://localhost:5173

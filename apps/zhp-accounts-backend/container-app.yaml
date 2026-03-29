@@ -1,17 +1,14 @@
 identity:
   type: SystemAssigned
 location: Poland Central
-name: konta-zhp-backend
+name: {{ACA_APP_NAME}}
 properties:
   configuration:
     activeRevisionsMode: Single
     ingress:
       allowInsecure: false
       corsPolicy:
-        allowedOrigins:
-        - https://konto.zhp.pl
-        - http://localhost:5173
-        - https://zhp-accounts-frontend.zhp-gk.workers.dev # TODO usunąć po release
+        allowedOrigins: [{{INGRESS_CORS_ALLOWED_ORIGINS}}]
         allowedMethods:
         - GET
         - POST
@@ -45,16 +42,16 @@ properties:
   template:
     containers:
     - image: {{IMAGE_NAME}}
-      name: konta-zhp-backend
+      name: backend
       env:
+      - name: NODE_ENV
+        value: "{{NODE_ENV}}"
       - name: ENABLE_CORS
         value: "false"
       - name: INTERNAL_AUTH_JWT_SECRET
         secretRef: internal-auth-jwt-secret
       - name: AUDIT_LOGGER_MODE
         value: "elastic"
-      - name: AUDIT_ENV_NAMESPACE
-        value: {{AUDIT_ENV_NAMESPACE}}
       - name: AUDIT_ELASTIC_ENDPOINT
         value: {{AUDIT_ELASTIC_ENDPOINT}}
       - name: AUDIT_ELASTIC_USERNAME

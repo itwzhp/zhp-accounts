@@ -1,6 +1,16 @@
 name = "zhp-accounts-frontend"
 compatibility_date = "2026-01-24"
 
+[env.test]
+name = "zhp-accounts-frontend"
+workers_dev = true
+
+# [env.prod]
+# name = "zhp-accounts-frontend-prod"
+# routes = [
+# 	{ pattern = "konto.zhp.pl/*", custom_domain = true }
+# ]
+
 # Assets-only configuration
 [assets]
 directory = "dist"

@@ -12,6 +12,7 @@ interface Config {
   corsAllowedOrigins: string[];
   internalAuthJwtSecret: string;
   internalAuthJwtTtlSeconds: number;
+  internalAuthJwtAudience: string;
   auditLoggerMode: "console" | "elastic";
   auditEnvironmentNamespace: string;
   auditElasticEndpoint: string | null;
@@ -58,10 +59,22 @@ function nullable(value: string | undefined): string | null {
   return trimmed.length > 0 ? trimmed : null;
 }
 
+function mapNodeEnvToAuditNamespace(nodeEnv: "development" | "production" | "test"): string {
+  if (nodeEnv === "development") {
+    return "dev";
+  }
+
+  if (nodeEnv === "production") {
+    return "prod";
+  }
+
+  return "test";
+}
+
 function getConfig(): Config {
   const port = parseInt(process.env.PORT || "3000", 10);
   const nodeEnv = parseNodeEnv(process.env.NODE_ENV);
-  const isLocalInstance = nodeEnv !== "production";
+  const isLocalInstance = nodeEnv === "development";
   const logLevel = (process.env.LOG_LEVEL || "info") as
     | "debug"
     | "info"
@@ -92,12 +105,12 @@ function getConfig(): Config {
     process.env.AUDIT_LOGGER_MODE,
     nodeEnv === "production" ? "elastic" : "console",
   );
-  const auditEnvironmentNamespace = process.env.AUDIT_ENV_NAMESPACE ||
-    (nodeEnv === "production" ? "prod" : nodeEnv === "test" ? "test" : "dev");
+  const auditEnvironmentNamespace = mapNodeEnvToAuditNamespace(nodeEnv);
   const auditElasticEndpoint = nullable(process.env.AUDIT_ELASTIC_ENDPOINT);
   const auditElasticApiKey = nullable(process.env.AUDIT_ELASTIC_API_KEY);
   const auditElasticUsername = nullable(process.env.AUDIT_ELASTIC_USERNAME);
   const auditElasticPassword = nullable(process.env.AUDIT_ELASTIC_PASSWORD);
+  const internalAuthJwtAudience = `zhp-accounts-${auditEnvironmentNamespace}`;
   const auditElasticRequestTimeoutMs = Number.parseInt(
     process.env.AUDIT_ELASTIC_REQUEST_TIMEOUT_MS || "3000",
     10,
@@ -127,6 +140,7 @@ function getConfig(): Config {
     corsAllowedOrigins,
     internalAuthJwtSecret,
     internalAuthJwtTtlSeconds,
+    internalAuthJwtAudience,
     auditLoggerMode,
     auditEnvironmentNamespace,
     auditElasticEndpoint,

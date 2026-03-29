@@ -1,3 +1,4 @@
+import { SignJWT } from "jose";
 import { describe, expect, it, vi } from "vitest";
 import { generateInternalAuthToken, verifyInternalAuthToken } from "./internal-auth";
 
@@ -12,6 +13,7 @@ function buildRequestWithInternalAuth(token: string): any {
 const mockConfig = vi.hoisted(() => ({
   internalAuthJwtSecret: "test-secret",
   internalAuthJwtTtlSeconds: 60,
+  internalAuthJwtAudience: "zhp-accounts-test",
 }));
 
 vi.mock("@/config", () => ({ config: mockConfig }));
@@ -70,5 +72,25 @@ describe("internal auth token", (): void => {
     } finally {
       nowSpy.mockRestore();
     }
+  });
+
+  it("rejects token with invalid audience", async (): Promise<void> => {
+    const secretKey = new TextEncoder().encode(mockConfig.internalAuthJwtSecret);
+    const issuedAt = Math.floor(Date.now() / 1000);
+
+    const token = await new SignJWT({
+      allowedUnitIds: [3],
+      allowedMemberNumbers: ["AA001234"],
+    })
+      .setProtectedHeader({ alg: "HS256", typ: "JWT" })
+      .setSubject("AA001234")
+      .setAudience("zhp-accounts-prod")
+      .setIssuedAt(issuedAt)
+      .setExpirationTime(issuedAt + mockConfig.internalAuthJwtTtlSeconds)
+      .sign(secretKey);
+
+    const payload = await verifyInternalAuthToken(buildRequestWithInternalAuth(token));
+
+    expect(payload).toBeNull();
   });
 });

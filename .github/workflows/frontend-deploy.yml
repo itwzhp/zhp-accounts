@@ -1,4 +1,4 @@
-name: Frontend - Build and deploy PROD
+name: Frontend - Build and Deploy TEST
 
 on:
   push:
@@ -44,11 +44,11 @@ jobs:
         working-directory: ./apps/zhp-accounts-frontend
 
       - name: Build
-        run: pnpm build
+        run: pnpm build -- --mode test
         working-directory: ./apps/zhp-accounts-frontend
 
-      - name: Deploy to Cloudflare
-        run: pnpm exec wrangler deploy
+      - name: Deploy TEST to Cloudflare
+        run: pnpm exec wrangler deploy --env test
         working-directory: ./apps/zhp-accounts-frontend
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
