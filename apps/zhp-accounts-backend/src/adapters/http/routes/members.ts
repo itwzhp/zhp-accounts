@@ -27,7 +27,11 @@ router.get("/members/:memberId", async (req: Request, res: Response): Promise<vo
     }
 
     res.status(200).json(member);
-  } catch {
+  } catch (error) {
+    console.error("Error handling GET /members/:memberId request", {
+      memberId,
+      error: error instanceof Error ? error.message : String(error),
+    });
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

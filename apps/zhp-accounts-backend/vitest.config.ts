@@ -13,6 +13,12 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    env: {
+      MOCK_AUDIT: "true",
+      MOCK_ENTRA: "true",
+      MOCK_TIPI: "true",
+      MOCK_MAIL: "true",
+    },
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],

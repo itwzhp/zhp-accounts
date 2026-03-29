@@ -82,9 +82,12 @@ All environment-specific configuration is managed via environment variables:
 - `PORT` (default: `3000`) - Server port
 - `NODE_ENV` (default: `development`) - Environment: `development|production|test`
 - `LOG_LEVEL` (default: `info`) - Log level: `debug|info|warn|error`
-- `AUDIT_LOGGER_MODE` (default: `elastic` for production, otherwise `console`) - Audit sink mode: `console|elastic`
+- `MOCK_AUDIT` (default: `false`) - Use mock audit logger when set to `true` (case-insensitive)
+- `MOCK_ENTRA` (default: `false`) - Use mock Entra adapters when set to `true` (case-insensitive)
+- `MOCK_TIPI` (default: `false`) - Use mock Tipi adapters when set to `true` (case-insensitive)
+- `MOCK_MAIL` (default: `false`) - Use mock mail adapters when set to `true` (case-insensitive)
 - `AUDIT_ENV_NAMESPACE` (default: `dev|test|prod` based on `NODE_ENV`) - ECS `data_stream.namespace`
-- `AUDIT_ELASTIC_ENDPOINT` (required when `AUDIT_LOGGER_MODE=elastic`) - Elastic endpoint URL
+- `AUDIT_ELASTIC_ENDPOINT` (required when `MOCK_AUDIT` is not `true`) - Elastic endpoint URL
 - `AUDIT_ELASTIC_API_KEY` (preferred) - Elastic API key for audit writes
 - `AUDIT_ELASTIC_USERNAME` and `AUDIT_ELASTIC_PASSWORD` (alternative) - Basic auth credentials
 - `AUDIT_ELASTIC_REQUEST_TIMEOUT_MS` (default: `3000`) - Audit request timeout

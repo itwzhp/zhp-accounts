@@ -50,8 +50,6 @@ properties:
         value: "false"
       - name: INTERNAL_AUTH_JWT_SECRET
         secretRef: internal-auth-jwt-secret
-      - name: AUDIT_LOGGER_MODE
-        value: "elastic"
       - name: AUDIT_ELASTIC_ENDPOINT
         value: {{AUDIT_ELASTIC_ENDPOINT}}
       - name: AUDIT_ELASTIC_USERNAME

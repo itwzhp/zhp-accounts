@@ -17,7 +17,7 @@ export class AuditHealthCheckAdapter implements HealthCheckPort {
   constructor(private readonly auditLogger: AuditLoggerPort) {}
 
   async check(): Promise<HealthStatus> {
-    if (config.auditLoggerMode !== "elastic") {
+    if (config.mockAudit) {
       return "ok";
     }
 

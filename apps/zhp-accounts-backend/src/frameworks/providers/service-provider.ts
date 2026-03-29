@@ -5,8 +5,10 @@ import type { AuditLoggerPort } from "@/ports/audit-logger-port";
 import type { MailNotificationPort } from "@/ports/mail-notification-port";
 import type { HealthCheckPort } from "@/ports/health-check-port";
 import { MockTipiQueryAdapter } from "@/adapters/tipi/mock-tipi-query-adapter";
+import { EntraMemberDetailsAdapter } from "@/adapters/entra/entra-member-details-adapter";
 import { MockEntraMemberDetailsAdapter } from "@/adapters/entra/mock-entra-member-details-adapter";
 import { MockEntraAccountCommandsAdapter } from "@/adapters/entra/mock-entra-account-commands-adapter";
+import { EntraAccountCommandsAdapter } from "@/adapters/entra/entra-account-commands-adapter";
 import { ConsoleAuditLoggerAdapter } from "@/adapters/audit/console-audit-logger-adapter";
 import { ElasticAuditLoggerAdapter } from "@/adapters/audit/elastic-audit-logger-adapter";
 import { ConsoleMailNotificationAdapter } from "@/adapters/mail/console-mail-notification-adapter";
@@ -24,7 +26,11 @@ let healthChecks: HealthCheckPort[] | null = null;
 
 export function getTipiQueryPort(): TipiQueryPort {
   if (!tipiQueryPort) {
-    tipiQueryPort = new MockTipiQueryAdapter();
+    if (config.mockTipi) {
+      tipiQueryPort = new MockTipiQueryAdapter();
+    } else {
+      tipiQueryPort = new MockTipiQueryAdapter();
+    }
   }
 
   return tipiQueryPort;
@@ -32,7 +38,9 @@ export function getTipiQueryPort(): TipiQueryPort {
 
 export function getEntraMemberDetailsPort(): EntraMemberDetailsPort {
   if (!entraMemberDetailsPort) {
-    entraMemberDetailsPort = new MockEntraMemberDetailsAdapter();
+    entraMemberDetailsPort = config.mockEntra
+      ? new MockEntraMemberDetailsAdapter()
+      : new EntraMemberDetailsAdapter();
   }
 
   return entraMemberDetailsPort;
@@ -40,7 +48,11 @@ export function getEntraMemberDetailsPort(): EntraMemberDetailsPort {
 
 export function getEntraAccountCommandsPort(): EntraAccountCommandsPort {
   if (!entraAccountCommandsPort) {
-    entraAccountCommandsPort = new MockEntraAccountCommandsAdapter();
+    if (config.mockEntra) {
+      entraAccountCommandsPort = new MockEntraAccountCommandsAdapter();
+    } else {
+      entraAccountCommandsPort = new EntraAccountCommandsAdapter();
+    }
   }
 
   return entraAccountCommandsPort;
@@ -48,9 +60,9 @@ export function getEntraAccountCommandsPort(): EntraAccountCommandsPort {
 
 export function getAuditLoggerPort(): AuditLoggerPort {
   if (!auditLoggerPort) {
-    auditLoggerPort = config.auditLoggerMode === "elastic"
-      ? new ElasticAuditLoggerAdapter()
-      : new ConsoleAuditLoggerAdapter();
+    auditLoggerPort = config.mockAudit
+      ? new ConsoleAuditLoggerAdapter()
+      : new ElasticAuditLoggerAdapter();
   }
 
   return auditLoggerPort;
@@ -58,7 +70,11 @@ export function getAuditLoggerPort(): AuditLoggerPort {
 
 export function getMailNotificationPort(): MailNotificationPort {
   if (!mailNotificationPort) {
-    mailNotificationPort = new ConsoleMailNotificationAdapter();
+    if (config.mockMail) {
+      mailNotificationPort = new ConsoleMailNotificationAdapter();
+    } else {
+      mailNotificationPort = new ConsoleMailNotificationAdapter();
+    }
   }
 
   return mailNotificationPort;

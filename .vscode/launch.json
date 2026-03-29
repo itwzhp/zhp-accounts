@@ -17,7 +17,11 @@
       "env": {
         "NODE_ENV": "development",
         "PORT": "3000",
-        "LOG_LEVEL": "debug"
+        "LOG_LEVEL": "debug",
+        "MOCK_AUDIT": "true",
+        "MOCK_ENTRA": "true",
+        "MOCK_TIPI": "true",
+        "MOCK_MAIL": "true"
       },
       "skipFiles": [
         "<node_internals>/**"

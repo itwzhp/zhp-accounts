@@ -1,28 +1,45 @@
 import type {
-  CreateAccountResponse,
   GenerateTapResponse,
   ZhpMember,
 } from "zhp-accounts-types";
-import type { EntraAccountCommandsPort } from "@/ports/entra-account-commands-port";
+import type {
+  CreateAccountResult,
+  EntraAccountCommandsPort,
+} from "@/ports/entra-account-commands-port";
+
+const occupiedUpns = new Set<string>([
+  "jan.kowalski@zhp.pl",
+  "kowalski.jan@zhp.pl",
+  "j.kowalski@zhp.pl",
+]);
 
 export class MockEntraAccountCommandsAdapter implements EntraAccountCommandsPort {
-  async createAccount(accountOwner: ZhpMember): Promise<CreateAccountResponse> {
-    const localPart = `${accountOwner.name}.${accountOwner.surname}`.toLowerCase().replace(/\s+/g, ".");
-    const email = `${localPart}@example.zhp.pl`;
+  async createAccount(accountOwner: ZhpMember, upn: string): Promise<CreateAccountResult> {
+    if (occupiedUpns.has(upn)) {
+      return {
+        status: "already-exists",
+        upn,
+      };
+    }
+
+    occupiedUpns.add(upn);
 
     return {
-      password: "TempPassword123!",
-      account: {
-        id: `mock-${accountOwner.membershipNumber}`,
-        upn: email,
-        membershipNumber: accountOwner.membershipNumber,
-        isAdmin: false,
+      status: "created",
+      response: {
+        password: "TempPassword123!",
+        account: {
+          id: `mock-${accountOwner.membershipNumber}`,
+          upn,
+          membershipNumber: accountOwner.membershipNumber,
+          isAdmin: false,
+        },
       },
     };
   }
 
-  async generateTap(memberNum: string): Promise<GenerateTapResponse> {
-    const tapSuffix = Buffer.from(memberNum).toString("base64url").slice(0, 12);
+  async generateTap(upn: string): Promise<GenerateTapResponse> {
+    const tapSuffix = Buffer.from(upn).toString("base64url").slice(0, 12);
 
     return {
       tap: `mock-tap-${tapSuffix}`,

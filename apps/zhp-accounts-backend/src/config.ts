@@ -8,18 +8,24 @@ interface Config {
   nodeEnv: "development" | "production" | "test";
   isLocalInstance: boolean;
   logLevel: "debug" | "info" | "warn" | "error";
+  mockAudit: boolean;
+  mockEntra: boolean;
+  mockTipi: boolean;
+  mockMail: boolean;
   enableCors: boolean;
   corsAllowedOrigins: string[];
   internalAuthJwtSecret: string;
   internalAuthJwtTtlSeconds: number;
   internalAuthJwtAudience: string;
-  auditLoggerMode: "console" | "elastic";
   auditEnvironmentNamespace: string;
   auditElasticEndpoint: string | null;
   auditElasticApiKey: string | null;
   auditElasticUsername: string | null;
   auditElasticPassword: string | null;
   auditElasticRequestTimeoutMs: number;
+  entraTenantId: string;
+  entraClientId: string;
+  entraLicenseSku: string;
 }
 
 function parseNodeEnv(
@@ -38,16 +44,8 @@ function parseNodeEnv(
   );
 }
 
-function parseAuditLoggerMode(mode: string | undefined, fallback: "console" | "elastic"): "console" | "elastic" {
-  if (!mode) {
-    return fallback;
-  }
-
-  if (mode === "console" || mode === "elastic") {
-    return mode;
-  }
-
-  throw new Error(`Unsupported AUDIT_LOGGER_MODE value: ${mode}. Expected one of: console, elastic.`);
+function parseBooleanFlag(value: string | undefined): boolean {
+  return value?.trim().toLowerCase() === "true";
 }
 
 function nullable(value: string | undefined): string | null {
@@ -72,6 +70,10 @@ function mapNodeEnvToAuditNamespace(nodeEnv: "development" | "production" | "tes
 }
 
 function getConfig(): Config {
+  const defaultEntraTenantId = "e1368d1e-3975-4ce6-893d-fc351fd44dcd";
+  const defaultEntraClientId = "87387abe-3db2-4d76-b115-bfe7f23f6553";
+  const defaultEntraLicenseSku = "94763226-9b3c-4e75-a931-5c89701abe66";
+
   const port = parseInt(process.env.PORT || "3000", 10);
   const nodeEnv = parseNodeEnv(process.env.NODE_ENV);
   const isLocalInstance = nodeEnv === "development";
@@ -80,6 +82,10 @@ function getConfig(): Config {
     | "info"
     | "warn"
     | "error";
+  const mockAudit = parseBooleanFlag(process.env.MOCK_AUDIT);
+  const mockEntra = parseBooleanFlag(process.env.MOCK_ENTRA);
+  const mockTipi = parseBooleanFlag(process.env.MOCK_TIPI);
+  const mockMail = parseBooleanFlag(process.env.MOCK_MAIL);
   const enableCors = process.env.ENABLE_CORS
     ? process.env.ENABLE_CORS === "true"
     : nodeEnv === "development";
@@ -101,10 +107,6 @@ function getConfig(): Config {
     10,
   );
 
-  const auditLoggerMode = parseAuditLoggerMode(
-    process.env.AUDIT_LOGGER_MODE,
-    nodeEnv === "production" ? "elastic" : "console",
-  );
   const auditEnvironmentNamespace = mapNodeEnvToAuditNamespace(nodeEnv);
   const auditElasticEndpoint = nullable(process.env.AUDIT_ELASTIC_ENDPOINT);
   const auditElasticApiKey = nullable(process.env.AUDIT_ELASTIC_API_KEY);
@@ -115,10 +117,13 @@ function getConfig(): Config {
     process.env.AUDIT_ELASTIC_REQUEST_TIMEOUT_MS || "3000",
     10,
   );
+  const entraTenantId = process.env.ENTRA_TENANT_ID?.trim() || defaultEntraTenantId;
+  const entraClientId = process.env.ENTRA_CLIENT_ID?.trim() || defaultEntraClientId;
+  const entraLicenseSku = process.env.ENTRA_LICENSE_SKU?.trim() || defaultEntraLicenseSku;
 
-  if (auditLoggerMode === "elastic") {
+  if (!mockAudit) {
     if (!auditElasticEndpoint) {
-      throw new Error("AUDIT_ELASTIC_ENDPOINT is required when AUDIT_LOGGER_MODE=elastic");
+      throw new Error("AUDIT_ELASTIC_ENDPOINT is required when MOCK_AUDIT is not true");
     }
 
     const hasApiKey = Boolean(auditElasticApiKey);
@@ -126,7 +131,7 @@ function getConfig(): Config {
 
     if (!hasApiKey && !hasBasicAuth) {
       throw new Error(
-        "AUDIT_LOGGER_MODE=elastic requires AUDIT_ELASTIC_API_KEY or AUDIT_ELASTIC_USERNAME + AUDIT_ELASTIC_PASSWORD",
+        "MOCK_AUDIT=false requires AUDIT_ELASTIC_API_KEY or AUDIT_ELASTIC_USERNAME + AUDIT_ELASTIC_PASSWORD",
       );
     }
   }
@@ -136,18 +141,24 @@ function getConfig(): Config {
     nodeEnv,
     isLocalInstance,
     logLevel,
+    mockAudit,
+    mockEntra,
+    mockTipi,
+    mockMail,
     enableCors,
     corsAllowedOrigins,
     internalAuthJwtSecret,
     internalAuthJwtTtlSeconds,
     internalAuthJwtAudience,
-    auditLoggerMode,
     auditEnvironmentNamespace,
     auditElasticEndpoint,
     auditElasticApiKey,
     auditElasticUsername,
     auditElasticPassword,
     auditElasticRequestTimeoutMs,
+    entraTenantId,
+    entraClientId,
+    entraLicenseSku,
   };
 }
 

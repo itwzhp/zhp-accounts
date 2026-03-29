@@ -23,7 +23,7 @@ export async function generateTap(
         throw new Error(`Konto ${command.membershipNumber} ma uprawnienia administratora, nie można wygenerować TAP`);
     }
 
-    const result = await commandPort.generateTap(command.membershipNumber);
+    const result = await commandPort.generateTap(existingAccount.upn);
     if (command.notificationEmail) {
         try {
             await mailNotification.notifyAboutGeneratedTap(command.notificationEmail, result);
