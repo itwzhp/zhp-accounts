@@ -1,4 +1,4 @@
-name: Frontend - Build and Deploy TEST
+name: Frontend - Build and Deploy (TEST -> PROD)
 
 on:
   push:
@@ -10,8 +10,7 @@ on:
       - '.github/workflows/frontend-deploy.yml'
 
 jobs:
-  deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  deploy-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -49,6 +48,54 @@ jobs:
 
       - name: Deploy TEST to Cloudflare
         run: pnpm exec wrangler deploy --env test
+        working-directory: ./apps/zhp-accounts-frontend
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+
+  deploy-prod:
+    needs: deploy-test
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          lfs: true
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'pnpm'
+          cache-dependency-path: apps/zhp-accounts-frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: ./apps/zhp-accounts-frontend
+
+      - name: Type check
+        run: pnpm run check
+        working-directory: ./apps/zhp-accounts-frontend
+
+      - name: Test
+        run: pnpm test
+        working-directory: ./apps/zhp-accounts-frontend
+
+      - name: Build
+        run: pnpm build -- --mode production
+        working-directory: ./apps/zhp-accounts-frontend
+
+      - name: Deploy PROD to Cloudflare
+        run: pnpm exec wrangler deploy --env prod
         working-directory: ./apps/zhp-accounts-frontend
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
