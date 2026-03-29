@@ -43,7 +43,7 @@ jobs:
         working-directory: ./apps/zhp-accounts-frontend
 
       - name: Build
-        run: pnpm build -- --mode test
+        run: pnpm build --mode test
         working-directory: ./apps/zhp-accounts-frontend
 
       - name: Deploy TEST to Cloudflare
@@ -91,7 +91,7 @@ jobs:
         working-directory: ./apps/zhp-accounts-frontend
 
       - name: Build
-        run: pnpm build -- --mode production
+        run: pnpm build --mode production
         working-directory: ./apps/zhp-accounts-frontend
 
       - name: Deploy PROD to Cloudflare
