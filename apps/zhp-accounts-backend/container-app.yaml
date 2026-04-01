@@ -38,6 +38,10 @@ properties:
     - name: audit-elastic-password
       value: {{AUDIT_ELASTIC_PASSWORD}}
     - name: microsoft-provider-authentication-secret
+    - name: tipi-api-client-id
+      value: {{TIPI_API_CLIENT_ID}}
+    - name: tipi-api-client-secret
+      value: {{TIPI_API_CLIENT_SECRET}}
   environmentId: /subscriptions/35e22786-93ea-47c8-902a-16e9d0f03e17/resourceGroups/zhp-accounts/providers/Microsoft.App/managedEnvironments/managedEnvironment-zhpaccounts-978a
   template:
     containers:
@@ -58,6 +62,12 @@ properties:
         secretRef: audit-elastic-password
       - name: AUDIT_ELASTIC_REQUEST_TIMEOUT_MS
         value: "3000"
+      - name: TIPI_API_BASE_URL
+        value: "https://tipi-api.zhp.pl"
+      - name: TIPI_API_CLIENT_ID
+        secretRef: tipi-api-client-id
+      - name: TIPI_API_CLIENT_SECRET
+        secretRef: tipi-api-client-secret
       probes:
       - failureThreshold: 2
         httpGet:

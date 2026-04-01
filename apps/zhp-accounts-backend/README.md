@@ -86,6 +86,9 @@ All environment-specific configuration is managed via environment variables:
 - `MOCK_ENTRA` (default: `false`) - Use mock Entra adapters when set to `true` (case-insensitive)
 - `MOCK_TIPI` (default: `false`) - Use mock Tipi adapters when set to `true` (case-insensitive)
 - `MOCK_MAIL` (default: `false`) - Use mock mail adapters when set to `true` (case-insensitive)
+- `TIPI_API_BASE_URL` (default: `https://tipi-api.zhp.pl`) - Base URL for Tipi API
+- `TIPI_API_CLIENT_ID` (required when `MOCK_TIPI` is not `true`) - Tipi API Client ID (`CF-Access-Client-Id`)
+- `TIPI_API_CLIENT_SECRET` (required when `MOCK_TIPI` is not `true`) - Tipi API Client Secret (`CF-Access-Client-Secret`)
 - `AUDIT_ENV_NAMESPACE` (default: `dev|test|prod` based on `NODE_ENV`) - ECS `data_stream.namespace`
 - `AUDIT_ELASTIC_ENDPOINT` (required when `MOCK_AUDIT` is not `true`) - Elastic endpoint URL
 - `AUDIT_ELASTIC_API_KEY` (preferred) - Elastic API key for audit writes

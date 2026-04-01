@@ -26,6 +26,9 @@ interface Config {
   entraTenantId: string;
   entraClientId: string;
   entraLicenseSku: string;
+  tipiApiBaseUrl: string;
+  tipiApiClientId: string;
+  tipiApiClientSecret: string;
 }
 
 function parseNodeEnv(
@@ -55,6 +58,16 @@ function nullable(value: string | undefined): string | null {
 
   const trimmed = value.trim();
   return trimmed.length > 0 ? trimmed : null;
+}
+
+function requiredString(value: string | undefined, envName: string): string {
+  const trimmed = value?.trim();
+
+  if (!trimmed) {
+    throw new Error(`${envName} is required`);
+  }
+
+  return trimmed;
 }
 
 function mapNodeEnvToAuditNamespace(nodeEnv: "development" | "production" | "test"): string {
@@ -120,6 +133,10 @@ function getConfig(): Config {
   const entraTenantId = process.env.ENTRA_TENANT_ID?.trim() || defaultEntraTenantId;
   const entraClientId = process.env.ENTRA_CLIENT_ID?.trim() || defaultEntraClientId;
   const entraLicenseSku = process.env.ENTRA_LICENSE_SKU?.trim() || defaultEntraLicenseSku;
+  const tipiApiBaseUrl =
+    process.env.TIPI_API_BASE_URL?.trim() || "https://tipi-api.zhp.pl";
+  const tipiApiClientId = process.env.TIPI_API_CLIENT_ID?.trim() || "";
+  const tipiApiClientSecret = process.env.TIPI_API_CLIENT_SECRET?.trim() || "";
 
   if (!mockAudit) {
     if (!auditElasticEndpoint) {
@@ -134,6 +151,12 @@ function getConfig(): Config {
         "MOCK_AUDIT=false requires AUDIT_ELASTIC_API_KEY or AUDIT_ELASTIC_USERNAME + AUDIT_ELASTIC_PASSWORD",
       );
     }
+  }
+
+  if (!mockTipi) {
+    requiredString(tipiApiBaseUrl, "TIPI_API_BASE_URL");
+    requiredString(tipiApiClientId, "TIPI_API_CLIENT_ID");
+    requiredString(tipiApiClientSecret, "TIPI_API_CLIENT_SECRET");
   }
 
   return {
@@ -159,6 +182,9 @@ function getConfig(): Config {
     entraTenantId,
     entraClientId,
     entraLicenseSku,
+    tipiApiBaseUrl,
+    tipiApiClientId,
+    tipiApiClientSecret,
   };
 }
 

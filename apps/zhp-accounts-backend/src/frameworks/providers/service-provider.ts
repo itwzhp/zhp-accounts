@@ -5,6 +5,7 @@ import type { AuditLoggerPort } from "@/ports/audit-logger-port";
 import type { MailNotificationPort } from "@/ports/mail-notification-port";
 import type { HealthCheckPort } from "@/ports/health-check-port";
 import { MockTipiQueryAdapter } from "@/adapters/tipi/mock-tipi-query-adapter";
+import { TipiQueryAdapter } from "@/adapters/tipi/tipi-query-adapter";
 import { EntraMemberDetailsAdapter } from "@/adapters/entra/entra-member-details-adapter";
 import { MockEntraMemberDetailsAdapter } from "@/adapters/entra/mock-entra-member-details-adapter";
 import { MockEntraAccountCommandsAdapter } from "@/adapters/entra/mock-entra-account-commands-adapter";
@@ -29,7 +30,7 @@ export function getTipiQueryPort(): TipiQueryPort {
     if (config.mockTipi) {
       tipiQueryPort = new MockTipiQueryAdapter();
     } else {
-      tipiQueryPort = new MockTipiQueryAdapter();
+      tipiQueryPort = new TipiQueryAdapter();
     }
   }
 
