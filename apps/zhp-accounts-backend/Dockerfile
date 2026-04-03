@@ -1,6 +1,6 @@
 FROM node:24-alpine AS base
 # Install pnpm globally
-RUN npm install -g pnpm@10.28
+RUN npm install -g pnpm@10.33.0
 
 # Build stage
 FROM base AS builder
@@ -11,7 +11,7 @@ ARG VERSION=1.0.0-dev
 WORKDIR /build/zhp-accounts-backend
 
 # Copy package files
-COPY zhp-accounts-backend/package.json zhp-accounts-backend/pnpm-lock.yaml zhp-accounts-backend/pnpm-workspace.yaml ./
+COPY zhp-accounts-backend/package.json zhp-accounts-backend/pnpm-lock.yaml zhp-accounts-backend/pnpm-workspace.yaml zhp-accounts-backend/.npmrc ./
 COPY zhp-accounts-types /build/zhp-accounts-types
 
 # Install dependencies
@@ -37,8 +37,15 @@ ENV EXPECTED_VERSION=${VERSION}
 # Run tests
 RUN pnpm test --run
 
+# Deploy stage
+FROM builder AS deploy
+
+WORKDIR /build/zhp-accounts-backend
+
+RUN pnpm --filter . deploy --prod /out
+
 # Production stage
-FROM base AS production
+FROM node:24-alpine AS production
 
 WORKDIR /app
 
@@ -46,17 +53,12 @@ WORKDIR /app
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001
 
-# Copy package files
-COPY zhp-accounts-backend/package.json zhp-accounts-backend/pnpm-lock.yaml zhp-accounts-backend/pnpm-workspace.yaml ./
-
-# Install production dependencies only
-RUN pnpm install --frozen-lockfile --production
+# Copy runtime package manifest and production dependencies from deploy stage
+COPY --from=deploy --chown=nodejs:nodejs /out/package.json ./package.json
+COPY --from=deploy --chown=nodejs:nodejs /out/node_modules ./node_modules
 
 # Copy built application from builder stage
-COPY --from=builder /build/zhp-accounts-backend/dist ./dist
-
-# Set ownership
-RUN chown -R nodejs:nodejs /app
+COPY --from=builder --chown=nodejs:nodejs /build/zhp-accounts-backend/dist ./dist
 
 # Switch to non-root user
 USER nodejs
