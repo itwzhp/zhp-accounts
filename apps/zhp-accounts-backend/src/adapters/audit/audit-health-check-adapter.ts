@@ -22,14 +22,16 @@ export class AuditHealthCheckAdapter implements HealthCheckPort {
     }
 
     if (!supportsElasticHealthCheck(this.auditLogger)) {
+      console.info("[Health][audit] Audit logger does not support checkElasticAuditHealth");
       return "down";
     }
 
-    try {
-      const isHealthy = await this.auditLogger.checkElasticAuditHealth();
-      return isHealthy ? "ok" : "down";
-    } catch {
+    const isHealthy = await this.auditLogger.checkElasticAuditHealth();
+    if (!isHealthy) {
+      console.info("[Health][audit] Elastic health check returned unhealthy");
       return "down";
     }
+
+    return "ok";
   }
 }

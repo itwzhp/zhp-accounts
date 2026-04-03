@@ -110,12 +110,14 @@ export class ElasticAuditLoggerAdapter implements AuditLoggerPort {
     }
 
     async checkElasticAuditHealth(): Promise<boolean> {
-        try {
-            const sec = await this.client.security.authenticate();
-            return sec.roles.includes("zhp-accounts-logs-writer");
-        } catch {
-            return false;
+        const sec = await this.client.security.authenticate();
+        const hasRequiredRole = sec.roles.includes("zhp-accounts-logs-writer");
+
+        if (!hasRequiredRole) {
+            console.info("[Health][audit] Missing required role zhp-accounts-logs-writer");
         }
+
+        return hasRequiredRole;
     }
 }
 

@@ -17,6 +17,7 @@ import { config } from "@/config";
 import { TipiHealthCheckAdapter } from "@/adapters/tipi/tipi-health-check-adapter";
 import { EntraHealthCheckAdapter } from "@/adapters/entra/entra-health-check-adapter";
 import { AuditHealthCheckAdapter } from "@/adapters/audit/audit-health-check-adapter";
+import { MailHealthCheckAdapter } from "@/adapters/mail/mail-health-check-adapter";
 
 let tipiQueryPort: TipiQueryPort | null = null;
 let entraMemberDetailsPort: EntraMemberDetailsPort | null = null;
@@ -83,11 +84,23 @@ export function getMailNotificationPort(): MailNotificationPort {
 
 export function getHealthChecks(): HealthCheckPort[] {
   if (!healthChecks) {
-    healthChecks = [
-      new TipiHealthCheckAdapter(),
-      new EntraHealthCheckAdapter(),
-      new AuditHealthCheckAdapter(getAuditLoggerPort()),
-    ];
+    healthChecks = [];
+
+    if (!config.mockTipi) {
+      healthChecks.push(new TipiHealthCheckAdapter());
+    }
+
+    if (!config.mockEntra) {
+      healthChecks.push(new EntraHealthCheckAdapter());
+    }
+
+    if (!config.mockAudit) {
+      healthChecks.push(new AuditHealthCheckAdapter(getAuditLoggerPort()));
+    }
+
+    if (!config.mockMail) {
+      healthChecks.push(new MailHealthCheckAdapter());
+    }
   }
 
   return healthChecks;

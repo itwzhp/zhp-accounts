@@ -14,6 +14,14 @@ const STATUS_RANK: Record<HealthStatus, number> = {
   down: 2,
 };
 
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return String(error);
+}
+
 export async function getHealth(): Promise<Health> {
   let worstStatus: HealthStatus = "ok";
 
@@ -22,8 +30,19 @@ export async function getHealth(): Promise<Health> {
 
     try {
       status = await check.check();
-    } catch {
+
+      if (status === "down") {
+        console.error(`[Health] Check \"${check.name}\" returned down`);
+      }
+
+      if (status === "degraded") {
+        console.warn(`[Health] Check \"${check.name}\" returned degraded`);
+      }
+    } catch (error) {
       status = "down";
+      console.error(
+        `[Health] Check \"${check.name}\" failed: ${getErrorMessage(error)}`,
+      );
     }
 
     if (STATUS_RANK[status] > STATUS_RANK[worstStatus]) {
