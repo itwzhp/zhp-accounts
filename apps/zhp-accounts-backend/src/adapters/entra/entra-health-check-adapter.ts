@@ -6,7 +6,7 @@ export class EntraHealthCheckAdapter implements HealthCheckPort {
   name = "entra";
 
   async check(): Promise<HealthStatus> {
-    await getGraphClient().api("/me").select(["id", "userPrincipalName"]).get();
+    await getGraphClient().api("/users").top(1).select(["id"]).get();
     return "ok";
   }
 }
