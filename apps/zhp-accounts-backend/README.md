@@ -93,7 +93,11 @@ All environment-specific configuration is managed via environment variables:
 - `AUDIT_ELASTIC_ENDPOINT` (required when `MOCK_AUDIT` is not `true`) - Elastic endpoint URL
 - `AUDIT_ELASTIC_API_KEY` (preferred) - Elastic API key for audit writes
 - `AUDIT_ELASTIC_USERNAME` and `AUDIT_ELASTIC_PASSWORD` (alternative) - Basic auth credentials
-- `AUDIT_ELASTIC_REQUEST_TIMEOUT_MS` (default: `3000`) - Audit request timeout
+- `AUDIT_ELASTIC_REQUEST_TIMEOUT_MS` (default: `3000`) - Timeout for each audit write attempt
+
+When `MOCK_AUDIT` is not `true`, audit writes are sent via HTTP to Elasticsearch with up to 5 retries
+(exponential backoff + jitter) for transient failures. Retries are attempted for network/timeout failures and
+HTTP statuses: `429`, `500`, `502`, `503`, `504`, `520`, `521`, `522`, `523`, `524`, `525`, `526`.
 
 ### Local EasyAuth simulation
 
