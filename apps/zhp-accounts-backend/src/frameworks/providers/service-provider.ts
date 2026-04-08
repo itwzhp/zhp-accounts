@@ -13,6 +13,7 @@ import { EntraAccountCommandsAdapter } from "@/adapters/entra/entra-account-comm
 import { ConsoleAuditLoggerAdapter } from "@/adapters/audit/console-audit-logger-adapter";
 import { ElasticAuditLoggerAdapter } from "@/adapters/audit/elastic-audit-logger-adapter";
 import { ConsoleMailNotificationAdapter } from "@/adapters/mail/console-mail-notification-adapter";
+import { AzureMailNotificationAdapter } from "@/adapters/mail/azure-mail-notification-adapter";
 import { config } from "@/config";
 import { TipiHealthCheckAdapter } from "@/adapters/tipi/tipi-health-check-adapter";
 import { EntraHealthCheckAdapter } from "@/adapters/entra/entra-health-check-adapter";
@@ -75,7 +76,7 @@ export function getMailNotificationPort(): MailNotificationPort {
     if (config.mockMail) {
       mailNotificationPort = new ConsoleMailNotificationAdapter();
     } else {
-      mailNotificationPort = new ConsoleMailNotificationAdapter();
+      mailNotificationPort = new AzureMailNotificationAdapter();
     }
   }
 

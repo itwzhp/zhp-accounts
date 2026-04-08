@@ -32,16 +32,16 @@ export async function getHealth(): Promise<Health> {
       status = await check.check();
 
       if (status === "down") {
-        console.error(`[Health] Check \"${check.name}\" returned down`);
+        console.error(`[Health] Check "${check.name}" returned down`);
       }
 
       if (status === "degraded") {
-        console.warn(`[Health] Check \"${check.name}\" returned degraded`);
+        console.warn(`[Health] Check "${check.name}" returned degraded`);
       }
     } catch (error) {
       status = "down";
       console.error(
-        `[Health] Check \"${check.name}\" failed: ${getErrorMessage(error)}`,
+        `[Health] Check "${check.name}" failed: ${getErrorMessage(error)}`,
       );
     }
 

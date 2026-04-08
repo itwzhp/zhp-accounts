@@ -29,6 +29,8 @@ interface Config {
   tipiApiBaseUrl: string;
   tipiApiClientId: string;
   tipiApiClientSecret: string;
+  mailAcsEndpoint: string;
+  mailFromAddress: string;
 }
 
 function parseNodeEnv(
@@ -137,6 +139,8 @@ function getConfig(): Config {
     process.env.TIPI_API_BASE_URL?.trim() || "https://tipi-api.zhp.pl";
   const tipiApiClientId = process.env.TIPI_API_CLIENT_ID?.trim() || "";
   const tipiApiClientSecret = process.env.TIPI_API_CLIENT_SECRET?.trim() || "";
+  const mailAcsEndpoint = process.env.MAIL_ACS_ENDPOINT?.trim() || "";
+  const mailFromAddress = process.env.MAIL_FROM_ADDRESS?.trim() || "";
 
   if (!mockAudit) {
     if (!auditElasticEndpoint) {
@@ -157,6 +161,11 @@ function getConfig(): Config {
     requiredString(tipiApiBaseUrl, "TIPI_API_BASE_URL");
     requiredString(tipiApiClientId, "TIPI_API_CLIENT_ID");
     requiredString(tipiApiClientSecret, "TIPI_API_CLIENT_SECRET");
+  }
+
+  if (!mockMail) {
+    requiredString(mailAcsEndpoint, "MAIL_ACS_ENDPOINT");
+    requiredString(mailFromAddress, "MAIL_FROM_ADDRESS");
   }
 
   return {
@@ -185,6 +194,8 @@ function getConfig(): Config {
     tipiApiBaseUrl,
     tipiApiClientId,
     tipiApiClientSecret,
+    mailAcsEndpoint,
+    mailFromAddress,
   };
 }
 

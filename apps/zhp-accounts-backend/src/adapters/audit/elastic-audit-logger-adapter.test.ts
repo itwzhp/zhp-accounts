@@ -62,7 +62,7 @@ describe("ElasticAuditLoggerAdapter", (): void => {
     const firstUrl = String(fetchMock.mock.calls[0]?.[0]);
     const secondUrl = String(fetchMock.mock.calls[1]?.[0]);
     const thirdUrl = String(fetchMock.mock.calls[2]?.[0]);
-    expect(firstUrl).toMatch(/_doc\//);
+    expect(firstUrl).toMatch(/_create\//);
     expect(secondUrl).toBe(firstUrl);
     expect(thirdUrl).toBe(firstUrl);
   });
