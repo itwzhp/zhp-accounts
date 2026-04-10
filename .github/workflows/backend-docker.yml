@@ -91,6 +91,8 @@ jobs:
           AUDIT_ELASTIC_ENDPOINT: ${{ vars.ELASTIC_URL }}
           TIPI_API_CLIENT_ID: ${{ secrets.TIPI_API_CLIENT_ID }}
           TIPI_API_CLIENT_SECRET: ${{ secrets.TIPI_API_CLIENT_SECRET }}
+          MAIL_ACS_ENDPOINT: ${{ vars.MAIL_ACS_ENDPOINT }}
+          MAIL_FROM_ADDRESS: test@konto.zhp.pl
           TEMPLATE_PATH: apps/zhp-accounts-backend/container-app.yaml
           RENDERED_PATH: /tmp/container-app-test.yaml
         run: |
@@ -107,6 +109,8 @@ jobs:
           sed -i "s|{{AUDIT_ELASTIC_ENDPOINT}}|${AUDIT_ELASTIC_ENDPOINT}|g" "${RENDERED_PATH}"
           sed -i "s|{{TIPI_API_CLIENT_ID}}|${TIPI_API_CLIENT_ID}|g" "${RENDERED_PATH}"
           sed -i "s|{{TIPI_API_CLIENT_SECRET}}|${TIPI_API_CLIENT_SECRET}|g" "${RENDERED_PATH}"
+          sed -i "s|{{MAIL_ACS_ENDPOINT}}|${MAIL_ACS_ENDPOINT}|g" "${RENDERED_PATH}"
+          sed -i "s|{{MAIL_FROM_ADDRESS}}|${MAIL_FROM_ADDRESS}|g" "${RENDERED_PATH}"
           az containerapp update \
             --name "${ACA_APP_NAME}" \
             --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \
@@ -141,6 +145,8 @@ jobs:
           AUDIT_ELASTIC_ENDPOINT: ${{ vars.ELASTIC_URL }}
           TIPI_API_CLIENT_ID: ${{ secrets.TIPI_API_CLIENT_ID }}
           TIPI_API_CLIENT_SECRET: ${{ secrets.TIPI_API_CLIENT_SECRET }}
+          MAIL_ACS_ENDPOINT: ${{ vars.MAIL_ACS_ENDPOINT }}
+          MAIL_FROM_ADDRESS: automat@konto.zhp.pl
           TEMPLATE_PATH: apps/zhp-accounts-backend/container-app.yaml
           RENDERED_PATH: /tmp/container-app-prod.yaml
         run: |
@@ -157,6 +163,8 @@ jobs:
           sed -i "s|{{AUDIT_ELASTIC_ENDPOINT}}|${AUDIT_ELASTIC_ENDPOINT}|g" "${RENDERED_PATH}"
           sed -i "s|{{TIPI_API_CLIENT_ID}}|${TIPI_API_CLIENT_ID}|g" "${RENDERED_PATH}"
           sed -i "s|{{TIPI_API_CLIENT_SECRET}}|${TIPI_API_CLIENT_SECRET}|g" "${RENDERED_PATH}"
+          sed -i "s|{{MAIL_ACS_ENDPOINT}}|${MAIL_ACS_ENDPOINT}|g" "${RENDERED_PATH}"
+          sed -i "s|{{MAIL_FROM_ADDRESS}}|${MAIL_FROM_ADDRESS}|g" "${RENDERED_PATH}"
           az containerapp update \
             --name "${ACA_APP_NAME}" \
             --resource-group ${{ vars.AZURE_RESOURCE_GROUP }} \

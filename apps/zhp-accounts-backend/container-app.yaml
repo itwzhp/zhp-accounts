@@ -68,6 +68,10 @@ properties:
         secretRef: tipi-api-client-id
       - name: TIPI_API_CLIENT_SECRET
         secretRef: tipi-api-client-secret
+      - name: MAIL_ACS_ENDPOINT
+        value: {{MAIL_ACS_ENDPOINT}}
+      - name: MAIL_FROM_ADDRESS
+        value: {{MAIL_FROM_ADDRESS}}
       probes:
       - failureThreshold: 2
         httpGet:

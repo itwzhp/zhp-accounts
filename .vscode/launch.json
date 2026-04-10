@@ -21,7 +21,10 @@
         "MOCK_AUDIT": "true",
         "MOCK_ENTRA": "true",
         "MOCK_TIPI": "true",
-        "MOCK_MAIL": "true"
+
+        "MOCK_MAIL": "true",
+        "MAIL_ACS_ENDPOINT": "https://acs-konto-dev.europe.communication.azure.com",
+        "MAIL_FROM_ADDRESS": "dev@konto.zhp.pl"
       },
       "skipFiles": [
         "<node_internals>/**"
