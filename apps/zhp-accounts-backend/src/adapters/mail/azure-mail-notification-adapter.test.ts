@@ -109,19 +109,4 @@ describe("AzureMailNotificationAdapter", () => {
     expect(message.content.subject).toBe("Twoj Temporary Access Pass (TAP)");
     expect(message.content.plainText).toContain("TAP: ABCDEF");
   });
-
-  it("logs unknown operation id when send state does not contain result", async () => {
-    const infoSpy = vi.spyOn(console, "info").mockImplementation(() => undefined);
-    getOperationStateMock.mockReturnValue({});
-
-    const adapter = new AzureMailNotificationAdapter();
-
-    await adapter.notifyAboutGeneratedTap("notify@zhp.pl", {
-      tap: "ABCDEF",
-      expiresAt: "2026-12-01T10:00:00.000Z",
-    });
-
-    const payload = infoSpy.mock.calls[0]?.[1] as Record<string, unknown>;
-    expect(payload.operationId).toBe("unknown");
-  });
 });

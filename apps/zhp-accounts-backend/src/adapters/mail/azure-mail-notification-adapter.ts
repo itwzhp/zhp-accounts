@@ -119,17 +119,14 @@ export class AzureMailNotificationAdapter implements MailNotificationPort {
 
   private async send(message: EmailMessage): Promise<void> {
     const poller = await this.client.beginSend(message);
-    await poller.poll();
 
+    await poller.poll();
     const opState = poller.getOperationState();
-    const operationId = opState.result?.id ?? "unknown";
 
     console.info("[Mail] ACS operation enqueued", {
-      operationId,
+      state: opState,
       recipient: message.recipients.to?.[0]?.address,
       subject: message.content.subject,
     });
-
-    // Fire-and-forget: poller continues in background via event loop
   }
 }
