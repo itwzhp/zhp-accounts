@@ -39,17 +39,13 @@ jobs:
       - name: Log in to Azure Container Registry
         if: github.event_name == 'push'
         run: |
-          ACR_HOST="${{ vars.ACR_ENDPOINT }}"
-          ACR_HOST="${ACR_HOST%.azurecr.io}"
-          ACR_NAME="${ACR_HOST%%-*}"
-          ACR_SUFFIX="${ACR_HOST#*-}"
-          az acr login --name "$ACR_NAME" --suffix "$ACR_SUFFIX"
+          echo "${{ secrets.ZHP_AZURE_CONTAINER_REGISTRY_ADMIN_PASSWORD }}" | docker login -u "${{ secrets.ZHP_AZURE_CONTAINER_REGISTRY_ADMIN_USER }}" --password-stdin "${{ vars.ZHP_AZURE_CONTAINER_REGISTRY_URL }}"
 
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ vars.ACR_ENDPOINT }}/zhp/accounts-backend
+          images: ${{ vars.ZHP_AZURE_CONTAINER_REGISTRY_URL }}/zhp/accounts-backend
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -93,11 +89,12 @@ jobs:
           TIPI_API_CLIENT_SECRET: ${{ secrets.TIPI_API_CLIENT_SECRET }}
           MAIL_ACS_ENDPOINT: ${{ vars.MAIL_ACS_ENDPOINT }}
           MAIL_FROM_ADDRESS: test@konto.zhp.pl
+          ZHP_AZURE_CONTAINER_REGISTRY_URL: ${{ vars.ZHP_AZURE_CONTAINER_REGISTRY_URL }}
           TEMPLATE_PATH: apps/zhp-accounts-backend/container-app.yaml
           RENDERED_PATH: /tmp/container-app-test.yaml
         run: |
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-          IMAGE="${{ vars.ACR_ENDPOINT }}/zhp/accounts-backend:sha-${SHORT_SHA}"
+          IMAGE="${ZHP_AZURE_CONTAINER_REGISTRY_URL}/zhp/accounts-backend:sha-${SHORT_SHA}"
           cp "${TEMPLATE_PATH}" "${RENDERED_PATH}"
           sed -i "s|{{ACA_APP_NAME}}|${ACA_APP_NAME}|g" "${RENDERED_PATH}"
           sed -i "s|{{NODE_ENV}}|${NODE_ENV}|g" "${RENDERED_PATH}"
@@ -109,6 +106,7 @@ jobs:
           sed -i "s|{{AUDIT_ELASTIC_ENDPOINT}}|${AUDIT_ELASTIC_ENDPOINT}|g" "${RENDERED_PATH}"
           sed -i "s|{{TIPI_API_CLIENT_ID}}|${TIPI_API_CLIENT_ID}|g" "${RENDERED_PATH}"
           sed -i "s|{{TIPI_API_CLIENT_SECRET}}|${TIPI_API_CLIENT_SECRET}|g" "${RENDERED_PATH}"
+          sed -i "s|{{ZHP_AZURE_CONTAINER_REGISTRY_URL}}|${ZHP_AZURE_CONTAINER_REGISTRY_URL}|g" "${RENDERED_PATH}"
           sed -i "s|{{MAIL_ACS_ENDPOINT}}|${MAIL_ACS_ENDPOINT}|g" "${RENDERED_PATH}"
           sed -i "s|{{MAIL_FROM_ADDRESS}}|${MAIL_FROM_ADDRESS}|g" "${RENDERED_PATH}"
           az containerapp update \
@@ -147,11 +145,12 @@ jobs:
           TIPI_API_CLIENT_SECRET: ${{ secrets.TIPI_API_CLIENT_SECRET }}
           MAIL_ACS_ENDPOINT: ${{ vars.MAIL_ACS_ENDPOINT }}
           MAIL_FROM_ADDRESS: automat@konto.zhp.pl
+          ZHP_AZURE_CONTAINER_REGISTRY_URL: ${{ vars.ZHP_AZURE_CONTAINER_REGISTRY_URL }}
           TEMPLATE_PATH: apps/zhp-accounts-backend/container-app.yaml
           RENDERED_PATH: /tmp/container-app-prod.yaml
         run: |
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
-          IMAGE="${{ vars.ACR_ENDPOINT }}/zhp/accounts-backend:sha-${SHORT_SHA}"
+          IMAGE="${ZHP_AZURE_CONTAINER_REGISTRY_URL}/zhp/accounts-backend:sha-${SHORT_SHA}"
           cp "${TEMPLATE_PATH}" "${RENDERED_PATH}"
           sed -i "s|{{ACA_APP_NAME}}|${ACA_APP_NAME}|g" "${RENDERED_PATH}"
           sed -i "s|{{NODE_ENV}}|${NODE_ENV}|g" "${RENDERED_PATH}"
@@ -163,6 +162,7 @@ jobs:
           sed -i "s|{{AUDIT_ELASTIC_ENDPOINT}}|${AUDIT_ELASTIC_ENDPOINT}|g" "${RENDERED_PATH}"
           sed -i "s|{{TIPI_API_CLIENT_ID}}|${TIPI_API_CLIENT_ID}|g" "${RENDERED_PATH}"
           sed -i "s|{{TIPI_API_CLIENT_SECRET}}|${TIPI_API_CLIENT_SECRET}|g" "${RENDERED_PATH}"
+          sed -i "s|{{ZHP_AZURE_CONTAINER_REGISTRY_URL}}|${ZHP_AZURE_CONTAINER_REGISTRY_URL}|g" "${RENDERED_PATH}"
           sed -i "s|{{MAIL_ACS_ENDPOINT}}|${MAIL_ACS_ENDPOINT}|g" "${RENDERED_PATH}"
           sed -i "s|{{MAIL_FROM_ADDRESS}}|${MAIL_FROM_ADDRESS}|g" "${RENDERED_PATH}"
           az containerapp update \

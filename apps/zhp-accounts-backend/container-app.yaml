@@ -29,7 +29,7 @@ properties:
     maxInactiveRevisions: 100
     registries:
     - identity: system-environment
-      server: zhpaccounts-cybcbyf5abbfdpg9.azurecr.io
+      server: {{ZHP_AZURE_CONTAINER_REGISTRY_URL}}
     secrets:
     - name: internal-auth-jwt-secret
       value: {{INTERNAL_AUTH_JWT_SECRET}}
