@@ -89,7 +89,6 @@ All environment-specific configuration is managed via environment variables:
 - `TIPI_API_BASE_URL` (default: `https://tipi-api.zhp.pl`) - Base URL for Tipi API
 - `TIPI_API_CLIENT_ID` (required when `MOCK_TIPI` is not `true`) - Tipi API Client ID (`CF-Access-Client-Id`)
 - `TIPI_API_CLIENT_SECRET` (required when `MOCK_TIPI` is not `true`) - Tipi API Client Secret (`CF-Access-Client-Secret`)
-- `AUDIT_ENV_NAMESPACE` (default: `dev|test|prod` based on `NODE_ENV`) - ECS `data_stream.namespace`
 - `AUDIT_ELASTIC_ENDPOINT` (required when `MOCK_AUDIT` is not `true`) - Elastic endpoint URL
 - `AUDIT_ELASTIC_API_KEY` (preferred) - Elastic API key for audit writes
 - `AUDIT_ELASTIC_USERNAME` and `AUDIT_ELASTIC_PASSWORD` (alternative) - Basic auth credentials

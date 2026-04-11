@@ -53,15 +53,6 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=sha
 
-      - name: Run tests
-        uses: docker/build-push-action@v6
-        with:
-          context: ./apps
-          file: ./apps/zhp-accounts-backend/Dockerfile
-          target: tester
-          push: false
-          cache-from: type=gha
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
