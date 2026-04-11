@@ -5,10 +5,18 @@
 
 import { Router, type Request, type Response, type Router as ExpressRouter } from "express";
 import { getHealth } from "@/use-cases/health/get-health";
+import { getReadinessHealth } from "@/use-cases/health/get-readiness-health";
 
 const router: ExpressRouter = Router();
 
 router.get("/healthcheck/readiness", async (_: Request, res: Response): Promise<void> => {
+  const health = await getReadinessHealth();
+  const statusCode = health.status === "down" ? 503 : 200;
+
+  res.status(statusCode).json(health);
+});
+
+router.get("/healthcheck/full-test", async (_: Request, res: Response): Promise<void> => {
   const health = await getHealth();
   const statusCode = health.status === "down" ? 503 : 200;
 

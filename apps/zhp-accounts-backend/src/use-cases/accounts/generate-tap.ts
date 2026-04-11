@@ -5,11 +5,14 @@ import {
   getEntraMemberDetailsPort,
   getMailNotificationPort,
 } from "@/frameworks/providers/service-provider";
+import { ensureFullHealth } from "@/use-cases/health/ensure-full-health";
 
 export async function generateTap(
   command: GenerateTapCommand,
     actor: Account,
 ): Promise<GenerateTapResponse> {
+    await ensureFullHealth();
+
     const commandPort = getEntraAccountCommandsPort();
     const queryPort = getEntraMemberDetailsPort();
     const auditLogger = getAuditLoggerPort();

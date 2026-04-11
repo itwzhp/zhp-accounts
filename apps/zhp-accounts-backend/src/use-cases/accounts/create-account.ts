@@ -7,11 +7,14 @@ import {
   getTipiQueryPort,
 } from "@/frameworks/providers/service-provider";
 import { getPossibleAddressesForUser } from "@/shared/email-address-patterns";
+import { ensureFullHealth } from "@/use-cases/health/ensure-full-health";
 
 export async function createAccount(
   command: CreateAccountCommand,
   actor: Account,
 ): Promise<CreateAccountResponse> {
+  await ensureFullHealth();
+
   const entraPort = getEntraAccountCommandsPort();
   const entraMemberDetailsPort = getEntraMemberDetailsPort();
   const tipiPort = getTipiQueryPort();

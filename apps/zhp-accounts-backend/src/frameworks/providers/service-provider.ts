@@ -26,6 +26,7 @@ let entraAccountCommandsPort: EntraAccountCommandsPort | null = null;
 let auditLoggerPort: AuditLoggerPort | null = null;
 let mailNotificationPort: MailNotificationPort | null = null;
 let healthChecks: HealthCheckPort[] | null = null;
+let readinessChecks: HealthCheckPort[] | null = null;
 
 export function getTipiQueryPort(): TipiQueryPort {
   if (!tipiQueryPort) {
@@ -105,4 +106,16 @@ export function getHealthChecks(): HealthCheckPort[] {
   }
 
   return healthChecks;
+}
+
+export function getReadinessChecks(): HealthCheckPort[] {
+  if (!readinessChecks) {
+    readinessChecks = [];
+
+    if (!config.mockTipi) {
+      readinessChecks.push(new TipiHealthCheckAdapter());
+    }
+  }
+
+  return readinessChecks;
 }

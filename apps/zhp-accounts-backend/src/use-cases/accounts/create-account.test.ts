@@ -4,6 +4,7 @@ import { createAccount } from "@/use-cases/accounts/create-account";
 import * as serviceProvider from "@/frameworks/providers/service-provider";
 import type { CreateAccountResult } from "@/ports/entra-account-commands-port";
 import type { TipiMemberDetails } from "@/entities/tipi-member-details";
+import type { HealthCheckPort } from "@/ports/health-check-port";
 
 const ACTOR: Account = {
   id: "actor-1",
@@ -20,6 +21,13 @@ const MEMBER: TipiMemberDetails = {
   choragiew: "Chorągiew Stołeczna",
 };
 
+function createCheck(name: string, status: "ok" | "degraded" | "down"): HealthCheckPort {
+  return {
+    name,
+    check: async () => status,
+  };
+}
+
 describe("createAccount", () => {
   afterEach(() => {
     vi.restoreAllMocks();
@@ -28,6 +36,13 @@ describe("createAccount", () => {
   it("throws when account already exists for membership number", async () => {
     const getMember = vi.fn().mockResolvedValue(MEMBER);
     const createEntraAccount = vi.fn();
+
+    vi.spyOn(serviceProvider, "getHealthChecks").mockReturnValue([
+      createCheck("tipi", "ok"),
+      createCheck("entra", "ok"),
+      createCheck("audit", "ok"),
+      createCheck("mail", "ok"),
+    ]);
 
     vi.spyOn(serviceProvider, "getTipiQueryPort").mockReturnValue({
       getRootUnits: vi.fn(),
@@ -72,6 +87,13 @@ describe("createAccount", () => {
     const createEntraAccount = vi.fn<
       (member: TipiMemberDetails, upn: string) => Promise<CreateAccountResult>
     >();
+
+    vi.spyOn(serviceProvider, "getHealthChecks").mockReturnValue([
+      createCheck("tipi", "ok"),
+      createCheck("entra", "ok"),
+      createCheck("audit", "ok"),
+      createCheck("mail", "ok"),
+    ]);
 
     createEntraAccount
       .mockResolvedValueOnce({ status: "already-exists", upn: "jan.kowalski@zhp.pl" })
@@ -132,5 +154,46 @@ describe("createAccount", () => {
     expect(result.account.upn).toBe("j.kowalski@zhp.pl");
     expect(notifyAboutCreatedAccount).toHaveBeenCalledOnce();
     expect(auditLog).toHaveBeenCalledOnce();
+  });
+
+  it("throws before command execution when full healthcheck is down", async () => {
+    const createEntraAccount = vi.fn();
+
+    vi.spyOn(serviceProvider, "getHealthChecks").mockReturnValue([
+      createCheck("tipi", "ok"),
+      createCheck("entra", "down"),
+    ]);
+
+    vi.spyOn(serviceProvider, "getTipiQueryPort").mockReturnValue({
+      getRootUnits: vi.fn(),
+      getUnit: vi.fn(),
+      getSubUnits: vi.fn(),
+      getMembers: vi.fn(),
+      getMember: vi.fn(),
+    });
+
+    vi.spyOn(serviceProvider, "getEntraMemberDetailsPort").mockReturnValue({
+      getMemberDetails: vi.fn(),
+    });
+
+    vi.spyOn(serviceProvider, "getEntraAccountCommandsPort").mockReturnValue({
+      createAccount: createEntraAccount,
+      generateTap: vi.fn(),
+    });
+
+    vi.spyOn(serviceProvider, "getMailNotificationPort").mockReturnValue({
+      notifyAboutCreatedAccount: vi.fn(),
+      notifyAboutGeneratedTap: vi.fn(),
+    });
+
+    vi.spyOn(serviceProvider, "getAuditLoggerPort").mockReturnValue({
+      log: vi.fn(),
+    });
+
+    await expect(
+      createAccount({ membershipNumber: MEMBER.membershipNumber }, ACTOR),
+    ).rejects.toThrow("Pelny healthcheck nie przeszedl");
+
+    expect(createEntraAccount).not.toHaveBeenCalled();
   });
 });

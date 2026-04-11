@@ -5,6 +5,7 @@
 
 import type { Health } from "@/entities/health";
 import type { HealthStatus } from "@/entities/health";
+import type { HealthCheckPort } from "@/ports/health-check-port";
 import { getHealthChecks } from "@/frameworks/providers/service-provider";
 import { VERSION } from "@/version";
 
@@ -22,29 +23,38 @@ function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
-export async function getHealth(): Promise<Health> {
-  let worstStatus: HealthStatus = "ok";
+async function runHealthCheck(
+  check: HealthCheckPort,
+): Promise<HealthStatus> {
+  try {
+    const status = await check.check();
 
-  for (const check of getHealthChecks()) {
-    let status: HealthStatus;
-
-    try {
-      status = await check.check();
-
-      if (status === "down") {
-        console.error(`[Health] Check "${check.name}" returned down`);
-      }
-
-      if (status === "degraded") {
-        console.warn(`[Health] Check "${check.name}" returned degraded`);
-      }
-    } catch (error) {
-      status = "down";
-      console.error(
-        `[Health] Check "${check.name}" failed: ${getErrorMessage(error)}`,
-      );
+    if (status === "down") {
+      console.error(`[Health] Check "${check.name}" returned down`);
     }
 
+    if (status === "degraded") {
+      console.warn(`[Health] Check "${check.name}" returned degraded`);
+    }
+
+    return status;
+  } catch (error) {
+    console.error(
+      `[Health] Check "${check.name}" failed: ${getErrorMessage(error)}`,
+    );
+
+    return "down";
+  }
+}
+
+export async function getHealthFromChecks(
+  checks: HealthCheckPort[],
+): Promise<Health> {
+  let worstStatus: HealthStatus = "ok";
+
+  const statuses = await Promise.all(checks.map((check) => runHealthCheck(check)));
+
+  for (const status of statuses) {
     if (STATUS_RANK[status] > STATUS_RANK[worstStatus]) {
       worstStatus = status;
     }
@@ -55,4 +65,8 @@ export async function getHealth(): Promise<Health> {
     timestamp: new Date().toISOString(),
     version: VERSION,
   };
+}
+
+export async function getHealth(): Promise<Health> {
+  return getHealthFromChecks(getHealthChecks());
 }
