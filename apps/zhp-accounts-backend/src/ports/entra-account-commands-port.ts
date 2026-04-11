@@ -1,4 +1,5 @@
-import type { CreateAccountResponse, GenerateTapResponse, ZhpMember } from "zhp-accounts-types";
+import type { CreateAccountResponse, GenerateTapResponse } from "zhp-accounts-types";
+import type { TipiMemberDetails } from "@/entities/tipi-member-details";
 
 export interface CreateAccountCreatedResult {
   status: "created";
@@ -13,6 +14,6 @@ export interface CreateAccountAlreadyExistsResult {
 export type CreateAccountResult = CreateAccountCreatedResult | CreateAccountAlreadyExistsResult;
 
 export interface EntraAccountCommandsPort {
-  createAccount(accountOwner: ZhpMember, upn: string): Promise<CreateAccountResult>;
+  createAccount(accountOwner: TipiMemberDetails, upn: string): Promise<CreateAccountResult>;
   generateTap(upn: string): Promise<GenerateTapResponse>;
 }

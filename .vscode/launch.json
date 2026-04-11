@@ -20,7 +20,11 @@
         "LOG_LEVEL": "debug",
         "MOCK_AUDIT": "true",
         "MOCK_ENTRA": "true",
+
         "MOCK_TIPI": "true",
+        "TIPI_API_BASE_URL": "https://tipi-api.zhp.pl",
+        "TIPI_API_CLIENT_ID": "",
+        "TIPI_API_CLIENT_SECRET": "",
 
         "MOCK_MAIL": "true",
         "MAIL_ACS_ENDPOINT": "https://acs-konto-dev.europe.communication.azure.com",

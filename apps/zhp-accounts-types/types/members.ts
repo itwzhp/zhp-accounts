@@ -4,11 +4,11 @@ export interface ZhpMember {
     name: string
     surname: string
     membershipNumber: string
-    hasAllRequiredConsents: boolean
 }
 
 export interface ZhpMemberDetails extends ZhpMember {
     mail: string | null
+    hasAllRequiredConsents: boolean
 
     // Jeśli true to znaczy, że mail można regenerować - np. zaktualizować nazwisko albo przepiąć domenę na zhp.pl
     canMailBeCorrected: boolean

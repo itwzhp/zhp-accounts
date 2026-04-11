@@ -1,9 +1,10 @@
 import { randomBytes } from "node:crypto";
-import type { ZhpMember, GenerateTapResponse } from "zhp-accounts-types";
+import type { GenerateTapResponse } from "zhp-accounts-types";
 import type {
   CreateAccountResult,
   EntraAccountCommandsPort,
 } from "@/ports/entra-account-commands-port";
+import type { TipiMemberDetails } from "@/entities/tipi-member-details";
 import { getGraphClient } from "./entra-graph-client";
 import { config } from "@/config";
 
@@ -83,7 +84,7 @@ export class EntraAccountCommandsAdapter implements EntraAccountCommandsPort {
       });
   }
 
-  async createAccount(accountOwner: ZhpMember, upn: string): Promise<CreateAccountResult> {
+  async createAccount(accountOwner: TipiMemberDetails, upn: string): Promise<CreateAccountResult> {
     const graphClient = getGraphClient();
     const password = createTemporaryPassword();
     const mailNickname = toMailNickname(upn);
@@ -114,8 +115,8 @@ export class EntraAccountCommandsAdapter implements EntraAccountCommandsPort {
         surname: accountOwner.surname,
         displayName: `${accountOwner.name} ${accountOwner.surname}`,
         jobTitle: accountOwner.membershipNumber,
-        department: "TODO",
-        officeLocation: "TODO",
+        department: accountOwner.hufiec,
+        officeLocation: accountOwner.choragiew,
         accountEnabled: true,
         usageLocation: "PL",
         employeeId: accountOwner.membershipNumber,

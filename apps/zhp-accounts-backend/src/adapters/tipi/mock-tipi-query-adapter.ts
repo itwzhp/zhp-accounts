@@ -1,4 +1,5 @@
 import type { ZhpMember, ZhpUnit } from "zhp-accounts-types";
+import type { TipiMemberDetails } from "@/entities/tipi-member-details";
 import type { TipiQueryPort } from "@/ports/tipi-query-port";
 
 const ROOT_UNITS: readonly ZhpUnit[] = [
@@ -36,15 +37,15 @@ const SUBUNITS_BY_PARENT: Record<number, readonly ZhpUnit[]> = {
   11: [{ id: 20, name: "1 WDH Sopot", type: "pjo" }],
 };
 
-const MEMBERS_BY_NUMBER: Record<string, ZhpMember> = {
-  AA001234: { name: "Jan", surname: "Krüger", membershipNumber: "AA001234", hasAllRequiredConsents: true },
-  AA005678: { name: "Anna", surname: "Nowak", membershipNumber: "AA005678", hasAllRequiredConsents: true },
-  BB001111: { name: "Piotr", surname: "Wiśniewski", membershipNumber: "BB001111", hasAllRequiredConsents: false },
-  CC002222: { name: "Magdalena", surname: "Lewandowska", membershipNumber: "CC002222", hasAllRequiredConsents: true },
-  XD003333: { name: "Tomasz", surname: "Kamiński", membershipNumber: "XD003333", hasAllRequiredConsents: false },
-  EE004444: { name: "Agnieszka", surname: "Szymańska", membershipNumber: "EE004444", hasAllRequiredConsents: true },
-  FF006666: { name: "Marta", surname: "Przybysz", membershipNumber: "FF006666", hasAllRequiredConsents: true },
-  XE005555: { name: "Agnieszka", surname: "Malewska", membershipNumber: "XE005555", hasAllRequiredConsents: false },
+const MEMBERS_BY_NUMBER: Record<string, TipiMemberDetails> = {
+  AA001234: { name: "Jan", surname: "Krüger", membershipNumber: "AA001234", hasAllRequiredConsents: true, hufiec: "Hufiec Warszawa-Mokotów", choragiew: "Chorągiew Stołeczna" },
+  AA005678: { name: "Anna", surname: "Nowak", membershipNumber: "AA005678", hasAllRequiredConsents: true, hufiec: "Hufiec Warszawa-Mokotów", choragiew: "Chorągiew Stołeczna" },
+  BB001111: { name: "Piotr", surname: "Wiśniewski", membershipNumber: "BB001111", hasAllRequiredConsents: false, hufiec: "Hufiec Praga", choragiew: "Chorągiew Stołeczna" },
+  CC002222: { name: "Magdalena", surname: "Lewandowska", membershipNumber: "CC002222", hasAllRequiredConsents: true, hufiec: "Hufiec Gdańsk", choragiew: "Chorągiew Gdańska" },
+  XD003333: { name: "Tomasz", surname: "Kamiński", membershipNumber: "XD003333", hasAllRequiredConsents: false, hufiec: "Hufiec Gdańsk", choragiew: "Chorągiew Gdańska" },
+  EE004444: { name: "Agnieszka", surname: "Szymańska", membershipNumber: "EE004444", hasAllRequiredConsents: true, hufiec: "Hufiec Praga", choragiew: "Chorągiew Stołeczna" },
+  FF006666: { name: "Marta", surname: "Przybysz", membershipNumber: "FF006666", hasAllRequiredConsents: true, hufiec: "Hufiec Praga", choragiew: "Chorągiew Stołeczna" },
+  XE005555: { name: "Agnieszka", surname: "Malewska", membershipNumber: "XE005555", hasAllRequiredConsents: false, hufiec: "Hufiec Praga", choragiew: "Chorągiew Stołeczna" },
 };
 
 const MEMBERSHIP_NUMBERS_BY_UNIT: Record<number, readonly string[]> = {
@@ -73,8 +74,23 @@ function cloneUnit(unit: ZhpUnit): ZhpUnit {
   return { id: unit.id, name: unit.name, type: unit.type };
 }
 
-function fallbackMember(membershipNumber: string): ZhpMember {
-  return { name: "Nieznany", surname: "Członek", membershipNumber, hasAllRequiredConsents: false };
+function toMemberSummary(member: TipiMemberDetails): ZhpMember {
+  return {
+    name: member.name,
+    surname: member.surname,
+    membershipNumber: member.membershipNumber,
+  };
+}
+
+function fallbackMemberDetails(membershipNumber: string): TipiMemberDetails {
+  return {
+    name: "Nieznany",
+    surname: "Członek",
+    membershipNumber,
+    hasAllRequiredConsents: false,
+    hufiec: "Nieznany hufiec",
+    choragiew: "Nieznana chorągiew",
+  };
 }
 
 function fallbackUnit(unitId: number): ZhpUnit {
@@ -104,11 +120,11 @@ export class MockTipiQueryAdapter implements TipiQueryPort {
     const membershipNumbers = MEMBERSHIP_NUMBERS_BY_UNIT[unitId] ?? [];
 
     return membershipNumbers.map(
-      (membershipNumber) => MEMBERS_BY_NUMBER[membershipNumber] ?? fallbackMember(membershipNumber),
+      (membershipNumber) => toMemberSummary(MEMBERS_BY_NUMBER[membershipNumber] ?? fallbackMemberDetails(membershipNumber)),
     );
   }
 
-  async getMember(membershipNumber: string): Promise<ZhpMember | null> {
+  async getMember(membershipNumber: string): Promise<TipiMemberDetails | null> {
     return MEMBERS_BY_NUMBER[membershipNumber] ?? null;
   }
 }

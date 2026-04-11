@@ -1,7 +1,7 @@
 import type {
   GenerateTapResponse,
-  ZhpMember,
 } from "zhp-accounts-types";
+import type { TipiMemberDetails } from "@/entities/tipi-member-details";
 import type {
   CreateAccountResult,
   EntraAccountCommandsPort,
@@ -14,7 +14,7 @@ const occupiedUpns = new Set<string>([
 ]);
 
 export class MockEntraAccountCommandsAdapter implements EntraAccountCommandsPort {
-  async createAccount(accountOwner: ZhpMember, upn: string): Promise<CreateAccountResult> {
+  async createAccount(accountOwner: TipiMemberDetails, upn: string): Promise<CreateAccountResult> {
     if (occupiedUpns.has(upn)) {
       return {
         status: "already-exists",

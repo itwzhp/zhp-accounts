@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { Account, ZhpMember } from "zhp-accounts-types";
+import type { Account } from "zhp-accounts-types";
 import { createAccount } from "@/use-cases/accounts/create-account";
 import * as serviceProvider from "@/frameworks/providers/service-provider";
 import type { CreateAccountResult } from "@/ports/entra-account-commands-port";
+import type { TipiMemberDetails } from "@/entities/tipi-member-details";
 
 const ACTOR: Account = {
   id: "actor-1",
@@ -10,11 +11,13 @@ const ACTOR: Account = {
   membershipNumber: "AA000001"
 };
 
-const MEMBER: ZhpMember = {
+const MEMBER: TipiMemberDetails = {
   name: "Jan",
   surname: "Kowalski",
   membershipNumber: "AA001234",
   hasAllRequiredConsents: true,
+  hufiec: "Hufiec Warszawa-Mokotów",
+  choragiew: "Chorągiew Stołeczna",
 };
 
 describe("createAccount", () => {
@@ -67,7 +70,7 @@ describe("createAccount", () => {
 
   it("retries next address pattern when previous one already exists", async () => {
     const createEntraAccount = vi.fn<
-      (member: ZhpMember, upn: string) => Promise<CreateAccountResult>
+      (member: TipiMemberDetails, upn: string) => Promise<CreateAccountResult>
     >();
 
     createEntraAccount

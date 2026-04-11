@@ -1,5 +1,6 @@
 import type { ZhpMember, ZhpUnit, ZhpUnitType } from "zhp-accounts-types";
 import { config } from "@/config";
+import type { TipiMemberDetails } from "@/entities/tipi-member-details";
 import type { TipiQueryPort } from "@/ports/tipi-query-port";
 
 interface TipiUnitSummaryResponse {
@@ -16,6 +17,11 @@ interface TipiMemberSummaryResponse {
 
 interface TipiMemberDetailsResponse extends TipiMemberSummaryResponse {
   hasAllRequiredConsents: boolean;
+}
+
+interface TipiAdditionalMemberDetailsResponse {
+  hufiec: string;
+  choragiew: string;
 }
 
 function toUnitType(value: string): ZhpUnitType {
@@ -39,16 +45,20 @@ function toMember(input: TipiMemberSummaryResponse): ZhpMember {
     name: input.name,
     surname: input.surname,
     membershipNumber: input.membershipNumber,
-    hasAllRequiredConsents: false,
   };
 }
 
-function toMemberDetails(input: TipiMemberDetailsResponse): ZhpMember {
+function toMemberDetails(
+  input: TipiMemberDetailsResponse,
+  additional: TipiAdditionalMemberDetailsResponse,
+): TipiMemberDetails {
   return {
     name: input.name,
     surname: input.surname,
     membershipNumber: input.membershipNumber,
     hasAllRequiredConsents: input.hasAllRequiredConsents,
+    hufiec: additional.hufiec,
+    choragiew: additional.choragiew,
   };
 }
 
@@ -135,26 +145,47 @@ export class TipiQueryAdapter implements TipiQueryPort {
     return response.data.map(toMember);
   }
 
-  async getMember(membershipNumber: string): Promise<ZhpMember | null> {
-    const path = `/zhp-accounts/members/${encodeURIComponent(membershipNumber)}`;
-    const response = await this.requestJson<TipiMemberDetailsResponse>(path);
+  async getMember(membershipNumber: string): Promise<TipiMemberDetails | null> {
+    const memberPath = `/zhp-accounts/members/${encodeURIComponent(membershipNumber)}`;
+    const additionalDetailsPath = `/memberdetails/${encodeURIComponent(membershipNumber)}`;
+    const [memberResponse, additionalDetailsResponse] = await Promise.all([
+      this.requestJson<TipiMemberDetailsResponse>(memberPath),
+      this.requestJson<TipiAdditionalMemberDetailsResponse>(additionalDetailsPath),
+    ]);
 
-    if (response.status === 404) {
+    if (memberResponse.status === 404) {
       return null;
     }
 
-    if (response.status === 400) {
+    if (memberResponse.status === 400) {
       throw new Error(`Invalid member ID format for Tipi member request: ${membershipNumber}`);
     }
 
-    if (response.status === 409) {
+    if (memberResponse.status === 409) {
       throw new Error(`Tipi returned data consistency conflict for member ID ${membershipNumber}`);
     }
 
-    if (response.status !== 200) {
-      throw new Error(`Tipi get member request failed with status ${response.status}`);
+    if (memberResponse.status !== 200) {
+      throw new Error(`Tipi get member request failed with status ${memberResponse.status}`);
     }
 
-    return toMemberDetails(response.data);
+    if (additionalDetailsResponse.status === 404) {
+      throw new Error(`Member details with ID ${membershipNumber} not found in Tipi details endpoint`);
+    }
+
+    if (additionalDetailsResponse.status === 400) {
+      throw new Error(`Invalid member ID format for Tipi member details request: ${membershipNumber}`);
+    }
+
+    if (additionalDetailsResponse.status === 409) {
+      throw new Error(`Tipi returned data consistency conflict for member details ID ${membershipNumber}`);
+    }
+
+    if (additionalDetailsResponse.status !== 200) {
+      throw new Error(`Tipi member details request failed with status ${additionalDetailsResponse.status}`);
+    }
+
+    // TODO: simplify this merge after primary member endpoint includes hufiec and choragiew.
+    return toMemberDetails(memberResponse.data, additionalDetailsResponse.data);
   }
 }
