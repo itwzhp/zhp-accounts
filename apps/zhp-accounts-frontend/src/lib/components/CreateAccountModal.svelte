@@ -110,8 +110,8 @@
               id="notification-email-create"
               type="email"
               bind:value={notificationEmail}
-              class="input w-full"
-              placeholder="przykladowy@mail.pl"
+              class="input w-full notification-email-input"
+              placeholder="przykladowy.adres@email.pl"
             />
           </div>
         {/if}
@@ -203,3 +203,9 @@
     {/if}
   </div>
 </dialog>
+
+<style>
+  .notification-email-input::placeholder {
+    opacity: 0.45;
+  }
+</style>
